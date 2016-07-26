@@ -1,0 +1,52 @@
+﻿<Page
+    x:Class="AilianBT.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AilianBT.Views"
+    xmlns:models="using:AilianBT.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    >
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView x:Name="listView" ItemsSource="{x:Bind MainVM.AilianRes,Mode=OneWay}" IsItemClickEnabled="True"
+                  ItemClick="{x:Bind MainVM.ItemClick}" >
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:AilianResModel">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Margin="0,4" TextWrapping="Wrap" Foreground="#FF2E3940">
+                           <Run Text="{x:Bind Title,Mode=OneWay}"></Run>
+                        </TextBlock>
+                        <StackPanel Margin="0,4" Grid.Row="1" Orientation="Horizontal">
+                            <TextBlock FontSize="12"  Margin="4,0,4,0" Text="{x:Bind PostTime,Mode=OneWay}"></TextBlock>
+                            <TextBlock FontSize="12" Margin="4,0,4,0" Text="{x:Bind Size,Mode=OneWay}"></TextBlock>
+                            <TextBlock FontSize="12"  Margin="4,0,4,0" Text="{x:Bind Author,Mode=OneWay}"></TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Template>
+                <ControlTemplate>
+                    <ScrollViewer x:Name="scrollViewer" VerticalContentAlignment="Bottom">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Rectangle Grid.Row="0" Height="60" Fill="AliceBlue"></Rectangle>
+                            <ItemsPresenter Grid.Row="1"></ItemsPresenter>
+                            <Button Grid.Row="2" Height="40" HorizontalAlignment="Stretch" Content="点击加载更多" Click="Button_Click"></Button>
+                        </Grid>
+
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListView.Template>
+        </ListView>
+    </Grid>
+</Page>

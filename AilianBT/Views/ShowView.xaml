@@ -1,0 +1,43 @@
+﻿<Page
+    x:Class="AilianBT.Views.ShowView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AilianBT.Views"
+    
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" >
+
+    <Grid  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid x:Name="panel">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="4"  FontSize="26" TextWrapping="Wrap" Text="{x:Bind ShowVM.ShowModel.Title,Mode=OneWay}"></TextBlock>
+                <StackPanel  Grid.Row="1" Orientation="Horizontal">
+                    <Button  Grid.Row="1"  Margin="4,0"  Content="下载种子" Command="{x:Bind ShowVM.DownloadBtCommand}" CommandParameter="{x:Bind ShowVM.ShowModel.BtLink,Mode=OneWay}"></Button>
+                    <Button  Grid.Row="1"  Margin="4,0"  Content="复制磁链" Command="{x:Bind ShowVM.DownloadBtCommand}" CommandParameter="{x:Bind ShowVM.ShowModel.MagnetLink,Mode=OneWay}"></Button>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Pivot>
+                    <PivotItem Header="简介">
+                        <WebView x:Name="webViewSummary" 
+                                 HorizontalAlignment="Stretch" local:ShowView.DetailInfo="{x:Bind ShowVM.ShowModel.Summary,Mode=OneWay}" ></WebView>
+                    </PivotItem>
+                    <PivotItem Header="文件">
+                        <WebView local:ShowView.DetailInfo="{x:Bind ShowVM.ShowModel.FileInfo,Mode=OneWay}"></WebView>
+                    </PivotItem>
+                </Pivot>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</Page>
