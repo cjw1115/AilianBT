@@ -212,7 +212,7 @@ namespace BtDownload.Views
             SetDefaultSelectStatus();
 
         }
-        private void btnRemove_Click(object sender, RoutedEventArgs e)
+        private async void btnRemove_Click(object sender, RoutedEventArgs e)
         {
             List<DownloadInfo> removes = new List<DownloadInfo>();
             foreach (var item in this.downList.SelectedItems)
@@ -226,6 +226,10 @@ namespace BtDownload.Views
             foreach (var item in removes)
             {
                 this.DownloadingVM.DownloadOperations.Remove(item);
+            }
+            foreach (var item in removes)
+            {
+                await FileService.DeleteFile((StorageFile)item.DownloadOperation.ResultFile);
             }
             //页面恢复未选择状态
             SetDefaultSelectStatus();

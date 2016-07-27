@@ -71,7 +71,14 @@ namespace BtDownload.Services
             var folder = await FileService.GetDownloadFolder();
             var file = await FileService.CreaterFile(folder, filename);
             var operation = _downloader.CreateDownload(uri, file);
-            await operation.StartAsync();
+            try
+            {
+                await operation.StartAsync();
+            }
+            catch
+            {
+
+            }
 
 
             var thumb = await FileService.GetThumbBytes(file);

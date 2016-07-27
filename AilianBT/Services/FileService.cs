@@ -53,14 +53,22 @@ namespace BtDownload.Services
         }
         public static async Task<StorageFolder> GetDownloadFolder()
         {
-            var path = GetLocalSetting<string>("downloadfolder");
-            var folder = await StorageFolder.GetFolderFromPathAsync(path);
-            return folder ?? DefaultDownloadFolder;
+            try
+            {
+                var path = GetLocalSetting<string>("downloadfolder");
+                var re = await StorageFolder.GetFolderFromPathAsync(path);
+                return re ?? DefaultDownloadFolder;
+            }
+            catch
+            {
+                return DefaultDownloadFolder;
+            }
         }
+            
+           
         public static  void SetDownloadFolder(StorageFolder folder)
         {
             SetLocalSetting<string>("downloadfolder",folder.Path);
-            //var file=await folder.CreateFileAsync("path.temp", CreationCollisionOption.ReplaceExisting);
             StorageApplicationPermissions.FutureAccessList.Add(folder);
         }
         public static T GetLocalSetting<T>(string key) where T : class

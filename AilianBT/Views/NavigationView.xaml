@@ -91,8 +91,13 @@
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-                            </ListView>
 
+                            </ListView>
+                            <Button VerticalAlignment="Bottom" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="{x:Bind NavigationVM.Setting_Click}">
+                                <StackPanel>
+                                    <TextBlock>设置</TextBlock>
+                                </StackPanel>
+                            </Button>
                         </Grid>
 
                     </SplitView.Pane>

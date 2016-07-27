@@ -39,6 +39,8 @@ namespace AilianBT.ViewModels
 
         public void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (SelectedIndex < 0)
+                return;
             Models.NavigationListItem item = NavigationList[SelectedIndex];
             if (item != null && item.PageType != null)
             {
@@ -49,6 +51,13 @@ namespace AilianBT.ViewModels
             {
                 GalaSoft.MvvmLight.Messaging.Messenger.Default.Send("这只是个饼，而且还没画完O(∩_∩)O", messageToken);
             }
+        }
+
+        public void Setting_Click()
+        {
+            SelectedIndex = -1;
+            MainTitle = "设置";
+            FuncFrame.Navigate(typeof(Views.SettingView));
         }
     }
 }

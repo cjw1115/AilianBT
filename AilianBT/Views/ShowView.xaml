@@ -23,7 +23,7 @@
                 <TextBlock Margin="4"  FontSize="26" TextWrapping="Wrap" Text="{x:Bind ShowVM.ShowModel.Title,Mode=OneWay}"></TextBlock>
                 <StackPanel  Grid.Row="1" Orientation="Horizontal">
                     <Button  Grid.Row="1"  Margin="4,0"  Content="下载种子" Command="{x:Bind ShowVM.DownloadBtCommand}" CommandParameter="{x:Bind ShowVM.ShowModel.BtLink,Mode=OneWay}"></Button>
-                    <Button  Grid.Row="1"  Margin="4,0"  Content="复制磁链" Command="{x:Bind ShowVM.DownloadBtCommand}" CommandParameter="{x:Bind ShowVM.ShowModel.MagnetLink,Mode=OneWay}"></Button>
+                    <Button  Grid.Row="1"  Margin="4,0"  Content="复制磁链" Command="{x:Bind ShowVM.DownloadMagnetCommand}" CommandParameter="{x:Bind ShowVM.ShowModel.MagnetLink,Mode=OneWay}"></Button>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="1">

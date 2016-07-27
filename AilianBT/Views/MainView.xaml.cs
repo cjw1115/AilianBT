@@ -30,7 +30,6 @@ namespace AilianBT.Views
         {
             var locator = App.Current.Resources["Locator"] as ViewModels.ViewModelLocator;
             MainVM = locator.MainVM;
-
             this.InitializeComponent();
             this.Loaded += MainView_Loaded;
 
@@ -43,7 +42,7 @@ namespace AilianBT.Views
             scrollView.VerticalAlignment = VerticalAlignment.Stretch;
             scrollView.ViewChanged-= ScrollView_ViewChanged;
             scrollView.ViewChanged += ScrollView_ViewChanged;
-            scrollView.ChangeView(null, 60, null);
+            scrollView.ChangeView(null, 120, null);
 
             OnRefresh += MainVM.Refresh;
             OnLoadMore += MainVM.LoadMore;
@@ -59,7 +58,7 @@ namespace AilianBT.Views
             var scrollView = sender as ScrollViewer;
             if (!e.IsIntermediate)
             {
-                if (scrollView.VerticalOffset <=0)
+                if (scrollView.VerticalOffset <=40)
                 { //刷新
                     if (!isRefresh)
                     {
@@ -69,7 +68,7 @@ namespace AilianBT.Views
                             await scrollView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                             {
                                 OnRefresh.Invoke();
-                                scrollView.ChangeView(null, 60, null);
+                                scrollView.ChangeView(null, 120, null);
                                 
                             });
                             isRefresh = false;
@@ -79,9 +78,9 @@ namespace AilianBT.Views
                     
                     
                 }
-                else if(scrollView.VerticalOffset < 60)
+                else if(scrollView.VerticalOffset < 120)
                 {
-                    scrollView.ChangeView(null, 60, null);
+                    scrollView.ChangeView(null, 120, null);
                 }
                 else if (scrollView.VerticalOffset > scrollView.ScrollableHeight-40)
                 {

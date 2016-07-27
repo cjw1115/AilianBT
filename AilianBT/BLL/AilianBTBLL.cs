@@ -16,14 +16,14 @@ namespace AilianBT.BLL
 
         private readonly string 首页 = "http://m.kisssub.org/";
         private readonly string 合集 = "http://m.kisssub.org/complete-1.html ";
+        private readonly string 搜索= "http://m.kisssub.org/search.php?keyword=";
 
-        private int _pageIndex;
         public async Task<IList<AilianResModel>> GetResList(int pageIndex = 1)
         {
             List<AilianResModel> list = null;
             try
             {
-                var content = await _httpService.SendRequst(首页 + pageIndex + ".html");
+                var content = await _httpService.SendRequst(首页+ pageIndex + ".html");
                 var pasrser = new HtmlParser();
                 var doc = pasrser.Parse(content);
                 var ul = doc.GetElementsByTagName("ul").Skip(1).FirstOrDefault();
@@ -48,7 +48,6 @@ namespace AilianBT.BLL
                         list.Add(model);
                     }
                 }
-                pageIndex++;
                 return list;
             }
             catch
@@ -96,10 +95,50 @@ namespace AilianBT.BLL
             {
                 var link=首页+div.Children[0].GetElementsByTagName("a").FirstOrDefault().GetAttribute("href");
                 model.BtLink = link;
-                link= div.Children[1].GetElementsByTagName("a").FirstOrDefault().GetAttribute("href");
+                link= div.Children[1].GetElementsByTagName("a").FirstOrDefault().GetAttribute("onclick");
+                link=Regex.Match(link, @"magnet[\w\W]*(?=')").ToString();
                 model.MagnetLink = link;
             }
             return model;
+        }
+        public async Task<IList<AilianResModel>> SerachResList(string searchiKey,int pageIndex = 1)
+        {
+            List<AilianResModel> list = null;
+            try
+            {
+                var content = await _httpService.SendRequst(搜索 + searchiKey +"&page="+ pageIndex);
+                var index = content.IndexOf("<div class=\"lists\">");
+                content=content.Substring(index);
+                var pasrser = new HtmlParser();
+                var doc = pasrser.Parse(content);
+                var ul = doc.GetElementsByTagName("ul").FirstOrDefault();
+                if (ul != null)
+                {
+                    list = new List<AilianResModel>();
+                    var lis = ul.QuerySelectorAll("li");
+                    foreach (var item in lis)
+                    {
+                        AilianResModel model = new AilianResModel();
+                        var re = item.Children[0].Children[0].TextContent;
+                        model.Title = Regex.Replace(re, @"/\*([\w\W]*)\*/", string.Empty) ?? re;
+                        model.Link = 首页 + item.Children[0].Children[0].GetAttribute("href");
+                        //
+                        var temp = item.Children[1].Children[0].ChildNodes.Last().TextContent.Replace("\n", "").Trim();
+
+                        model.PostTime = temp;
+
+                        temp = item.Children[1].Children[1].ChildNodes.Last().TextContent.Replace("\n", "").Trim();
+                        model.Size = temp;
+                        model.Author = item.Children[1].Children[2].Children[1].TextContent.Trim();
+                        list.Add(model);
+                    }
+                }
+                return list;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
     }

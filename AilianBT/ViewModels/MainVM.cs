@@ -33,6 +33,10 @@ namespace AilianBT.ViewModels
         private int _pageIndex = 1;
         public async void Loaded()
         {
+            _pageIndex = 1;
+            IsSearching = false;
+            IsVisibleSearchBox = false;
+
             var list = await bll.GetResList(_pageIndex++);
             if (list != null)
             {
@@ -45,7 +49,11 @@ namespace AilianBT.ViewModels
         
         public async void LoadMore()
         {
-            var newlist=await bll.GetResList(_pageIndex++);
+            IList<AilianResModel> newlist = null;
+            if (IsSearching)
+                newlist = await bll.SerachResList(SearchKey,_pageIndex++);
+            else
+                newlist = await bll.GetResList(_pageIndex++);
             if (newlist != null||newlist.Count>0)
             {
                 foreach(var item in newlist)
@@ -56,7 +64,13 @@ namespace AilianBT.ViewModels
         }
         public async void Refresh()
         {
-            var newlist = await bll.GetResList(1);
+            _pageIndex = 1;
+            IList<AilianResModel> newlist = null;
+            if (IsSearching)
+                newlist = await bll.SerachResList(SearchKey, _pageIndex++);
+            else
+                newlist = await bll.GetResList(1);
+
             if (newlist != null && newlist.Count > 0)
             {
                 AilianRes.Clear();
@@ -72,6 +86,54 @@ namespace AilianBT.ViewModels
         {
             var model = e.ClickedItem as AilianResModel;
             NavigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
+        }
+
+        private string _searchKey;
+
+        public string SearchKey
+        {
+            get { return _searchKey; }
+            set { Set(ref _searchKey, value); }
+        }
+
+        private bool _isVisibleSearchBox=false;
+
+        public bool IsVisibleSearchBox
+        {
+            get { return _isVisibleSearchBox; }
+            set { Set(ref _isVisibleSearchBox, value); }
+        }
+
+        private bool _isSearching = false;
+
+        public bool IsSearching
+        {
+            get { return _isSearching; }
+            set { _isSearching = value; }
+        }
+
+        public void Search_Click()
+        {
+            IsVisibleSearchBox = true;
+        }
+
+        public async void Search(string searchKey)
+        {
+            //标识搜索状态
+            _pageIndex = 1;
+            IsSearching = true;
+            
+            var newlist = await bll.SerachResList(searchKey, _pageIndex++);
+            if (newlist != null && newlist.Count > 0)
+            {
+                AilianRes.Clear();
+                foreach (var item in newlist)
+                {
+                    AilianRes.Add(item);
+                }
+            }
+
+            IsVisibleSearchBox = false;
         }
     }
 }

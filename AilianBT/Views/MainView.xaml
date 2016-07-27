@@ -3,12 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AilianBT.Views"
+    xmlns:controls="using:AilianBT.Controls"
     xmlns:models="using:AilianBT.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     >
-    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView x:Name="listView" ItemsSource="{x:Bind MainVM.AilianRes,Mode=OneWay}" IsItemClickEnabled="True"
                   ItemClick="{x:Bind MainVM.ItemClick}" >
@@ -32,14 +32,14 @@
             </ListView.ItemTemplate>
             <ListView.Template>
                 <ControlTemplate>
-                    <ScrollViewer x:Name="scrollViewer" VerticalContentAlignment="Bottom">
+                    <ScrollViewer x:Name="scrollViewer" VerticalContentAlignment="Bottom" VerticalScrollBarVisibility="Hidden">
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <Rectangle Grid.Row="0" Height="60" Fill="AliceBlue"></Rectangle>
+                            <Rectangle Grid.Row="0" Height="120" Fill="AliceBlue"></Rectangle>
                             <ItemsPresenter Grid.Row="1"></ItemsPresenter>
                             <Button Grid.Row="2" Height="40" HorizontalAlignment="Stretch" Content="点击加载更多" Click="Button_Click"></Button>
                         </Grid>
@@ -48,5 +48,9 @@
                 </ControlTemplate>
             </ListView.Template>
         </ListView>
+        <CommandBar VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <AppBarButton Icon="Find" Label="查找" Click="{x:Bind MainVM.Search_Click}"></AppBarButton>
+        </CommandBar>
+        <!--<controls:SearchBox  IsVisible="{x:Bind MainVM.IsVisibleSearchBox,Mode=TwoWay}" SearchKey="{x:Bind MainVM.SearchKey,Mode=TwoWay}" Search="{x:Bind MainVM.Search}"></controls:SearchBox>-->
     </Grid>
 </Page>

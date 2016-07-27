@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace AilianBT.ViewModels
 {
@@ -67,7 +68,10 @@ namespace AilianBT.ViewModels
         public ICommand DownloadMagnetCommand { get; set; }
         public void DownloadMagnet(object param)
         {
-
+            var magnetlink = (string)param;
+            DataPackage datapackage = new DataPackage();
+            datapackage.SetText(magnetlink);
+            Clipboard.SetContent(datapackage);
         }
     }
 }
