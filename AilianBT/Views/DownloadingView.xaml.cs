@@ -27,6 +27,7 @@ using BtDownload.Services;
 using BtDownload.VIewModels;
 using BtDownload.Models;
 using Windows.Storage.AccessCache;
+using AilianBT.Services;
 //“空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 上有介绍
 
 namespace BtDownload.Views
@@ -44,6 +45,7 @@ namespace BtDownload.Views
             DownloadingVM = SimpleIoc.GetInstance<DownloadingVM>();
             DownloadedVM = SimpleIoc.GetInstance<DownloadedVM>();
             _downloadService = new DownloadService();
+
             this.InitializeComponent();
             this.Loaded += DownloadingView_Loaded;
 
@@ -92,6 +94,8 @@ namespace BtDownload.Views
 
             //存储到数据库中
             DownloadService.StoreDownloadedInfo(re);
+
+            NotificationService.ShowDownloadFinishedToast(downloadInfo.FileName);
         }
 
         public async Task StarDownload(string filename,Uri uri)
@@ -123,11 +127,26 @@ namespace BtDownload.Views
             //await SetStorageFolder();
 
             defaultFolder = await FileService.GetDownloadFolder();
-            
-            var uri=DownloadService.GetDownloadUri(this.tbUri.Text);
-            var filename = DownloadService.GetDownloadFileName(this.tbUri.Text);
-            await StarDownload(filename, uri);
 
+            try
+            {
+                var uri = DownloadService.GetDownloadUri(this.tbUri.Text);
+                var filename = DownloadService.GetDownloadFileName(this.tbUri.Text);
+                await StarDownload(filename, uri);
+            }
+            catch(System.UriFormatException uriFormartException)
+            {
+                AilianBT.App.ShowNotification("下载地址不正确：" + uriFormartException.Message);
+            }
+            catch(ArgumentException argumentException)
+            {
+                AilianBT.App.ShowNotification("下载参数异常：" + argumentException.Message);
+            }
+            catch(Exception exception)
+            {
+                AilianBT.App.ShowNotification("下载超时");
+            }
+            
 
         }
         public void DownloadProgress(DownloadOperation operation)
@@ -154,16 +173,16 @@ namespace BtDownload.Views
             var btn = sender as Button;
             var id = (int)btn.Tag;
             var info=DownloadingVM.DownloadOperations.Where(m => m.ID == id).FirstOrDefault();
-            if(info.DownloadStatus== DownloadStatus.Run)
+            if (info.DownloadStatus == DownloadStatus.Run)
             {
                 info.Pause();
-                btn.Content = "开始";
+                //btn.Content = "\xE768;";//开始按钮
 
             }
-            else if(info.DownloadStatus== DownloadStatus.Pause)
+            else if (info.DownloadStatus == DownloadStatus.Pause)
             {
                 info.Resume();
-                btn.Content = "暂停";
+                //btn.Content = "\xE769;";//暂停按钮
             }
             var sel = this.downList.SelectedItem as DownloadInfo;
             if (sel != null && sel.ID == id)
@@ -227,10 +246,18 @@ namespace BtDownload.Views
             {
                 this.DownloadingVM.DownloadOperations.Remove(item);
             }
-            foreach (var item in removes)
+            try
             {
-                await FileService.DeleteFile((StorageFile)item.DownloadOperation.ResultFile);
+                foreach (var item in removes)
+                {
+                    await FileService.DeleteFile((StorageFile)item.DownloadOperation.ResultFile);
+                }
             }
+            catch(FileNotFoundException notfound)
+            {
+                AilianBT.App.ShowNotification("文件不存在："+ notfound.Message);
+            }
+            
             //页面恢复未选择状态
             SetDefaultSelectStatus();
         }

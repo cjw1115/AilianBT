@@ -7,23 +7,47 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
-            <TextBlock>下载目录</TextBlock>
-            <Button Name="tbDownload" Click="DownloadLocation_Click" HorizontalAlignment="Stretch">
-                <Button.Template>
-                    <ControlTemplate>
-                        <Border BorderThickness="2" BorderBrush="#FFC1C9CA">
-                            <ContentPresenter></ContentPresenter>
-                        </Border>
-                        
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+    <Grid Background="{StaticResource  AilianBtGridBackground2}">
+        <Image x:Name="imgbackground" Stretch="None" HorizontalAlignment="Right" VerticalAlignment="Bottom"></Image>
+        <StackPanel Padding="20" >
+            <StackPanel Margin="0,20,0,0">
+                <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">下载目录</TextBlock>
+                <Button Margin="8,0,0,0"  Foreground="{StaticResource  AilianBtListMainForeground}" Name="tbDownload" Click="DownloadLocation_Click" HorizontalAlignment="Stretch">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource  AilianBtGridBackground2}" IsTapEnabled="False" >
+                                <Border BorderThickness="1" BorderBrush="#FFC1C9CA">
+                                    <ContentPresenter ></ContentPresenter>
+                                </Border>
+                            </Grid>
+
+
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+            <StackPanel  Margin="0,20,0,0">
+                <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}" Text="通知&amp;提示"></TextBlock>
+                <StackPanel Margin="8,0,0,0"  Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center"  Foreground="{StaticResource  AilianBtListMainForeground}">启用Toast通知</TextBlock>
+                    <ToggleSwitch x:Name="toast_switch" Margin="8,0,0,0"  Toggled="toast_switch_Toggled"></ToggleSwitch>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel  Margin="0,20,0,0">
+                <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">当前版本</TextBlock>
+                <TextBlock Margin="8,0,0,0" Foreground="{StaticResource  AilianBtListMainForeground}">1.1.0</TextBlock>
+            </StackPanel>
+            <StackPanel  Margin="0,20,0,0">
+                <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">关于作者（CQ）</TextBlock>
+                <StackPanel Margin="8,0,0,0"  Orientation="Vertical">
+                    <HyperlinkButton FontSize="12" NavigateUri="http://weibo.com/cjw19951115" Content="微博主页"></HyperlinkButton>
+                    <HyperlinkButton FontSize="12" NavigateUri="http://www.cjw1115.com/" Content="个人博客"></HyperlinkButton>
+
+                </StackPanel>
+            </StackPanel>
+
         </StackPanel>
-        <StackPanel>
-            <TextBlock>当前版本</TextBlock>
-            <TextBlock>1.0.0</TextBlock>
-        </StackPanel>
-    </StackPanel>
+
+    </Grid>
+    
 </Page>

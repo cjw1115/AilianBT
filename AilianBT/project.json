@@ -1,10 +1,12 @@
 ﻿{
   "dependencies": {
     "AngleSharp": "0.9.7",
-    "EntityFramework.Commands": "7.0.0-rc1-final",
-    "EntityFramework.SQLite": "7.0.0-rc1-final",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
-    "MvvmLight": "5.3.0"
+    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",
+    "Microsoft.EntityFrameworkCore.Tools": "1.0.0-preview2-final",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "MvvmLight": "5.3.0",
+    "NotificationsExtensions.Win10": "14332.0.2",
+    "System.Text.Encoding.CodePages": "4.0.1"
   },
   "frameworks": {
     "uap10.0": {}

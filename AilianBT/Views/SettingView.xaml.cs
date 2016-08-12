@@ -32,8 +32,12 @@ namespace AilianBT.Views
 
         private async void SettingView_Loaded(object sender, RoutedEventArgs e)
         {
+            this.imgbackground.Source = await FileService.GetBackgroundImage();
+
             var folder =await FileService.GetDownloadFolder();
             tbDownload.Content = folder.Path;
+            var taostswitch=FileService.GetLocalSetting<bool>("toastswitch");
+            this.toast_switch.IsOn = taostswitch;
         }
 
         private async void  DownloadLocation_Click(object sender, RoutedEventArgs e)
@@ -46,7 +50,12 @@ namespace AilianBT.Views
                 ((Button)sender).Content = folder.Path;
                 FileService.SetDownloadFolder(folder);
             }
-            
+        }
+        
+        private void toast_switch_Toggled(object sender, RoutedEventArgs e)
+        {
+            FileService.SetLocalSetting<bool>("toastswitch", toast_switch.IsOn);
+
         }
     }
 }

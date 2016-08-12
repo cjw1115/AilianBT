@@ -14,13 +14,14 @@ namespace AilianBT.ViewModels
         private readonly string messageToken = "1";
         public List<NavigationListItem> NavigationList { get; set; } = new List<NavigationListItem>
         {
-           new NavigationListItem { Title="首页", PageType=typeof(Views.MainView) },
-           new NavigationListItem { Title="下载中心", PageType=typeof(DownloadMainView) }
+           new NavigationListItem { Title="首页", PageType=typeof(Views.MainView),Icon="\xE80F" },
+           new NavigationListItem { Title="番组表", PageType=typeof(Views.KeyView),Icon="\xE192"},
+           new NavigationListItem { Title="下载中心", PageType=typeof(DownloadMainView) ,Icon="\xE896"}
         };
 
         public static Frame FuncFrame { get; set; }
         public static Frame DetailFrame { get; set; }
-
+        //public ViewModels.MusicVM MusicVM { get; set; } = new MusicVM();
         private string _mainTitle;
         public string MainTitle
         {

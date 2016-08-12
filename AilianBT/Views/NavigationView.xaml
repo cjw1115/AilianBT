@@ -4,42 +4,129 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AilianBT.Views"
     xmlns:models="using:AilianBT.Models"
+    xmlns:controls="using:AilianBT.Controls"
     xmlns:triggers="using:AilianBT.Triggers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <Page.Resources>
+        <Style x:Key="ButtonStyle1" TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundTransparentBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Padding" Value="12,0,12,0"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilinaBtItemHoverColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilinaBtItemSelectColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            
+        </Style>
+        <Style TargetType="ListViewItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid x:Name="RootGrid" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup>
+                                    <VisualState x:Name="Normal">
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilinaBtItemHoverColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilinaBtItemSelectColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter" Padding="12,0,12,0"></ContentPresenter>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup x:Name="ShowModeVisualStateGroup" >
-                    <VisualState  x:Name="WideVisualState" >
-                        <VisualState.Setters>
-                            <Setter Value="*" Target="col1.Width"></Setter>
-                            <Setter Value="*" Target="col2.Width"></Setter>
-                        </VisualState.Setters>
-                        <VisualState.StateTriggers>
+            <VisualStateGroup x:Name="ShowModeVisualStateGroup" >
+                <VisualState  x:Name="WideVisualState" >
+                    <VisualState.Setters>
+                        <Setter Value="*" Target="col1.Width"></Setter>
+                        <Setter Value="*" Target="col2.Width"></Setter>
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
                         <triggers:NavigationViewAdaptiveTrigger  MinWindowWidth="700"/>
-                        </VisualState.StateTriggers>
-                    </VisualState>
-                    <VisualState x:Name="NarrowVisualState" >
-                        <VisualState.Setters>
-                            <Setter Value="Collapsed" Target="mainPanel.Visibility"></Setter>
-                            <Setter Value="0" Target="gridDetail.(Grid.Column)"></Setter>
-                        </VisualState.Setters>
-                        <VisualState.StateTriggers>
-                            <triggers:NavigationViewAdaptiveTrigger  MinWindowWidth="0"/>
-                        </VisualState.StateTriggers>
-                    </VisualState>
-                    <VisualState x:Name="NormalVisualState" >
-                        <VisualState.Setters>
-                            <Setter Value="*" Target="col1.Width"></Setter>
-                            <Setter Value="0" Target="col2.Width"></Setter>
-                        </VisualState.Setters>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="NarrowVisualState" >
+                    <VisualState.Setters>
+                        <Setter Value="Collapsed" Target="mainPanel.Visibility"></Setter>
+                        <Setter Value="0" Target="gridDetail.(Grid.Column)"></Setter>
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <triggers:NavigationViewAdaptiveTrigger  MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="NormalVisualState" >
+                    <VisualState.Setters>
+                        <Setter Value="*" Target="col1.Width"></Setter>
+                        <Setter Value="0" Target="col2.Width"></Setter>
+                    </VisualState.Setters>
 
-                    </VisualState>
+                </VisualState>
 
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="col1" Width="*"/>
@@ -50,17 +137,24 @@
 
             <RelativePanel x:Name="mainPanel" VerticalAlignment="Stretch"  >
                 <Grid x:Name="gridTopBar" Height="44" RelativePanel.AlignRightWithPanel="True"
-                      RelativePanel.AlignLeftWithPanel="True">
+                      RelativePanel.AlignLeftWithPanel="True"
+                      Background="{StaticResource AilianBtMainColor}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Button x:Name="btnHamber" FontSize="24" VerticalAlignment="Center" Grid.Column="0"    Background="Transparent" Margin="4" BorderThickness="0" Click="btnHamber_Click" >
-                        <TextBlock   Margin="0" FontFamily="Segoe MDL2 Assets" Text="&#xE700;"></TextBlock>
+                        <TextBlock Foreground="{StaticResource AilianBtTitleForeground}"   Margin="0" FontFamily="Segoe MDL2 Assets" Text="&#xE700;"></TextBlock>
                     </Button>
                     <Grid VerticalAlignment="Center" Grid.Column="1"  x:Name="gridTitleBar" >
-                        <TextBlock FontSize="20" VerticalAlignment="Center" Text="{x:Bind NavigationVM.MainTitle,Mode=OneWay}"></TextBlock>
+                        <TextBlock FontSize="20" Foreground="{StaticResource AilianBtTitleForeground}" VerticalAlignment="Center" Text="{x:Bind NavigationVM.MainTitle,Mode=OneWay}"></TextBlock>
                     </Grid>
+                    <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1"  HorizontalAlignment="Right">
+                        <Button Content="上" Click="{x:Bind NavigationVM.MusicVM.Previou}"></Button>
+                        <Button Content="播放" Click="{x:Bind NavigationVM.MusicVM.Play}"></Button>
+                        <Button Content="暂停" Click="{x:Bind NavigationVM.MusicVM.Pause}"></Button>
+                        <Button Content="下" Click="{x:Bind NavigationVM.MusicVM.Next}"></Button>
+                    </StackPanel>-->
                 </Grid>
 
                 <TextBlock  Text="点击左上汉堡菜单，开启精彩工大生活" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"></TextBlock>
@@ -72,30 +166,28 @@
                            RelativePanel.AlignLeftWithPanel="True"
                            RelativePanel.Below="gridTopBar"  >
                     <SplitView.Pane >
-                        <Grid  >
+                        <Grid Background="{StaticResource AilianBtMainColor}" >
                             <ListView x:Name="navigationList" ItemsSource="{x:Bind NavigationVM.NavigationList,Mode=OneWay}"
                                      IsItemClickEnabled="False"
                                       SelectedIndex="{x:Bind NavigationVM.SelectedIndex,Mode=TwoWay}"
                                       SelectionMode="Single"
-                                      SelectionChanged="{x:Bind NavigationVM.SelectionChanged}">
-                                <ListView.Template>
-                                    <ControlTemplate>
-                                        <ItemsPresenter></ItemsPresenter>
-                                    </ControlTemplate>
-                                </ListView.Template>
+                                      SelectionChanged="{x:Bind NavigationVM.SelectionChanged}"
+                                      >
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:NavigationListItem">
+                                        
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Margin="4,0,4,0" VerticalAlignment="Center" Text="{x:Bind Icon,Mode=OneWay}" FontFamily="Segoe MDL2 Assets" FontSize="20"></TextBlock>
-                                            <TextBlock Margin="4,0,4,0" VerticalAlignment="Center" Text="{x:Bind Title,Mode=OneWay}"></TextBlock>
+                                            <TextBlock Foreground="{StaticResource AilianBtTitleForeground}" Margin="4,0,4,0" VerticalAlignment="Center" Text="{x:Bind Icon,Mode=OneWay}" FontFamily="Segoe MDL2 Assets" FontSize="20"></TextBlock>
+                                            <TextBlock Foreground="{StaticResource AilianBtTitleForeground}" Margin="4,0,4,0" VerticalAlignment="Center" Text="{x:Bind Title,Mode=OneWay}"></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-
+                                
                             </ListView>
-                            <Button VerticalAlignment="Bottom" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="{x:Bind NavigationVM.Setting_Click}">
-                                <StackPanel>
-                                    <TextBlock>设置</TextBlock>
+                            <Button  Background="Transparent" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Click="{x:Bind NavigationVM.Setting_Click}" Style="{StaticResource ButtonStyle1}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Foreground="{StaticResource AilianBtTitleForeground}" Margin="4,0,4,0" VerticalAlignment="Center"  FontFamily="Segoe MDL2 Assets" FontSize="20" Text="&#xE713;"></TextBlock>
+                                    <TextBlock Foreground="{StaticResource AilianBtTitleForeground}" Margin="4,0,4,0" VerticalAlignment="Center" >设置</TextBlock>
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -104,7 +196,7 @@
                     <SplitView.Content>
 
                         <Grid>
-                            <Frame   x:Name="FuncFrame" >
+                            <Frame   x:Name="FuncFrame" Background="Transparent">
                             </Frame>
                             <Border x:Name="swipeBorder" Width="50"  HorizontalAlignment="Left" Background="Transparent"   
                                     ManipulationMode="TranslateX" 
@@ -120,5 +212,6 @@
                 </Frame>
             </Grid>
         </Grid>
+        <controls:Notification x:Name="notification" Visibility="Collapsed"></controls:Notification>
     </Grid>
 </Page>

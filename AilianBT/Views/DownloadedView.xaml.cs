@@ -1,4 +1,5 @@
-﻿using BtDownload.Models;
+﻿using AilianBT.Services;
+using BtDownload.Models;
 using BtDownload.Services;
 using BtDownload.VIewModels;
 using System;
@@ -29,15 +30,22 @@ namespace BtDownload.Views
         public DownloadedVM DownloadedVM { get; set; }
         public DownloadedView()
         {
+            
             this.InitializeComponent();
-            this.Loaded += DownloadedView_Loaded;
+            //this.Loaded += DownloadedView_Loaded;
             DownloadedVM = SimpleIoc.GetInstance<DownloadedVM>();
+
+            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
+            var list = dbservice.DownloadDbContext.DownloadedInfos;
+
+            DownloadedVM.DownloadedInfoList.Clear();
+            foreach (var item in list)
+            {
+                DownloadedVM.DownloadedInfoList.Add(item);
+            }
         }
 
-        private  void DownloadedView_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-        }
+        
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
@@ -51,11 +59,11 @@ namespace BtDownload.Views
             {
                 DownloadedVM.DownloadedInfoList.Remove(item);
             }
-            using(var dbcontext=new DownloadDbContext())
-            {
-                dbcontext.DownloadedInfos.RemoveRange(removes);
-                dbcontext.SaveChanges();
-            }
+
+            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
+            dbservice.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
+            dbservice.DownloadDbContext.SaveChanges();
+            
             SetDefaultSelectStatus();
         }
         private async void DeleteFile_Click(object sender, RoutedEventArgs e)
@@ -70,16 +78,24 @@ namespace BtDownload.Views
             {
                 DownloadedVM.DownloadedInfoList.Remove(item);
             }
-            using (var dbcontext = new DownloadDbContext())
+
+            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
+            dbservice.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
+            dbservice.DownloadDbContext.SaveChanges();
+            
+
+            try
             {
-                dbcontext.DownloadedInfos.RemoveRange(removes);
-                dbcontext.SaveChanges();
+                foreach (var item in removes)
+                {
+                    //var file = await StorageFile.GetFileFromPathAsync(item.FilePath);
+                    var file = await FileService.GetFile(item.FilePath);
+                    await FileService.DeleteFile(file);
+                }
             }
-            foreach (var item in removes)
+            catch (FileNotFoundException notfound)
             {
-                //var file = await StorageFile.GetFileFromPathAsync(item.FilePath);
-                var file = await FileService.GetFile(item.FilePath);
-                await FileService.DeleteFile(file);
+                AilianBT.App.ShowNotification("文件不存在：" + notfound.Message);
             }
             SetDefaultSelectStatus();
         }
@@ -129,13 +145,7 @@ namespace BtDownload.Views
         }
 
 
-        public static IEnumerable<DownloadedInfo> GetDownloadedInfo()
-        {
-            var dbcontext = new DownloadDbContext();
-            var query=dbcontext.DownloadedInfos;
-            return query.ToList();
-        }
-
+       
 
         
     }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace BtDownload.Services
@@ -71,17 +72,35 @@ namespace BtDownload.Services
             SetLocalSetting<string>("downloadfolder",folder.Path);
             StorageApplicationPermissions.FutureAccessList.Add(folder);
         }
-        public static T GetLocalSetting<T>(string key) where T : class
+        public static T GetLocalSetting<T>(string key)
         {
             var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
             object value;
             settings.Values.TryGetValue(key, out value);
-            return value as T;
+            if (value == null)
+                return default(T);
+            return (T)value;
         }
-        public static void SetLocalSetting<T>(string key, T value) where T : class
+        public static void SetLocalSetting<T>(string key, T value)
         {
             var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
             settings.Values[key] = value;
+        }
+
+
+        public static async Task<ImageSource> GetBackgroundImage()
+        {
+            var imageFile=await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///images//background/{DateTime.Now.Millisecond % 3 + 1}.png"));
+            if (imageFile != null)
+            {
+                BitmapImage bitmap = new BitmapImage();
+                using(var ras=await imageFile.OpenReadAsync())
+                {
+                    bitmap.SetSource(ras);
+                }
+                return bitmap;
+            }
+            return null;
         }
     }
 }

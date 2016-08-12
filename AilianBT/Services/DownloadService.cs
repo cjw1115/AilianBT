@@ -1,4 +1,5 @@
-﻿using BtDownload.Models;
+﻿using AilianBT.Services;
+using BtDownload.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace BtDownload.Services
             
         }
        
+        //直接创建下载任务，有ui
         public async Task<DownloadInfo> CreateDownload(Uri uri,IStorageFile file,Action<DownloadOperation> handler)
         {
             CancellationTokenSource cts = new CancellationTokenSource();
@@ -43,6 +45,8 @@ namespace BtDownload.Services
 
             return info;
         }
+
+        //将正在下载信息转换为下载完成信息
         public static async Task<DownloadedInfo> FinishedDownload(DownloadInfo downloadInfo)
         {
             DownloadedInfo downloadedInfo = new DownloadedInfo();
@@ -57,15 +61,7 @@ namespace BtDownload.Services
             return downloadedInfo;
         }
 
-
-        public async static void CreateBackDownload(Uri uri)
-        {
-            var filename = GetDownloadFileName(uri.ToString());
-            var folder =await  FileService.GetDownloadFolder();
-            var file = await FileService.CreaterFile(folder, filename);
-            var operation = _downloader.CreateDownload(uri, file);
-            await  operation.StartAsync();
-        }
+        //创建后台下载任务
         public async static void CreateBackDownload(string filename,Uri uri)
         {
             var folder = await FileService.GetDownloadFolder();
@@ -77,10 +73,7 @@ namespace BtDownload.Services
             }
             catch
             {
-
             }
-
-
             var thumb = await FileService.GetThumbBytes(file);
             DownloadedInfo info = new DownloadedInfo()
             {
@@ -91,22 +84,27 @@ namespace BtDownload.Services
                 Thumb = thumb
             };
             StoreDownloadedInfo(info);
+
+            NotificationService.ShowDownloadFinishedToast(info.FileName);
         }
 
+        //存储下载完成的信息
         public static async void StoreDownloadedInfo(DownloadedInfo downloadedInfo)
         {
-            var dbcontext = new DownloadDbContext();
-            dbcontext.DownloadedInfos.Add(downloadedInfo);
-            await dbcontext.SaveChangesAsync();
+            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
+            dbservice.DownloadDbContext.DownloadedInfos.Add(downloadedInfo);
+            await dbservice.DownloadDbContext.SaveChangesAsync();
         }
+
+        //存储下载完成的信息
         public static async void StoreDownloadedInfo(IEnumerable<DownloadedInfo> downloadedInfos)
         {
-            var dbcontext = new DownloadDbContext();
-            dbcontext.DownloadedInfos.AddRange(downloadedInfos);
-            await dbcontext.SaveChangesAsync();
+            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
+            dbservice.DownloadDbContext.DownloadedInfos.AddRange(downloadedInfos);
+            await dbservice.DownloadDbContext.SaveChangesAsync();
         }
 
-
+        //获取当前所有的下载信息
         public async Task<IList<DownloadInfo>> GetAllDownloadInfoAsync(Action<DownloadOperation> handler)
         {
             List<DownloadInfo> downloadList = new List<DownloadInfo>();
@@ -146,6 +144,7 @@ namespace BtDownload.Services
             return downloadList;
         }
 
+        //蒋字符串链接解析为uri
         public static Uri GetDownloadUri(string uriString)
         {
             var re = uriString.Trim();
@@ -153,6 +152,7 @@ namespace BtDownload.Services
             return uri;
         }
 
+        //更具下载链接获取文件名
         public static string GetDownloadFileName(string uriString)
         {
             uriString = uriString.Trim();

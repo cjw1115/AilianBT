@@ -6,15 +6,76 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <local:IndexConverter x:Key="IndexConverter"></local:IndexConverter>
+        
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot x:Name="piovt" SelectionChanged="piovt_SelectionChanged"> 
-            <PivotItem Header="正在下载" Margin="0">
-                <local:DownloadingView></local:DownloadingView>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+            <Style TargetType="ListViewItem">
+                <Setter Property="Foreground" Value="{StaticResource AilianBtTitleUnselectForeground}"></Setter>
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <StackPanel x:Name="RootPanel" VerticalAlignment="Stretch" Background="Transparent">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup>
+                                        <VisualState x:Name="Normal"></VisualState>
+                                        <VisualState x:Name="Selected">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames  Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}"></DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames  Storyboard.TargetName="BorderBar" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"></DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames  Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}"></DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames  Storyboard.TargetName="BorderBar" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"></DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <ContentPresenter x:Name="ContentPresenter" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch"></ContentPresenter>
+                                <Border x:Name="BorderBar" Margin="8" Visibility="Collapsed" BorderBrush="{StaticResource AilianBtMainColor}" BorderThickness="0,0,0,2"></Border>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+        <ListView  x:Name="navibar" Background="{StaticResource AilianBtGridBackground2}"
+                        SelectedIndex="{x:Bind pivot.SelectedIndex,Mode=TwoWay}"
+                   >
+            <TextBlock FontSize="20" >正在下载</TextBlock>
+            <TextBlock FontSize="20"  >下载完成</TextBlock>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"></StackPanel>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+        <Pivot x:Name="pivot" Grid.Row="1" 
+               Background="{StaticResource AilianBtGridBackground2}">
+            <PivotItem Margin="0">
+                <local:DownloadingView Margin="0" x:Name="DownloadingView"></local:DownloadingView>
             </PivotItem>
-            <PivotItem Header="下载完成" Margin="0">
-                <local:DownloadedView></local:DownloadedView>
+            <PivotItem Margin="0">
+                <local:DownloadedView Margin="0" x:Name="DownloadedView"></local:DownloadedView>
             </PivotItem>
+           
         </Pivot>
     </Grid>
 </Page>

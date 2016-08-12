@@ -11,12 +11,15 @@
     <AssemblyName>AilianBT</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>AilianBT_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>AilianBT_StoreKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Never</AppxBundle>
+    <PackageCertificateThumbprint>FBFA4BE56105A5E3F618B65815911DFDB36FF0C7</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +31,9 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>false</Optimize>
+    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -40,6 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -51,6 +58,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
@@ -89,6 +97,8 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="AilianBT_StoreKey.pfx" />
+    <None Include="App.config" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -96,29 +106,40 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BLL\AilianBTBLL.cs" />
-    <Compile Include="DAL\Net\HttpBaseService.cs" />
-    <Compile Include="Helpers\VisualTreeHelperTool.cs" />
-    <Compile Include="Migrations\20160725071240_init.cs" />
-    <Compile Include="Migrations\20160725071240_init.Designer.cs">
-      <DependentUpon>20160725071240_init.cs</DependentUpon>
+    <Compile Include="Controls\KeyPannelControl.cs" />
+    <Compile Include="Controls\Notification.xaml.cs">
+      <DependentUpon>Notification.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\20160725131225_thumb_byte.cs" />
-    <Compile Include="Migrations\20160725131225_thumb_byte.Designer.cs">
-      <DependentUpon>20160725131225_thumb_byte.cs</DependentUpon>
+    <Compile Include="Exceptions\Exceptions.cs" />
+    <Compile Include="Helpers\VisualTreeHelperTool.cs" />
+    <Compile Include="Migrations\20160731064812_init.cs" />
+    <Compile Include="Migrations\20160731064812_init.designer.cs">
+      <DependentUpon>20160731064812_init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20160810075533_change.cs" />
+    <Compile Include="Migrations\20160810075533_change.designer.cs">
+      <DependentUpon>20160810075533_change.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\DownloadDbContextModelSnapshot.cs" />
     <Compile Include="Models\AilianResModel.cs" />
     <Compile Include="Models\DownloadDbContext.cs" />
     <Compile Include="Models\DownloadedInfo.cs" />
     <Compile Include="Models\DownloadInfo.cs" />
+    <Compile Include="Models\KeyGroupModel.cs" />
+    <Compile Include="Models\MusicModel.cs" />
     <Compile Include="Models\NavigationListItem.cs" />
+    <Compile Include="Models\NewKeyModel.cs" />
     <Compile Include="Models\ShowModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controls\SearchBox.xaml.cs">
       <DependentUpon>SearchBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\DbService.cs" />
     <Compile Include="Services\DownloadService.cs" />
     <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\HttpBaseService.cs" />
+    <Compile Include="Services\MusicService.cs" />
+    <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\SimpleIoc.cs" />
     <Compile Include="Triggers\NavigationViewAdaptiveTrigger.cs" />
     <Compile Include="ValueConverters\BoolToVisibityConverter.cs" />
@@ -126,10 +147,13 @@
     <Compile Include="ValueConverters\DataSizeConverter.cs" />
     <Compile Include="ValueConverters\DownloadStatusToIconConverter.cs" />
     <Compile Include="ValueConverters\NavigationListItemConverter.cs" />
+    <Compile Include="ValueConverters\PullHeightConverter.cs" />
     <Compile Include="ViewModels\DownloadedVM.cs" />
     <Compile Include="ViewModels\DownloadingVM.cs" />
+    <Compile Include="ViewModels\KeyVM.cs" />
     <Compile Include="ViewModels\MainVM.cs" />
     <Compile Include="ViewModels\NavigationVM.cs" />
+    <Compile Include="ViewModels\SearchVM.cs" />
     <Compile Include="ViewModels\ShowVM.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\DefaultDetailView.xaml.cs">
@@ -144,11 +168,17 @@
     <Compile Include="Views\DownloadMainView.xaml.cs">
       <DependentUpon>DownloadMainView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\KeyView.xaml.cs">
+      <DependentUpon>KeyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NavigationView.xaml.cs">
       <DependentUpon>NavigationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchView.xaml.cs">
+      <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingView.xaml.cs">
       <DependentUpon>SettingView.xaml</DependentUpon>
@@ -164,23 +194,37 @@
     <None Include="AilianBT_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Square71x71Logo.scale-100.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="Images\background\1.png" />
+    <Content Include="Images\background\2.png" />
+    <Content Include="Images\background\3.png" />
+    <Content Include="Images\Startup\1.png" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Notification.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\SearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\DefaultDetailView.xaml">
       <SubType>Designer</SubType>
@@ -198,11 +242,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\KeyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NavigationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SearchView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -215,7 +267,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DAL\Net\" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

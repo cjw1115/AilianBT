@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 
-namespace AilianBT.DAL.Net
+namespace AilianBT.Services
 {
     public class HttpBaseService
     {
@@ -24,10 +26,10 @@ namespace AilianBT.DAL.Net
             _client.DefaultRequestHeaders.UserAgent.Add(new Windows.Web.Http.Headers.HttpProductInfoHeaderValue(user_agent));
 
         }
-        public async Task<string> SendRequst(string uri,bool ispost=false,IDictionary <string,string> dic=null, string referUri = "", CancellationToken cancellation = new CancellationToken())
+        public async Task<string> SendRequst(string uri, bool isGb2312 = false, bool ispost=false,IDictionary <string,string> dic=null, string referUri = "", CancellationToken cancellation = new CancellationToken())
         {
             HttpResponseMessage response = null;
-            Encoding encoding = Encoding.UTF8;
+            //Encoding gb2312 = Encoding.GetEncoding("gb2312");
             try
             {
                 if (!string.IsNullOrEmpty(referUri))
@@ -46,8 +48,11 @@ namespace AilianBT.DAL.Net
                     response = await _client.PostAsync(new Uri(uri), content);
                 }
 
-                var re=await response.Content.ReadAsStringAsync();
+                var buffer = await response.Content.ReadAsBufferAsync();
+                byte[] arry = buffer.ToArray();
+                var re = Encoding.UTF8.GetString(arry);
                 return re;
+
             }
             catch
             {
@@ -58,6 +63,32 @@ namespace AilianBT.DAL.Net
                 response?.Dispose();
             }
         }
-        
+        public async Task<IRandomAccessStream> GetUriStream(string  uri,string referUri = "")
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(referUri))
+                {
+                    _client.DefaultRequestHeaders.Referer = new Uri(referUri);
+                }
+
+                var re = await _client.GetAsync(new Uri(uri));
+                
+                var buffer=await re.Content.ReadAsBufferAsync();
+                InMemoryRandomAccessStream ras = new InMemoryRandomAccessStream();
+                await ras.WriteAsync(buffer);
+                ras.Seek(0);
+                return ras;
+
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+               
+            }
+        }
     }
 }

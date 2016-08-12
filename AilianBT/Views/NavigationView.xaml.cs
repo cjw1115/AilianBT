@@ -25,7 +25,7 @@ namespace AilianBT.Views
     public sealed partial class NavigationView : Page
     {
         public ViewModels.NavigationVM NavigationVM { get; set; }
-       
+        public Controls.Notification Notification { get; set; }
 
         public NavigationView()
         {
@@ -41,18 +41,12 @@ namespace AilianBT.Views
             DetailFrame.Navigated += DetailFrame_Navigated;
             DetailFrame.Navigate(typeof(Views.DefaultDetailView));
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += NavigationView_BackRequested; ;
+            SystemNavigationManager.GetForCurrentView().BackRequested += NavigationView_BackRequested;
 
-            GalaSoft.MvvmLight.Messaging.Messenger.Default.Register<string>(this, "1",
-                (message) =>
-                {
-                    //显示提示信息
-                });
-
-
+            Notification = this.notification;
         }
 
-
+      
 
         private void NavigationView_BackRequested(object sender, BackRequestedEventArgs e)
         {
@@ -103,7 +97,6 @@ namespace AilianBT.Views
                     VisualStateManager.GoToState(this, "NarrowVisualState", false);
                 }
             }
-
         }
 
         Grid paneGrid;

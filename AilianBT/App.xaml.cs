@@ -1,13 +1,16 @@
-﻿using Microsoft.Data.Entity;
+﻿using AilianBT.Services;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -23,21 +26,36 @@ namespace AilianBT
     /// </summary>
     sealed partial class App : Application
     {
+        public static Frame MainFrame { get; set; }
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
         /// 已执行，逻辑上等同于 main() 或 WinMain()。
         /// </summary>
         public App()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            using (var dbcontext = new BtDownload.Models.DownloadDbContext())
-            {
-                dbcontext.Database.Migrate();
-            }
+            //using (var dbcontext = new BtDownload.Models.DownloadDbContext())
+            //{
+            //    dbcontext.Database.Migrate();
+            //}
+            
+
             BtDownload.Services.SimpleIoc.Register<BtDownload.VIewModels.DownloadedVM>();
             BtDownload.Services.SimpleIoc.Register<BtDownload.VIewModels.DownloadingVM>();
+            BtDownload.Services.SimpleIoc.Register<Services.DbService>();
+
+            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
+            dbservice.DownloadDbContext.Database.Migrate();
+
+            //{
+            //    StatusBar statusBar = .StatusBar.GetForCurrentView();
+            //    statusBar.BackgroundOpacity = 1;
+            //    statusBar.BackgroundColor = color;
+            //}
         }
 
         /// <summary>
@@ -85,6 +103,23 @@ namespace AilianBT
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
             }
+
+
+            MainFrame = rootFrame;
+
+
+            var view = ApplicationView.GetForCurrentView();
+            var brush = (App.Current.Resources["AilianBtMainColor"]) as SolidColorBrush;
+            view.TitleBar.ButtonBackgroundColor = brush.Color;
+            view.TitleBar.BackgroundColor = brush.Color;
+
+            if ("Windows.Mobile" == Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily)
+            {
+                StatusBar statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundOpacity = 1;
+                statusBar.BackgroundColor = brush.Color;
+            }
+
         }
 
         /// <summary>
@@ -109,6 +144,14 @@ namespace AilianBT
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
+        }
+
+
+        public static void ShowNotification(string message)
+        {
+            Views.NavigationView view = MainFrame.Content as Views.NavigationView;
+            view.Notification.NotifyMessage = message;
+            view.Notification.Show();
         }
     }
 }

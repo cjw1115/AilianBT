@@ -29,29 +29,24 @@ namespace BtDownload.Views
         
         public DownloadMainView()
         {
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             this.InitializeComponent();
-            
+        }
+    }
+    public class IndexConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (-1 >= (int)value)
+            {
+                return 0;
+            }
+            return (int)value;
         }
 
-        private async void  piovt_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-           
-            DownloadedVM downloadedVM = SimpleIoc.GetInstance<DownloadedVM>();
-            var PivotItem = (PivotItem)this.piovt.SelectedItem;
-            if (PivotItem != null)
-            {
-                var page = PivotItem.Content;
-                if (page is DownloadedView)
-                {
-                    var list = DownloadedView.GetDownloadedInfo();
-                    downloadedVM.DownloadedInfoList.Clear();
-                    foreach (var item in list)
-                    {   
-                        downloadedVM.DownloadedInfoList.Add(item);
-                    }
-                }
-            }
-            
+            return (int)value;
         }
     }
 }

@@ -15,11 +15,11 @@ namespace BtDownload.ValueConverters
             switch (status)
             {
                 case DownloadStatus.NoStart:
-                    return "开始";
+                    return "\xE896";
                 case DownloadStatus.Pause:
-                    return "开始";
+                    return "\xE896";
                 case DownloadStatus.Run:
-                    return "暂停";
+                    return "\xE769";
                 case DownloadStatus.Complate:
                 case DownloadStatus.Other:
                 default:

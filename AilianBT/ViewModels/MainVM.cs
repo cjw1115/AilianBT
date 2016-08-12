@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace AilianBT.ViewModels
@@ -18,7 +19,6 @@ namespace AilianBT.ViewModels
             bll = new BLL.AilianBTBLL();
             AilianRes = new ObservableCollection<AilianResModel>();
         }
-        public event Action test;
         private ObservableCollection<AilianResModel> _ailianRes;
         public ObservableCollection<AilianResModel> AilianRes
         {
@@ -29,58 +29,101 @@ namespace AilianBT.ViewModels
             }
         }
 
-
         private int _pageIndex = 1;
         public async void Loaded()
         {
             _pageIndex = 1;
-            IsSearching = false;
-            IsVisibleSearchBox = false;
 
-            var list = await bll.GetResList(_pageIndex++);
-            if (list != null)
+            try
             {
-                foreach (var item in list)
+                var list = await bll.GetResList(_pageIndex++);
+                if (list != null)
                 {
-                    AilianRes.Add(item);
+                    AilianRes.Clear();
+                    foreach (var item in list)
+                    {
+                        AilianRes.Add(item);
+                    }
                 }
             }
+            catch (Exceptions.NetworkException networkexception)
+            {
+                App.ShowNotification(networkexception.Message);
+            }
+            catch (Exceptions.ResolveException resolveException)
+            {
+                App.ShowNotification(resolveException.Message);
+            }
+
         }
         
         public async void LoadMore()
         {
             IList<AilianResModel> newlist = null;
-            if (IsSearching)
-                newlist = await bll.SerachResList(SearchKey,_pageIndex++);
-            else
-                newlist = await bll.GetResList(_pageIndex++);
-            if (newlist != null||newlist.Count>0)
+            try
             {
-                foreach(var item in newlist)
+                newlist = await bll.GetResList(_pageIndex++);
+
+                if (newlist != null)
                 {
-                    AilianRes.Add(item);
+                    foreach (var item in newlist)
+                    {
+                        AilianRes.Add(item);
+                    }
                 }
             }
+            catch (Exceptions.NetworkException networkexception)
+            {
+                App.ShowNotification(networkexception.Message);
+            }
+            catch (Exceptions.ResolveException resolveException)
+            {
+                App.ShowNotification(resolveException.Message);
+            }
         }
+
+        private bool _isRefreshing = false;
+
+        public bool IsRefreshing
+        {
+            get { return _isRefreshing; }
+            set { Set(ref _isRefreshing, value); }
+        }
+
         public async void Refresh()
         {
             _pageIndex = 1;
             IList<AilianResModel> newlist = null;
-            if (IsSearching)
-                newlist = await bll.SerachResList(SearchKey, _pageIndex++);
-            else
-                newlist = await bll.GetResList(1);
-
-            if (newlist != null && newlist.Count > 0)
+            try
             {
-                AilianRes.Clear();
-                foreach (var item in newlist)
+                newlist = await bll.GetResList(1);
+                if (newlist != null && newlist.Count > 0)
                 {
-                    AilianRes.Add(item);
+                    AilianRes.Clear();
+                    foreach (var item in newlist)
+                    {
+                        AilianRes.Add(item);
+                    }
+                }
+
+                if (newlist != null)
+                {
+                    AilianRes.Clear();
+                    foreach (var item in newlist)
+                    {
+                        AilianRes.Add(item);
+                    }
                 }
             }
+            catch (Exceptions.NetworkException networkexception)
+            {
+                App.ShowNotification(networkexception.Message);
+            }
+            catch (Exceptions.ResolveException resolveException)
+            {
+                App.ShowNotification(resolveException.Message);
+            }
         }
-
 
         public  void ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -88,52 +131,9 @@ namespace AilianBT.ViewModels
             NavigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
         }
 
-        private string _searchKey;
-
-        public string SearchKey
-        {
-            get { return _searchKey; }
-            set { Set(ref _searchKey, value); }
-        }
-
-        private bool _isVisibleSearchBox=false;
-
-        public bool IsVisibleSearchBox
-        {
-            get { return _isVisibleSearchBox; }
-            set { Set(ref _isVisibleSearchBox, value); }
-        }
-
-        private bool _isSearching = false;
-
-        public bool IsSearching
-        {
-            get { return _isSearching; }
-            set { _isSearching = value; }
-        }
-
         public void Search_Click()
         {
-            IsVisibleSearchBox = true;
-        }
-
-        public async void Search(string searchKey)
-        {
-            //标识搜索状态
-            _pageIndex = 1;
-            IsSearching = true;
-            
-            var newlist = await bll.SerachResList(searchKey, _pageIndex++);
-            if (newlist != null && newlist.Count > 0)
-            {
-                AilianRes.Clear();
-                foreach (var item in newlist)
-                {
-                    AilianRes.Add(item);
-                }
-            }
-
-            IsVisibleSearchBox = false;
+            NavigationVM.DetailFrame.Navigate(typeof(Views.SearchView));
         }
     }
 }

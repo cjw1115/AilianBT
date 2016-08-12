@@ -33,14 +33,27 @@ namespace AilianBT.ViewModels
             show.Title = model.Title;
             show.PublishTime = model.PostTime;
             show.Uper = model.Author;
-            var re=await GetDetailInfo(model.Link);
-            if (re != null)
+            try
             {
-                show.Summary = re.Summary;
-                show.FileInfo = re.FileInfo;
-                show.BtLink = re.BtLink;
-                show.MagnetLink = re.MagnetLink;
+                var re = await GetDetailInfo(model.Link);
+                if (re != null)
+                {
+                    show.Summary = re.Summary;
+                    show.FileInfo = re.FileInfo;
+                    show.BtLink = re.BtLink;
+                    show.MagnetLink = re.MagnetLink;
+                }
+                
             }
+            catch(Exceptions.NetworkException networkException)
+            {
+                App.ShowNotification(networkException.Message);
+            }
+            catch (Exceptions.ResolveException resolveException)
+            {
+                App.ShowNotification(resolveException.Message);
+            }
+
             ShowModel = show;
         }
         public async Task<Models.ShowModel> GetDetailInfo(string showUri)
@@ -55,14 +68,8 @@ namespace AilianBT.ViewModels
             var link = (string)param;
             Uri uri = new Uri(link);
             DownloadService.CreateBackDownload(ShowModel.Title+".torrent",uri);
-            //var locator = App.Current.Resources["Locator"] as ViewModelLocator;
-            //var item=locator.NavigationVM.NavigationList.Where(m => m.PageType == typeof(BtDownload.Views.DownloadMainView)).FirstOrDefault();
-            //if(item != null)
-            //{
-            //    var index=locator.NavigationVM.NavigationList.IndexOf(item);
-            //    locator.NavigationVM.SelectedIndex = index;
-            //    locator.NavigationVM.SelectionChanged(null, null);
-            //}
+
+            App.ShowNotification("已加入下载队列");
         }
 
         public ICommand DownloadMagnetCommand { get; set; }
@@ -72,6 +79,8 @@ namespace AilianBT.ViewModels
             DataPackage datapackage = new DataPackage();
             datapackage.SetText(magnetlink);
             Clipboard.SetContent(datapackage);
+
+            App.ShowNotification("复制成功");
         }
     }
 }

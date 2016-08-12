@@ -1,22 +1,22 @@
-using System;
-using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
-using Microsoft.Data.Entity.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using BtDownload.Models;
 
-namespace BtDownload.Migrations
+namespace AilianBT.Migrations
 {
     [DbContext(typeof(DownloadDbContext))]
-    [Migration("20160725071240_init")]
-    partial class init
+    [Migration("20160810075533_change")]
+    partial class change
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-rc1-16348");
+                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
 
-            modelBuilder.Entity("BtDownload.DownloadedInfo", b =>
+            modelBuilder.Entity("BtDownload.Models.DownloadedInfo", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
@@ -29,7 +29,11 @@ namespace BtDownload.Migrations
 
                     b.Property<ulong>("Size");
 
+                    b.Property<byte[]>("Thumb");
+
                     b.HasKey("ID");
+
+                    b.ToTable("DownloadedInfos");
                 });
         }
     }

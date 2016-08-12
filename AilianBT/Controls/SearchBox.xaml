@@ -6,14 +6,56 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Height="44" Visibility="Collapsed">
+    Height="32" >
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid x:Name="RootGrid">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup>
+                                    <VisualState x:Name="Normal"></VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter" VerticalContentAlignment="Center" Width="40" HorizontalContentAlignment="Center"></ContentPresenter>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </UserControl.Resources>
 
-    <Grid>
+    <Grid  HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource AilianBtMainColor}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="tbSearch" Text="{x:Bind SearchKey}"/>
-        <Button Grid.Column="1" x:Name="btnSearch" Content="查找" VerticalAlignment="Stretch"></Button>
+        <TextBox Padding="8,4,8,4" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="{StaticResource AilianBtMainColor }"
+                 x:Name="tbSearch" MinWidth="300"  Text="{x:Bind SearchKey,Mode=OneWay}"
+                 PlaceholderText="请输入关键字" BorderThickness="0"/>
+        <Button Foreground="{StaticResource AilianBtMainColor}" Background="Transparent" HorizontalAlignment="Center" Grid.Column="1" BorderThickness="0" x:Name="btnSearch"  VerticalAlignment="Stretch">
+            <Button.Content>
+                <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"></TextBlock>
+            </Button.Content>
+        </Button>
     </Grid>
 </UserControl>
