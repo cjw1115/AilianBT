@@ -116,7 +116,7 @@ namespace AilianBT.Views
             this.imgbackground.Source = await FileService.GetBackgroundImage();
             Init();
 
-            if (naviParam.IsTo)
+            if (naviParam!=null&&naviParam.IsTo)
             {
                 SearchVM.Loaded(naviParam.SearchKey);
             }

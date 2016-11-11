@@ -110,6 +110,7 @@
     <Compile Include="Controls\Notification.xaml.cs">
       <DependentUpon>Notification.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DAL\Class1.cs" />
     <Compile Include="Exceptions\Exceptions.cs" />
     <Compile Include="Helpers\VisualTreeHelperTool.cs" />
     <Compile Include="Migrations\20160731064812_init.cs" />
@@ -122,11 +123,11 @@
     </Compile>
     <Compile Include="Migrations\DownloadDbContextModelSnapshot.cs" />
     <Compile Include="Models\AilianResModel.cs" />
+    <Compile Include="Models\ThemeColorModel.cs" />
     <Compile Include="Models\DownloadDbContext.cs" />
     <Compile Include="Models\DownloadedInfo.cs" />
     <Compile Include="Models\DownloadInfo.cs" />
     <Compile Include="Models\KeyGroupModel.cs" />
-    <Compile Include="Models\MusicModel.cs" />
     <Compile Include="Models\NavigationListItem.cs" />
     <Compile Include="Models\NewKeyModel.cs" />
     <Compile Include="Models\ShowModel.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Services\HttpBaseService.cs" />
     <Compile Include="Services\MusicService.cs" />
     <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\SimpleIoc.cs" />
     <Compile Include="Triggers\NavigationViewAdaptiveTrigger.cs" />
     <Compile Include="ValueConverters\BoolToVisibityConverter.cs" />
@@ -152,6 +154,7 @@
     <Compile Include="ViewModels\DownloadingVM.cs" />
     <Compile Include="ViewModels\KeyVM.cs" />
     <Compile Include="ViewModels\MainVM.cs" />
+    <Compile Include="ViewModels\MusicVM.cs" />
     <Compile Include="ViewModels\NavigationVM.cs" />
     <Compile Include="ViewModels\SearchVM.cs" />
     <Compile Include="ViewModels\ShowVM.cs" />
@@ -170,6 +173,9 @@
     </Compile>
     <Compile Include="Views\KeyView.xaml.cs">
       <DependentUpon>KeyView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MusicView.xaml.cs">
+      <DependentUpon>MusicView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -246,6 +252,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MusicView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -267,13 +277,21 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DAL\Net\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MusciBackgroundShared\AilianBTShared.csproj">
+      <Project>{87d06a2f-8d73-4f51-9206-74c7920914dc}</Project>
+      <Name>AilianBTShared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MusciBackground\MusicBackground.csproj">
+      <Project>{a9dcfeec-0e58-4203-bb01-f844d0b8c707}</Project>
+      <Name>MusicBackground</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

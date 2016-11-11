@@ -32,9 +32,14 @@ namespace BtDownload.Views
         {
             
             this.InitializeComponent();
-            //this.Loaded += DownloadedView_Loaded;
+            this.Loaded += DownloadedView_Loaded; ;
             DownloadedVM = SimpleIoc.GetInstance<DownloadedVM>();
 
+           
+        }
+
+        private void DownloadedView_Loaded(object sender, RoutedEventArgs e)
+        {
             var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
             var list = dbservice.DownloadDbContext.DownloadedInfos;
 
@@ -44,8 +49,6 @@ namespace BtDownload.Views
                 DownloadedVM.DownloadedInfoList.Add(item);
             }
         }
-
-        
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {

@@ -1,5 +1,4 @@
-﻿using AilianBT.Models;
-using AilianBTShared.Models;
+﻿using AilianBTShared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Storage.Streams;
 
-namespace AilianBT.Services
+namespace AilianBTShared.Services
 {
     public class MusicService
     {
@@ -19,15 +18,15 @@ namespace AilianBT.Services
         public async Task<IList<MusicModel>> GetNetPlayList()
         {
             List<MusicModel> musicList = new List<MusicModel>();
-            var re=await _httpService.SendRequst(listUri);
+            var re = await _httpService.SendRequst(listUri);
             if (re != null)
             {
                 var jsonString = Regex.Match(re, @"(?<=shuffle\()([\w\W]*)(?=\)\);SCM)").ToString();
-                
+
                 var arry = JsonArray.Parse(jsonString);
-                for (int i=0;i<arry.Count;i++)
-                {   
-                   MusicModel model = new MusicModel();
+                for (int i = 0; i < arry.Count; i++)
+                {
+                    MusicModel model = new MusicModel();
                     model.ID = i;
                     model.Title = arry[i].GetObject()["title"].GetString();
                     var uriString = arry[i].GetObject()["url"].GetString();

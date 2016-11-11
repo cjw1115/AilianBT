@@ -1,0 +1,151 @@
+﻿<Page
+    x:Class="AilianBT.Views.MusicView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AilianBT.Views"
+    xmlns:models="using:AilianBTShared.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <local:BoolToVisibility x:Key="BoolToVisibility"></local:BoolToVisibility>
+        <local:PlayStatusVisibility x:Key="PlayStatusVisibility"></local:PlayStatusVisibility>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource ButtonBackground}"/>
+            <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8,4,8,4"/>
+            <Setter Property="Height" Value="40"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="FocusVisualMargin" Value="-3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilianBtMainColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilianBtTitleForeground}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilianBtMainColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilianBtTitleForeground}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundDisabled}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.ColumnSpan="3" Grid.Row="0" x:Name="list_music" 
+                  ItemsSource="{x:Bind MusicVM.MusicList,Mode=OneWay}"
+                  IsItemClickEnabled="True" SelectionMode="Single" 
+                  ItemClick="{x:Bind MusicVM.ItemClick}"
+                  Background="{ThemeResource AilianBtGridBackground2}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:MusicModel">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" HorizontalAlignment="Right" Text="{x:Bind ID,Mode=OneWay}" Margin="4,0,4,0"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Title,Mode=OneWay}" TextWrapping="Wrap" Margin="4,0,4,0"></TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <Grid Grid.Row="1">
+            <TextBlock TextWrapping="Wrap" Visibility="{x:Bind MusicVM.Title,Mode=OneWay,Converter={StaticResource PlayStatusVisibility}}">
+                <Run Foreground="{ThemeResource AilianBtListOtherForeground}" Text="正在播放："></Run>
+                <Run  Foreground="{ThemeResource AilianBtMainColor}" Text="{x:Bind MusicVM.Title,Mode=OneWay}"></Run>
+            </TextBlock>
+        </Grid>
+        <Grid Grid.Row="2" Background="#FFF4F4F4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="AppBarButton">
+                    <Setter Property="Foreground" Value="{ThemeResource AilianBtMainColor}"></Setter>
+                </Style>
+            </Grid.Resources>
+            <Button Grid.Row="1" Grid.Column="0"  x:Name="btn_previou" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                      Click="{x:Bind MusicVM.previou_Click}" 
+                      IsEnabled="{x:Bind MusicVM.CanPreviou,Mode=OneWay}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE892;"></TextBlock>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="1"   x:Name="btn_play" Margin="4"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      Click="{x:Bind MusicVM.play_Click}"
+                      Visibility="{x:Bind MusicVM.IsPlayVisible,Mode=OneWay,Converter={StaticResource BoolToVisibility}}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;"></TextBlock>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="1"  x:Name="btn_pause" Margin="4"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      Click="{x:Bind MusicVM.pause_Click}"
+                       Visibility="{x:Bind MusicVM.IsPauseVisible,Mode=OneWay,Converter={StaticResource BoolToVisibility}}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE769;"></TextBlock>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="3"   x:Name="btn_next" Margin="4"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      Click="{x:Bind MusicVM.next_Click}"
+                      IsEnabled="{x:Bind MusicVM.CanNext,Mode=OneWay}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE893;"></TextBlock>
+            </Button>
+        </Grid>
+    </Grid>
+</Page>

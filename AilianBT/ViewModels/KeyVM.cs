@@ -24,13 +24,21 @@ namespace AilianBT.ViewModels
         }
         public async void Loaded()
         {
-            var newkeys = await _ailianBtBll.GetNewKeyList();
-
-            Groups.Clear();
-            for (int i = 0; i < newkeys.Count; i++)
+            try
             {
-                Groups.Add(new KeyGroupModel { Day = (DayOfWeek)i, Keys = new List<NewKeysModels> { new NewKeysModels { NewKeyModel= newkeys[i] }  } });
+                var newkeys = await _ailianBtBll.GetNewKeyList();
+
+                Groups.Clear();
+                for (int i = 0; i < newkeys.Count; i++)
+                {
+                    Groups.Add(new KeyGroupModel { Day = (DayOfWeek)i, Keys = new List<NewKeysModels> { new NewKeysModels { NewKeyModel = newkeys[i] } } });
+                }
             }
+            catch(Exception e)
+            {
+                App.ShowNotification(e.Message);
+            }
+            
         }
        
         //private CollectionViewSource _collectionViewSource;

@@ -16,6 +16,7 @@ namespace AilianBT.ViewModels
         {
            new NavigationListItem { Title="首页", PageType=typeof(Views.MainView),Icon="\xE80F" },
            new NavigationListItem { Title="番组表", PageType=typeof(Views.KeyView),Icon="\xE192"},
+           new NavigationListItem { Title="动漫音乐", PageType=typeof(Views.MusicView),Icon="\xE8D6"},
            new NavigationListItem { Title="下载中心", PageType=typeof(DownloadMainView) ,Icon="\xE896"}
         };
 

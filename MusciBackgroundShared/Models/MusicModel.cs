@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AilianBT.Models
+namespace AilianBTShared.Models
 {
     [DataContract]
     public class MusicModel

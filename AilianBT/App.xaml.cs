@@ -1,4 +1,5 @@
 ﻿using AilianBT.Services;
+using BtDownload.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -120,6 +121,7 @@ namespace AilianBT
                 statusBar.BackgroundColor = brush.Color;
             }
 
+            LoadBasicSetting();
         }
 
         /// <summary>
@@ -152,6 +154,19 @@ namespace AilianBT
             Views.NavigationView view = MainFrame.Content as Views.NavigationView;
             view.Notification.NotifyMessage = message;
             view.Notification.Show();
+        }
+
+        public async void LoadBasicSetting()
+        {
+            AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
+            var model = await setting.GetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name);
+            if (model != null)
+                Services.SettingService.SetThemeColor(model.ThemeColor);
+            else
+            {
+                var brush = Application.Current.Resources["AilianBtMainColor"] as SolidColorBrush;
+                Services.SettingService.SetThemeColor(brush.Color);
+            }
         }
     }
 }

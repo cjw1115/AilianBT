@@ -1,6 +1,6 @@
-﻿using AilianBT.Models;
-using AilianBT.Services;
-using MusicBackground;
+﻿using AilianBTShared.Helpers;
+using AilianBTShared.Models;
+using AilianBTShared.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,156 +11,263 @@ using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage.Streams;
+
 namespace MusicBackground
 {
     public sealed class MusicBackground : IBackgroundTask
     {
-        private MediaPlayer mediaPlayer;
-        private SystemMediaTransportControls smtc;
-        private List<MusicModel> playList;
-        private MediaSource CurrentSource;
-        private int CurrentId { get; set; }
-
+        private BackgroundTaskDeferral deferral;
+        private MediaPlayer mediaPlaer;
+        SystemMediaTransportControls smtc = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
+        private int currentID = -1;
+        private List<MusicModel> musicList = new List<MusicModel>(0);
         private MusicService musicService = new MusicService();
 
-        private BackgroundTaskDeferral deferral;
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             deferral = taskInstance.GetDeferral();
             taskInstance.Canceled += TaskInstance_Canceled;
 
-            mediaPlayer = BackgroundMediaPlayer.Current;
-            mediaPlayer.AutoPlay = false;
+            mediaPlaer = BackgroundMediaPlayer.Current;
+            mediaPlaer.AutoPlay = false;
+            mediaPlaer.MediaEnded += (o, args) => { positon = TimeSpan.Zero; currentID++; play(); };
 
-            smtc =BackgroundMediaPlayer.Current.SystemMediaTransportControls;
-            smtc.IsPauseEnabled = true;
             smtc.IsPreviousEnabled = true;
             smtc.IsNextEnabled = true;
+            smtc.IsPauseEnabled = true;
             smtc.IsPlayEnabled = true;
             smtc.ButtonPressed += Smtc_ButtonPressed;
-            BackgroundMediaPlayer.MessageReceivedFromForeground += BackgroundMediaPlayer_MessageReceivedFromForeground;
+            smtc.DisplayUpdater.Type = MediaPlaybackType.Music;
 
-            playList = new List<MusicModel>();
+            BackgroundMediaPlayer.MessageReceivedFromForeground += BackgroundMediaPlayer_MessageReceivedFromForeground;
+        }
+
+        private void Smtc_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
+        {
+            switch (args.Button)
+            {
+                case SystemMediaTransportControlsButton.Play:
+                    play(isFromForeground:false);
+                    break;
+                case SystemMediaTransportControlsButton.Pause:
+                    pause(isFromForeground: false);
+                    break;
+                case SystemMediaTransportControlsButton.Stop:
+                    break;
+                case SystemMediaTransportControlsButton.Record:
+                    break;
+                case SystemMediaTransportControlsButton.FastForward:
+                    break;
+                case SystemMediaTransportControlsButton.Rewind:
+                    break;
+                case SystemMediaTransportControlsButton.Next:
+                    next(isFromForeground: false);
+                    break;
+                case SystemMediaTransportControlsButton.Previous:
+                    previou(isFromForeground: false);
+                    break;
+                case SystemMediaTransportControlsButton.ChannelUp:
+                    break;
+                case SystemMediaTransportControlsButton.ChannelDown:
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void BackgroundMediaPlayer_MessageReceivedFromForeground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
-            ValueSet _valueSet = (ValueSet)e.Data;
-            object action;
-            _valueSet.TryGetValue("action", out action);
-            if (action != null)
+            ValueSet valueSet = (ValueSet)e.Data;
+            //action:next,play,previou,pause,update
+            //play:id
+            //update:musiclist
+            object actionObject = null;
+            valueSet.TryGetValue("action",out actionObject);
+            if (actionObject != null)
             {
-                switch ((string)action)
+                var action = (string)actionObject;
+                switch (action)
                 {
                     case "play":
-                        object id;
-                        _valueSet.TryGetValue("id", out id);
-                        if (id != null)
-                        {
-                            Play((int)id);
-                        }
+                        object id = null;
+                        valueSet.TryGetValue("id", out id);
+                        if (id == null)
+                            play();
                         else
                         {
-                            Play();
+                            play((int)id);
                         }
                         break;
-                    case "pause": Pause(); break;
-                    case "next": Next(); break;
-                    case "previou":Previou(); break;
-                    case "updatelist":
-                        var jsonString = (string)_valueSet["playlist"];
-                        var list = JsonHelper.FromJson<IList<MusicModel>>(jsonString);
-                        foreach (var item in list)
+                    case "pause":pause(); break;
+                    case "next":next(); break;
+                    case "previou":previou(); break;
+                    case "update":
+                        object listObject = null;
+                        valueSet.TryGetValue("musiclist", out listObject);
+                        if (listObject != null)
                         {
-                            playList.Add(item);
-                        }
-                        var first = playList.FirstOrDefault();
-                        if (first != null)
-                        {
-                            CurrentId = first.ID;
+                            var list=JsonHelper.DerializeObjec<List<MusicModel>>((string)listObject);
+                            musicList.Clear();
+                            musicList.AddRange(list);
+                            currentID = musicList.FirstOrDefault().ID;
                         }
                         break;
                     default:
                         break;
                 }
-                return;
             }
-        }
-        public async void Play(int id)
-        {
-            var item = playList.Where(m => m.ID == id).FirstOrDefault();
-            if (item != null)
-            {
-                await SetMeiaSource(item);
-            }
-            mediaPlayer.Play();
-        }
-        public async void Play()
-        {
-            if (CurrentSource ==null)
-            {
-                var item = playList.FirstOrDefault();
-                if (item != null)
-                {
-                    await SetMeiaSource(item);
-                    mediaPlayer.Play();
-                }
-            }
-            
-        }
-        
-        public void Pause()
-        {
-            mediaPlayer.Pause();
-        }
-        public async void Next()
-        {
-            if (CurrentSource != null)
-            {
-                int id = (int)CurrentSource.CustomProperties["ID"];
-                var item = playList.Where(m => m.ID == id+1).FirstOrDefault();
-                if (item != null)
-                {
-                    await SetMeiaSource(item);
-                    mediaPlayer.Play();
-                }
-                
-            }
-            
-        }
-        public async void Previou()
-        {
-            if (CurrentSource != null)
-            {
-                int id = (int)CurrentSource.CustomProperties["ID"];
-                var item = playList.Where(m => m.ID == id-1).FirstOrDefault();
-                if (item != null)
-                {
-                    await SetMeiaSource(item);
-                    mediaPlayer.Play();
-                }
-
-            }
-        }
-
-        private void Smtc_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
-        {
-            throw new NotImplementedException();
         }
 
         private void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            BackgroundMediaPlayer.Shutdown();
             deferral.Complete();
         }
 
-        private async Task SetMeiaSource(MusicModel model)
+        private async void previou(bool isFromForeground = true)
         {
-            var ras = await musicService.GetMusicStream(model.Uri);
-            CurrentSource = MediaSource.CreateFromStream(ras, "audio/mpeg");
-            CurrentSource.CustomProperties["ID"] = model.ID;
-            CurrentSource.Reset();
-            mediaPlayer.Source = CurrentSource;
+            currentID--;
+            if (currentID < 0 || currentID >= musicList.Count)
+            {
+                currentID = musicList.Count - 1;
+            }
+            var model = musicList[currentID];
+            IRandomAccessStream ras;
+            try
+            {
+                ras = await musicService.GetMusicStream(model.Uri);
+            }
+            catch
+            {
+                SendMessageToForground("exception", currentID,"网络错误");
+                return;
+            }
+            var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
+            mediaPlaer.Source = source;
+            mediaPlaer.Play();
+            
+            displayUpdate(model);
+          
+            SendMessageToForground("previou", currentID);
+        }
+
+        private async void play(bool isFromForeground = true)
+        {
+            if(currentID<0|| currentID >= musicList.Count)
+            {
+                currentID = 0;
+            }
+            if (positon == TimeSpan.Zero)
+            {
+                var model = musicList[currentID];
+                IRandomAccessStream ras;
+                try
+                {
+                    ras = await musicService.GetMusicStream(model.Uri);
+                }
+                catch
+                {
+                    SendMessageToForground("exception", currentID, "网络错误");
+                    return;
+                }
+                var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
+                mediaPlaer.Source = source;
+                
+                displayUpdate(model);
+            }
+            mediaPlaer.PlaybackSession.Position = positon;
+            mediaPlaer.Play();
+           
+            SendMessageToForground("play", currentID);
+
+        }
+        private async void play(int id, bool isFromForeground = true)
+        {
+            if (id < 0 || id >= musicList.Count)
+                return;
+            currentID = id;
+            
+            var model = musicList[currentID];
+            IRandomAccessStream ras;
+            try
+            {
+                ras = await musicService.GetMusicStream(model.Uri);
+            }
+            catch
+            {
+                SendMessageToForground("exception", currentID, "网络错误");
+                return;
+            }
+            
+            var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
+            mediaPlaer.Source = source;
+            
+            mediaPlaer.Play();
+            displayUpdate(model);
+            //if (isFromForeground)
+            //{
+            //    SendMessageToForground("play", currentID);
+            //}
+            SendMessageToForground("play", currentID);
+        }
+
+        private TimeSpan positon;
+        private  void pause(bool isFromForeground = true)
+        {
+            positon = mediaPlaer.PlaybackSession.Position;
+            mediaPlaer.Pause();
+            //if (isFromForeground)
+            //{
+            //    SendMessageToForground("pause", currentID);
+            //}
+            SendMessageToForground("pause", currentID);
+        }
+
+        private async void next(bool isFromForeground=true)
+        {
+            currentID++;
+            if (currentID < 0 || currentID >= musicList.Count)
+            {
+                currentID = 0;
+            }
+            var model = musicList[currentID];
+            IRandomAccessStream ras;
+            try
+            {
+                ras = await musicService.GetMusicStream(model.Uri);
+            }
+            catch
+            {
+                SendMessageToForground("exception", currentID, "网络错误");
+                return;
+            }
+            var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
+            mediaPlaer.Source = source;
+            mediaPlaer.Play();
+            
+            displayUpdate(model);
+            //if (isFromForeground)
+            //{
+            //    SendMessageToForground("next", currentID);
+            //}
+            SendMessageToForground("next", currentID);
+        }
+
+        private void displayUpdate(MusicModel model)
+        {
+            smtc.DisplayUpdater.MusicProperties.Title = model.Title;
+            smtc.DisplayUpdater.Update();
+        }
+        private void SendMessageToForground(string action,int currentId,string des=null)
+        {
+            ValueSet set = new ValueSet();
+            set["action"] = action;
+            set["id"] = currentId;
+            if(action== "exception")
+            {
+                set["des"] = des;
+            }
+            BackgroundMediaPlayer.SendMessageToForeground(set);
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using BtDownload.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,6 +26,7 @@ namespace AilianBT.Views
     /// </summary>
     public sealed partial class SettingView : Page
     {
+
         public SettingView()
         {
             this.InitializeComponent();
@@ -38,6 +41,13 @@ namespace AilianBT.Views
             tbDownload.Content = folder.Path;
             var taostswitch=FileService.GetLocalSetting<bool>("toastswitch");
             this.toast_switch.IsOn = taostswitch;
+
+            ThemeColors.Clear();
+            var colors = Services.SettingService.GetAllColor();
+            foreach (var item in colors)
+            {
+                ThemeColors.Add(item);
+            }
         }
 
         private async void  DownloadLocation_Click(object sender, RoutedEventArgs e)
@@ -55,7 +65,34 @@ namespace AilianBT.Views
         private void toast_switch_Toggled(object sender, RoutedEventArgs e)
         {
             FileService.SetLocalSetting<bool>("toastswitch", toast_switch.IsOn);
+        }
 
+        #region 用户主题设置
+        public ObservableCollection<Models.ThemeColorModel> ThemeColors { get; set; } = new ObservableCollection<Models.ThemeColorModel>();
+        public async void ThemeItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem as Models.ThemeColorModel;
+            Services.SettingService.SetThemeColor(item.ThemeColor);
+
+            //存储颜色
+            AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
+            await setting.SetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name, item);
+        }
+        #endregion
+
+    }
+    public class ColorBrushConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            Color color = (Color)value;
+            return new SolidColorBrush(color);
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
         }
     }
 }
