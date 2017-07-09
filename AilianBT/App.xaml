@@ -11,7 +11,9 @@
             <vm:ViewModelLocator x:Key="Locator"></vm:ViewModelLocator>
             <!--整体主色调，适用于大标题背景，小标题前景-->
             <SolidColorBrush x:Key="AilianBtMainColor"  Color="#FFE777AB"></SolidColorBrush>
+            
             <SolidColorBrush x:Key="AilinaBtItemHoverColor" Color="#FFE7ADC8"></SolidColorBrush>
+            
             <SolidColorBrush x:Key="AilinaBtItemSelectColor" Color="#FFAE517D"></SolidColorBrush>
             <!--未选中标题-->
             <SolidColorBrush x:Name="AilianBtTitleUnselectForeground" Color="#FF7F7E7D"></SolidColorBrush>
@@ -1320,6 +1322,8 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            
+            
             <ResourceDictionary x:Key="ThemeColors">
                 <Color x:Key="浪漫紫" >#FFBE3CFD</Color>
                 <Color x:Key="烟波蓝">#FF1D91FF</Color>

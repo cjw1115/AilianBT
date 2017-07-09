@@ -365,9 +365,9 @@
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>43612cjw1115.ULove</MainPackageIdentityName>
-    <MainPackageIdentityName>43612cjw1115.2457283754C76</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.52401D68F12FA</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.WP8.1</MainPackageIdentityName>
+    <MainPackageIdentityName>43612cjw1115.2457283754C76</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NBLGGH4TFBW" />
 </StoreAssociation>

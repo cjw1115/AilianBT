@@ -9,6 +9,111 @@
     mc:Ignorable="d">
     <Page.Resources>
         <local:ColorBrushConverter x:Key="ColorBrushConverter"></local:ColorBrushConverter>
+        <Style TargetType="ListViewItem" x:Key="ListViewItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="MaxWidth" Value="50"/>
+            <Setter Property="MinWidth" Value="50"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Grid x:Name="ContentBorder"
+                              Width="{TemplateBinding Width}"
+                                  Height="{TemplateBinding Height}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedIcon" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                            
+
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayIcon" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                            <DoubleAnimationUsingKeyFrames RepeatBehavior="Forever" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)" Storyboard.TargetName="OverlayIcon">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="360"/>
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedIcon" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayIcon" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedIcon" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayIcon" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed"></DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid x:Name="ContentPresenterGrid"
+                                  Width="{TemplateBinding Width}"
+                                  Height="{TemplateBinding Height}"
+                                  Background="Transparent" Margin="0,0,0,0"
+                                  Padding="0">
+
+                                <ContentPresenter x:Name="ContentPresenter"
+                                                  
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Content="{TemplateBinding Content}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="{TemplateBinding Padding}" />
+
+                                <Grid x:Name="SelectedOverlay" Visibility="Visible">
+                                    <Rectangle Fill="Black" Opacity="0.4"></Rectangle>
+                                    <SymbolIcon x:Name="SelectedIcon" Symbol="Emoji" Foreground="White"></SymbolIcon>
+                                    <SymbolIcon x:Name="OverlayIcon" Symbol="Emoji2" Foreground="White" RenderTransformOrigin="0.5,0.5">
+                                        <SymbolIcon.RenderTransform>
+                                            <CompositeTransform/>
+                                        </SymbolIcon.RenderTransform>
+                                    </SymbolIcon>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
     <Grid Background="{StaticResource  AilianBtGridBackground2}">
         <Image x:Name="imgbackground" Stretch="None" HorizontalAlignment="Right" VerticalAlignment="Bottom"></Image>
@@ -38,41 +143,50 @@
             </StackPanel>
             <StackPanel  Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">当前版本</TextBlock>
-                <TextBlock Margin="8,0,0,0" Foreground="{StaticResource  AilianBtListMainForeground}">1.4.0</TextBlock>
+                <TextBlock Margin="8,0,0,0" Foreground="{StaticResource  AilianBtListMainForeground}" Text="{x:Bind Version,Mode=OneTime}"></TextBlock>
             </StackPanel>
             <StackPanel Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">主色调</TextBlock>
-                <ListView Margin="8" Foreground="{ThemeResource AilianBtMainColor}" ItemsSource="{x:Bind ThemeColors,Mode=OneWay}"
+                <ListView Margin="8" 
+                          ItemContainerStyle="{StaticResource ListViewItem}"
+                          Foreground="{ThemeResource AilianBtMainColor}" 
+                          ItemsSource="{x:Bind ThemeColors,Mode=OneWay}"
                        IsItemClickEnabled="True" ItemClick="ThemeItemClick">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid ItemWidth="48"  HorizontalAlignment="Left" Orientation="Horizontal"></ItemsWrapGrid>
+                            <StackPanel Orientation="Horizontal"></StackPanel>
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:ThemeColorModel">
-                            <Rectangle HorizontalAlignment="Center" VerticalAlignment="Center" Width="40" Height="40" Fill="{x:Bind ThemeColor ,Converter={StaticResource ColorBrushConverter}}"></Rectangle>
+                            <Rectangle  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                        Width="48" Height="48"
+                                       Fill="{x:Bind ThemeColor ,Converter={StaticResource ColorBrushConverter}}"></Rectangle>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="Padding" Value="0"></Setter>
-                            <Setter Property="Margin" Value="0"></Setter>
-                        </Style>
-                    </ListView.ItemContainerStyle>
                 </ListView>
+                <!--<ListView Margin="8" 
+                          ItemContainerStyle="{StaticResource ListViewItem}"
+                          Foreground="{ThemeResource AilianBtMainColor}" 
+                          IsItemClickEnabled="True" ItemClick="ThemeItemClick">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid HorizontalAlignment="Left" Orientation="Horizontal"></ItemsWrapGrid>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <Rectangle Width="48" Height="48" Fill="Red"></Rectangle>
+                </ListView>-->
             </StackPanel>
             <StackPanel  Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">关于作者（CQ）</TextBlock>
                 <StackPanel Margin="8,0,0,0"  Orientation="Vertical">
                     <HyperlinkButton FontSize="12" NavigateUri="http://weibo.com/cjw19951115" Content="微博主页"></HyperlinkButton>
-                    <HyperlinkButton FontSize="12" NavigateUri="http://www.cjw1115.com/" Content="个人博客"></HyperlinkButton>
+                    <HyperlinkButton FontSize="12" NavigateUri="http://www.cjw1115.com/" Content="个人站点"></HyperlinkButton>
 
                 </StackPanel>
             </StackPanel>
 
         </StackPanel>
-        
     </Grid>
-    
+
 </Page>

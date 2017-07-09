@@ -32,6 +32,7 @@ namespace AilianBT.Views
 
             this.InitializeComponent();
             this.Loaded += NavigationView_Loaded;
+            this.btnAbout.Click += BtnAbout_Click;
             var locator = Application.Current.Resources["Locator"] as ViewModels.ViewModelLocator;
             NavigationVM = locator.NavigationVM;
             ViewModels.NavigationVM.DetailFrame = this.DetailFrame;
@@ -46,7 +47,10 @@ namespace AilianBT.Views
             Notification = this.notification;
         }
 
-      
+        private void BtnAbout_Click(object sender, RoutedEventArgs e)
+        {
+            this.splitView.IsPaneOpen = false;
+        }
 
         private void NavigationView_BackRequested(object sender, BackRequestedEventArgs e)
         {
@@ -197,5 +201,9 @@ namespace AilianBT.Views
 
         }
 
+        private void navigationList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            this.splitView.IsPaneOpen = false;
+        }
     }
 }

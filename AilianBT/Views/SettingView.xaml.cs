@@ -26,7 +26,7 @@ namespace AilianBT.Views
     /// </summary>
     public sealed partial class SettingView : Page
     {
-
+        public string Version =>  $"{Windows.ApplicationModel.Package.Current.Id.Version.Major}.{Windows.ApplicationModel.Package.Current.Id.Version.Minor}.{Windows.ApplicationModel.Package.Current.Id.Version.Build}"; 
         public SettingView()
         {
             this.InitializeComponent();
