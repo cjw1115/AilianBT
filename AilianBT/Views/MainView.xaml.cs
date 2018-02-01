@@ -38,14 +38,14 @@ namespace AilianBT.Views
       
         public void Init()
         {
-            var scrollView = Helpers.VisualTreeHelperTool.FindVisualChild<ScrollViewer>(this.listView);
-            scrollView.HorizontalScrollMode = ScrollMode.Disabled;
-            scrollView.VerticalAlignment = VerticalAlignment.Stretch;
-            scrollView.ViewChanged -= ScrollView_ViewChanged;
-            scrollView.ViewChanged += ScrollView_ViewChanged;
-            scrollView.Loaded += ScrollView_Loaded;
+            //var scrollView = Helpers.VisualTreeHelperTool.FindVisualChild<ScrollViewer>(this.listView);
+            //scrollView.HorizontalScrollMode = ScrollMode.Disabled;
+            //scrollView.VerticalAlignment = VerticalAlignment.Stretch;
+            //scrollView.ViewChanged -= ScrollView_ViewChanged;
+            //scrollView.ViewChanged += ScrollView_ViewChanged;
+            //scrollView.Loaded += ScrollView_Loaded;
 
-            scrollView.ChangeView(null, 120, null);
+            //scrollView.ChangeView(null, 120, null);
 
             OnRefresh += MainVM.Refresh;
             OnLoadMore += MainVM.LoadMore;
@@ -61,53 +61,53 @@ namespace AilianBT.Views
 
         private bool isLoadMore = false;
         private bool isRefresh = false;
-        private ProgressRing _progressRing=> Helpers.VisualTreeHelperTool.FindVisualChild<ProgressRing>(this.listView);
-        private void ScrollView_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            var scrollView = sender as ScrollViewer;
-            if (!e.IsIntermediate)
-            {
-                if (scrollView.VerticalOffset <= 0)
-                { //刷新
-                    if (!isRefresh)
-                    {
+        //private ProgressRing _progressRing=> Helpers.VisualTreeHelperTool.FindVisualChild<ProgressRing>(this.listView);
+        //private void ScrollView_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        //{
+        //    var scrollView = sender as ScrollViewer;
+        //    if (!e.IsIntermediate)
+        //    {
+        //        if (scrollView.VerticalOffset <= 0)
+        //        { //刷新
+        //            if (!isRefresh)
+        //            {
                         
-                        _progressRing.IsActive = true;
-                        Task.Run(async () =>
-                        {
-                            await scrollView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                OnRefresh.Invoke();
-                                scrollView.ChangeView(null, 120, null);
+        //                _progressRing.IsActive = true;
+        //                Task.Run(async () =>
+        //                {
+        //                    await scrollView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+        //                    {
+        //                        OnRefresh.Invoke();
+        //                        scrollView.ChangeView(null, 120, null);
 
-                            });
-                            isRefresh = false;
-                            _progressRing.IsActive = false;
-                        });
-                    }
+        //                    });
+        //                    isRefresh = false;
+        //                    _progressRing.IsActive = false;
+        //                });
+        //            }
                     
-                }
-                else if (scrollView.VerticalOffset < 120)
-                {
-                    scrollView.ChangeView(null, 120, null);
-                }
-                else if (scrollView.VerticalOffset > scrollView.ScrollableHeight - 40)
-                {
-                    if (!isLoadMore)
-                    {
-                        Task.Run(async () =>
-                        {
-                            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                            {
-                                OnLoadMore.Invoke();
+        //        }
+        //        else if (scrollView.VerticalOffset < 120)
+        //        {
+        //            scrollView.ChangeView(null, 120, null);
+        //        }
+        //        else if (scrollView.VerticalOffset > scrollView.ScrollableHeight - 40)
+        //        {
+        //            if (!isLoadMore)
+        //            {
+        //                Task.Run(async () =>
+        //                {
+        //                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+        //                    {
+        //                        OnLoadMore.Invoke();
 
-                            });
-                            isLoadMore = false;
-                        });
-                    }
-                }
-            }
-        }
+        //                    });
+        //                    isLoadMore = false;
+        //                });
+        //            }
+        //        }
+        //    }
+        //}
 
 
         private async void MainView_Loaded(object sender, RoutedEventArgs e)
@@ -122,7 +122,11 @@ namespace AilianBT.Views
         {
             OnLoadMore.Invoke();
         }
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            OnRefresh.Invoke();
+        }
 
-        
+
     }
 }

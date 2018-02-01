@@ -16,10 +16,10 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>AilianBT_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>AilianBT_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Never</AppxBundle>
-    <PackageCertificateThumbprint>F8B2D82DD2EB4C88C8534EBEC7F5E312F191DBA7</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>4171822DDA767D9EA9A698F12DC411919922BA29</PackageCertificateThumbprint>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -98,6 +98,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="AilianBT_StoreKey.pfx" />
     <None Include="AilianBT_TemporaryKey.pfx" />
     <None Include="App.config" />
   </ItemGroup>

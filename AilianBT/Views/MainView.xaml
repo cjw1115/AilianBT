@@ -26,7 +26,7 @@
                                     </VisualState>
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
-                                            
+
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="ContentRectangle">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AilianBtGridBackground}"/>
                                             </ObjectAnimationUsingKeyFrames>
@@ -68,10 +68,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
     </Page.Resources>
-    <Grid Background="{StaticResource AilianBtGridBackground2}"
-           >
+    <Grid Background="{StaticResource AilianBtGridBackground2}">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="auto"/>
@@ -109,7 +108,7 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.Template>
+            <!--<ListView.Template>
                 <ControlTemplate>
                     <ScrollViewer x:Name="scrollViewer" VerticalContentAlignment="Bottom" VerticalScrollBarVisibility="Hidden">
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -118,22 +117,25 @@
                                 <RowDefinition />
                                 <RowDefinition Height="auto"></RowDefinition>
                             </Grid.RowDefinitions>
-                            <ProgressRing Grid.Row="0" Height="120" x:Name="progressRing"  ></ProgressRing>
+                           
 
                             <ItemsPresenter Grid.Row="1"></ItemsPresenter>
-                            <Button Grid.Row="2" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="点击加载更多" Click="Button_Click"></Button>
+                            
                             <Rectangle Grid.Row="1" Grid.RowSpan="2" Height="{Binding ElementName=scrollViewer,
                                 Path=ViewportHeight,Mode=OneWay,Converter={StaticResource PullHeightConverter}}"></Rectangle>
                         </Grid>
 
                     </ScrollViewer>
                 </ControlTemplate>
-            </ListView.Template>
-
+            </ListView.Template>-->
+            <ListView.Footer>
+                <Button  Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="点击加载更多" Click="Button_Click"></Button>
+            </ListView.Footer>
         </ListView>
-        
+        <ProgressRing Grid.Row="0" Height="120" x:Name="progressRing"  ></ProgressRing>
         <CommandBar Style="{StaticResource AilianBtCommandBar}"  Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent">
             <AppBarButton Foreground="White" Icon="Find" Label="查找"  Click="{x:Bind MainVM.Search_Click}"></AppBarButton>
+            <AppBarButton x:Name="btnRefresh"  Foreground="White"  Label="刷新" Click="Refresh_Click"  Icon="Refresh"/>
         </CommandBar>
 
     </Grid>
