@@ -1,10 +1,10 @@
 ﻿{
   "dependencies": {
-    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2"
+    "Microsoft.EntityFrameworkCore.Sqlite": "2.0.1",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "6.0.6"
   },
   "frameworks": {
-    "uap10.0": {}
+    "uap10.0.15063": {}
   },
   "runtimes": {
     "win10-arm": {},

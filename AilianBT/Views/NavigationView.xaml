@@ -76,7 +76,7 @@
         </Style>
         <Style TargetType="ListViewItem">
             <Setter Property="Height" Value="60"> </Setter>
-            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Left"></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
@@ -100,20 +100,12 @@
                                             <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
                                         </Storyboard>
                                     </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="OverlayRect">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
-                                        </Storyboard>
-                                    </VisualState>
+                                   
                                     <VisualState x:Name="Selected">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="OverlayRect">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                                             </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
@@ -711,7 +703,7 @@
                                 
                             </ListView>
                             <Button x:Name="btnAbout"  Background="Transparent" VerticalAlignment="Bottom" 
-                                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+                                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" 
                                      Click="{x:Bind NavigationVM.Setting_Click}"
                                      Style="{StaticResource AboutButtonStyle}">
                                 <StackPanel Orientation="Horizontal">

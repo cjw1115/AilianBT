@@ -33,7 +33,7 @@ namespace AilianBT.ViewModels
         public  void Loaded(object param)
         {
             SearchKey = (string)param;
-            Search(SearchKey);
+            Search();
         }
 
         public async void LoadMore()
@@ -122,13 +122,13 @@ namespace AilianBT.ViewModels
         }
         
         
-        public async void Search(string searchKey)
+        public async void Search()
         {
             //标识搜索状态
             _pageIndex = 1;
             try
             {
-                var newlist = await bll.SerachResList(searchKey, _pageIndex++);
+                var newlist = await bll.SerachResList(SearchKey, _pageIndex++);
                 AilianRes.Clear();
                 if (newlist != null && newlist.Count > 0)
                 {
