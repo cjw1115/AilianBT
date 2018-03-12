@@ -398,7 +398,7 @@
         <ProgressRing Grid.Row="0" Height="120" x:Name="progressRing"  ></ProgressRing>
         <CommandBar Style="{StaticResource AilianBtCommandBar}"  Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent">
             <AppBarButton Foreground="White" Icon="Find" Label="查找"  Click="{x:Bind MainVM.Search_Click}"></AppBarButton>
-            <AppBarButton x:Name="btnRefresh" Style="{StaticResource AppBarButtonRevealStyle}"  Foreground="White"  Label="刷新" Click="Refresh_Click"  Icon="Refresh"/>
+            <AppBarButton x:Name="btnRefresh"   Foreground="White"  Label="刷新" Click="Refresh_Click"  Icon="Refresh"/>
         </CommandBar>
 
     </Grid>
