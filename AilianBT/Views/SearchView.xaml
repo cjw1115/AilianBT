@@ -11,7 +11,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:PullHeightConverter x:Key="PullHeightConverter"></converters:PullHeightConverter>
         <Style  TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
             <Setter Property="Template">
@@ -105,27 +104,20 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.Template>
-                <ControlTemplate>
-                    <ScrollViewer x:Name="scrollViewer" VerticalContentAlignment="Bottom" VerticalScrollBarVisibility="Hidden">
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition />
-                                <RowDefinition Height="auto"></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <ProgressRing Grid.Row="0" Height="120" x:Name="progressRing"  ></ProgressRing>
+            <ListView.Footer>
+                <Grid Width="36" Height="36">
+                    <TextBlock x:Name="iconLoadingMore" Visibility="Collapsed" Foreground="{StaticResource AilianBtMainColor}" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" Text="&#xf110;" FontFamily="{StaticResource FontAwesome}"></TextBlock>
+                    <Button x:Name="iconNeedMore" Visibility="Collapsed" Foreground="{StaticResource AilianBtMainColor}" Background="Transparent"  BorderThickness="0" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Button_Click"
+                        Content="&#xf103;" FontSize="36" FontFamily="{StaticResource FontAwesome}" >
+                        <Button.Template>
+                            <ControlTemplate>
+                                <ContentPresenter HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></ContentPresenter>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
-                            <ItemsPresenter Grid.Row="1"></ItemsPresenter>
-                            <Button Grid.Row="2" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="点击加载更多" ></Button>
-                            <Rectangle Grid.Row="1" Grid.RowSpan="2" Height="{Binding ElementName=scrollViewer,
-                                Path=ViewportHeight,Mode=OneWay,Converter={StaticResource PullHeightConverter}}"></Rectangle>
-                        </Grid>
-
-                    </ScrollViewer>
-                </ControlTemplate>
-            </ListView.Template>
-
+                </Grid>
+            </ListView.Footer>
         </ListView>
         <controls:SearchBox x:Name="searchBox"  Grid.Row="1" Margin="8,4,8,8"  SearchKey="{x:Bind SearchVM.SearchKey,Mode=TwoWay}" Search="{x:Bind SearchVM.Search}">
         </controls:SearchBox>

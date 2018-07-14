@@ -1,7 +1,4 @@
 ﻿using AilianBT.ViewModels;
-using AilianBTShared.Helpers;
-using AilianBTShared.Models;
-using AilianBTShared.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -3,7 +3,7 @@
   <Identity Name="43612cjw1115.BT" Publisher="CN=44E84CDA-74C3-45A0-AAD6-3A43680DABBC" Version="1.5.1.0" />
   <mp:PhoneIdentity PhoneProductId="d758413b-677d-4943-9130-95146701a022" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>爱恋动漫UWP</DisplayName>
+    <DisplayName>爱恋动漫BT</DisplayName>
     <PublisherDisplayName>cjw1115</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -23,7 +23,7 @@
             <uap:ShowOn Tile="square310x310Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#E777AB" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#ffffff" />
       </uap:VisualElements>
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="MusicBackground.MusicBackground">

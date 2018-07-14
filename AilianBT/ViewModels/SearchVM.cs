@@ -36,7 +36,7 @@ namespace AilianBT.ViewModels
             Search();
         }
 
-        public async void LoadMore()
+        public async Task LoadMore()
         {
             IList<AilianResModel> newlist = null;
             try
@@ -70,7 +70,7 @@ namespace AilianBT.ViewModels
             set { Set(ref _isRefreshing, value); }
         }
 
-        public async void Refresh()
+        public async Task Refresh()
         {
             _pageIndex = 1;
             IList<AilianResModel> newlist = null;
@@ -124,6 +124,11 @@ namespace AilianBT.ViewModels
         
         public async void Search()
         {
+            if(string.IsNullOrWhiteSpace(SearchKey))
+            {
+                App.ShowNotification("请输入搜索关键字");
+                return;
+            }
             //标识搜索状态
             _pageIndex = 1;
             try
