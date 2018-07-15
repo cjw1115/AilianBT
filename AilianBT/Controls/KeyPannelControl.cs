@@ -36,6 +36,7 @@ namespace AilianBT.Controls
         
         protected override Size MeasureOverride(Size availableSize)
         {
+            this.list?.Clear();
             int row = 1;
             double rowheight = 0;
 

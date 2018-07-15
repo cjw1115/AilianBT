@@ -200,7 +200,8 @@ namespace AilianBT.BLL
                 for (int j = 1; j < keys.Count(); j++)
                 {
                     var onekey=keys[j].Split('|');
-                    Models.NewKeyModel model = new NewKeyModel { Key = onekey[0], Value = onekey[1] };
+                    
+                    Models.NewKeyModel model = new NewKeyModel { Key = onekey[0], Value = Uri.UnescapeDataString(onekey[1]) };
                     newKeysModels.Add(model);
                 }
                 newKeys.Add(i, newKeysModels);
