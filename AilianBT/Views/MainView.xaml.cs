@@ -118,7 +118,7 @@ namespace AilianBT.Views
             angleAnimation.Duration = TimeSpan.FromSeconds(1);
             angleAnimation.IterationBehavior = AnimationIterationBehavior.Forever;
             var visual=ElementCompositionPreview.GetElementVisual(iconLoadingMore);
-            visual.CenterPoint = new System.Numerics.Vector3((float)(iconLoadingMore.ActualWidth / 2), (float)(iconLoadingMore.ActualHeight/ 2f), 0);
+            visual.CenterPoint = new System.Numerics.Vector3((float)(18), (float)(18), 0);
             visual.StartAnimation("RotationAngleInDegrees", angleAnimation);
         }
         #endregion

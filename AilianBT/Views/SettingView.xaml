@@ -148,9 +148,12 @@
             <StackPanel Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">主色调</TextBlock>
                 <ListView Margin="8" 
+                          x:Name="lvThemes"
                           ItemContainerStyle="{StaticResource ListViewItem}"
                           Foreground="{ThemeResource AilianBtMainColor}" 
+                           SelectedItem="{x:Bind SelectedTheme,Mode=OneWay}"
                           ItemsSource="{x:Bind ThemeColors,Mode=OneWay}"
+                         SelectionMode="Single"
                        IsItemClickEnabled="True" ItemClick="ThemeItemClick">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>

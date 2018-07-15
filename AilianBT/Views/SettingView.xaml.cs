@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -24,7 +26,7 @@ namespace AilianBT.Views
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class SettingView : Page
+    public sealed partial class SettingView : Page,INotifyPropertyChanged
     {
         public string Version =>  $"{Windows.ApplicationModel.Package.Current.Id.Version.Major}.{Windows.ApplicationModel.Package.Current.Id.Version.Minor}.{Windows.ApplicationModel.Package.Current.Id.Version.Build}"; 
         public SettingView()
@@ -48,6 +50,11 @@ namespace AilianBT.Views
             {
                 ThemeColors.Add(item);
             }
+            
+            AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
+            var theme=await setting.GetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name);
+            theme=ThemeColors.Where(m => m.Name == theme.Name).FirstOrDefault();
+            SelectedTheme= theme;
         }
 
         private async void  DownloadLocation_Click(object sender, RoutedEventArgs e)
@@ -69,16 +76,38 @@ namespace AilianBT.Views
 
         #region 用户主题设置
         public ObservableCollection<Models.ThemeColorModel> ThemeColors { get; set; } = new ObservableCollection<Models.ThemeColorModel>();
+
+        private Models.ThemeColorModel _selectedTheme;
+        public Models.ThemeColorModel SelectedTheme
+        {
+            get => _selectedTheme;
+            set
+            {
+                if(value!=_selectedTheme)
+                {
+                    _selectedTheme = value;
+                    OnPropertyChanged();
+                }
+            } 
+        }
         public async void ThemeItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as Models.ThemeColorModel;
             Services.SettingService.SetThemeColor(item.ThemeColor);
+            SelectedTheme = item;
 
             //存储颜色
             AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
             await setting.SetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name, item);
         }
         #endregion
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName]string propertyName=null)
+        {
+            PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName));
+        }
 
     }
     public class ColorBrushConverter : IValueConverter
