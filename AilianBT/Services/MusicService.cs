@@ -1,5 +1,4 @@
 ﻿using AilianBT.Models;
-using AilianBTShared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,17 +12,22 @@ namespace AilianBT.Services
 {
     public class MusicService
     {
-        private readonly string listUri = "http://www.kisssub.org/addon/player/app/scm-music-player/playlist.js";
+        private readonly string listUri = "http://www.kisssub.org/addon/player/app/scm-music-player/playlist.js?time=";
         private readonly string kisssUbUri = "http://www.kisssub.org/";
         private static HttpBaseService _httpService = new HttpBaseService(true);
         public async Task<IList<MusicModel>> GetNetPlayList()
         {
             List<MusicModel> musicList = new List<MusicModel>();
-            var re=await _httpService.SendRequst(listUri);
+            var re=await _httpService.SendRequst(listUri+DateTime.Now.Millisecond.ToString());
             if (re != null)
             {
-                var jsonString = Regex.Match(re, @"(?<=shuffle\()([\w\W]*)(?=\)\);SCM)").ToString();
-                
+                var startStr = "shuffle(";
+                var endStr = "));";
+                var startIndex = re.IndexOf(startStr) + startStr.Length;
+                var endIndex = re.IndexOf(endStr);
+
+                var jsonString = re.Substring(startIndex, endIndex - startIndex);
+
                 var arry = JsonArray.Parse(jsonString);
                 for (int i=0;i<arry.Count;i++)
                 {   
@@ -39,7 +43,8 @@ namespace AilianBT.Services
         }
         public async Task<IRandomAccessStream> GetMusicStream(Uri uri)
         {
-            var re = await _httpService.GetUriStream(uri.ToString(),referUri: kisssUbUri);
+            var newUri=uri.ToString() + "?date=" + DateTime.Now.Millisecond;
+            var re = await _httpService.GetUriStream(newUri, referUri: kisssUbUri);
             return re;
         }
     }

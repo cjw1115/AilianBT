@@ -104,11 +104,9 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Models\MusicModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\HttpBaseService.cs" />
-    <Compile Include="Services\MusicService.cs" />
     <EmbeddedResource Include="Properties\MusciBackgroundShared.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +116,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.5</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

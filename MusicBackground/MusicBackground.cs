@@ -171,6 +171,7 @@ namespace MusicBackground
                     return;
                 }
                 var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
+                
                 mediaPlaer.Source = source;
                 
                 displayUpdate(model);

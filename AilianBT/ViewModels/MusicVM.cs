@@ -1,6 +1,7 @@
-﻿using AilianBTShared.Helpers;
-using AilianBTShared.Models;
-using AilianBTShared.Services;
+﻿using AilianBT.Services;
+using AilianBT.Helpers;
+using AilianBT.Models;
+using AilianBT.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,20 +27,89 @@ namespace AilianBT.ViewModels
         }
         public ObservableCollection<MusicModel> MusicList { get; set; } = new ObservableCollection<MusicModel>();
         MusicService musicService = new MusicService();
-        MediaPlayer player = new MediaPlayer() { AutoPlay = false };
-        SystemMediaTransportControls smtc = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
+        
         CoreDispatcher _coreDispatcher;
-
+        MusicManager musicManager = new MusicManager();
         public MusicVM(CoreDispatcher coreDispatcher) : this()
         {
             _coreDispatcher = coreDispatcher;
         }
         public MusicVM()
-        {
-            BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
-            Init();
+        {   
         }
-        public async void Init()
+        
+        public async void Load()
+        {
+            await Init();
+            CacheMusic();
+        }
+        public void CacheMusic(int? index=null)
+        {
+            var value = index == null ? CurrentIndex : index.Value;
+            if (value < 0 || value >= MusicList.Count)
+                return;
+
+            if(value == 0)
+            {
+                CanPreviou = false;
+            }
+            else if(value == MusicList.Count-1)
+            {
+                CanNext = false;
+            }
+            musicManager.Clear();
+
+            if (value - 1 >= 0)
+            {
+                CanPreviou = true;
+                musicManager.Add(MusicList[value-1]);
+            }
+
+            musicManager.Add(MusicList[value]);
+
+            if(MusicList.Count> value + 1)
+            {
+                CanNext = true;
+                musicManager.Add(MusicList[value+1]);
+            }
+            
+            
+        }
+        public void CacheNextMusic()
+        {
+            if(CurrentIndex!=0)
+            {
+                musicManager.Clear(0);
+            }
+            
+            if(CurrentIndex+1<MusicList.Count-1)
+            {
+                musicManager.Add(MusicList[CurrentIndex + 2]);
+            }
+            else
+            {
+                CanPreviou = true;
+                CanNext = false;
+            }
+        }
+        public void CachePreviousMusic()
+        {
+            if (CurrentIndex != MusicList.Count-1)
+            {
+                musicManager.Clear(2);
+            }
+            
+            if (CurrentIndex - 1 >0)
+            {
+                musicManager.Add(MusicList[CurrentIndex -2],0);
+            }
+            else
+            {
+                CanPreviou = false;
+                CanNext = true;
+            }
+        }
+        public async Task Init()
         {
             IList<MusicModel> list = null;
             try
@@ -49,25 +119,25 @@ namespace AilianBT.ViewModels
                 {
                     MusicList.Add(item);
                 }
+                CurrentIndex = 0;
             }
             catch(Exception e)
             {
                 App.ShowNotification(e.Message);
                 return;
             }
-          
-
-            ValueSet set = new ValueSet();
-            set["action"] = "update";
-            set["musiclist"] = JsonHelper.SerializeObject(list);
-            BackgroundMediaPlayer.SendMessageToBackground(set);
 
             IsPlayVisible = true;
             IsPauseVisible = false;
             CanPreviou = true;
             CanNext = true;
         }
-
+        private int _currentIndex = -1;
+        public int CurrentIndex
+        {
+            get { return _currentIndex; }
+            set { _currentIndex = value; OnPropertyChanged(); }
+        }
         private bool _canPreviou;
         public bool CanPreviou
         {
@@ -99,105 +169,49 @@ namespace AilianBT.ViewModels
             set { _title = value; OnPropertyChanged(); }
         }
 
-        public async void previou_Click()
+        public void previou_Click()
         {
-            ValueSet set = new ValueSet();
-            set["action"] = "previou";
-            BackgroundMediaPlayer.SendMessageToBackground(set);
-        }
-
-        public async void play_Click()
-        {
-            ValueSet set = new ValueSet();
-            set["action"] = "play";
-            BackgroundMediaPlayer.SendMessageToBackground(set);
-        }
-
-        public async void pause_Click()
-        {
-            ValueSet set = new ValueSet();
-            set["action"] = "pause";
-            BackgroundMediaPlayer.SendMessageToBackground(set);
-        }
-
-        public async void next_Click()
-        {
-            ValueSet set = new ValueSet();
-            set["action"] = "next";
-            BackgroundMediaPlayer.SendMessageToBackground(set);
-        }
-
-        public void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
-        {
-            ValueSet valueSet = (ValueSet)e.Data;
-            //action:next,play,previou,pause,update
-            //play:id
-            //update:musiclist
-            object actionObject = null;
-            valueSet.TryGetValue("action", out actionObject);
-            int id = (int)valueSet["id"];
-            var model = MusicList.Where(m => m.ID == id).FirstOrDefault();
-            if (actionObject != null)
+            if (CurrentIndex <=0)
             {
-                var action = (string)actionObject;
-                switch (action)
-                {
-                    case "play":
-                        _coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            IsPlayVisible = false;
-                            IsPauseVisible = true;
-                            Title = model.Title;
-                        });
-
-                        break;
-                    case "pause":
-                        _coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            IsPlayVisible = true;
-                            IsPauseVisible = false;
-                        });
-
-                        break;
-                    case "next":
-                        _coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            IsPlayVisible = false;
-                            IsPauseVisible = true;
-                            Title = model.Title;
-                        });
-
-                        break;
-                    case "previou":
-                        _coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            IsPlayVisible = false;
-                            IsPauseVisible = true;
-                            Title = model.Title;
-                        });
-
-                        break;
-                    case "exception":
-                        _coreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            App.ShowNotification((string)valueSet["des"]);
-                        });
-                        
-                        break;
-                    default:
-                        break;
-                }
+                return;
+            }
+            if (CurrentIndex - 1 >=0)
+            {
+                CachePreviousMusic();
+                musicManager.Previous();
+                CurrentIndex--;
             }
         }
 
-        public void ItemClick(object sender, ItemClickEventArgs e)
+        public void play_Click()
         {
-            MusicModel model = e.ClickedItem as MusicModel;
+            CacheMusic();
+            musicManager.Play();
+        }
 
-            ValueSet set = new ValueSet();
-            set["action"] = "play";
-            set["id"] = model.ID;
-            BackgroundMediaPlayer.SendMessageToBackground(set);
+        public void pause_Click()
+        {
+            musicManager.Pause();
+        }
+
+        public void next_Click()
+        {
+            if(CurrentIndex>=MusicList.Count-1)
+            {
+                return;
+            }
+            if(CurrentIndex+1<=MusicList.Count-1)
+            {
+                CacheNextMusic();
+                musicManager.Next();
+                CurrentIndex++;
+            }
+            
+        }
+        public void ItemClick(MusicModel model)
+        {
+            CacheMusic();
+            musicManager.Play();
         }
     }
 }

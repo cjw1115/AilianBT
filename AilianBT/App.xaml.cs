@@ -44,7 +44,6 @@ namespace AilianBT
             //    dbcontext.Database.Migrate();
             //}
             
-
             BtDownload.Services.SimpleIoc.Register<BtDownload.VIewModels.DownloadedVM>();
             BtDownload.Services.SimpleIoc.Register<BtDownload.VIewModels.DownloadingVM>();
             BtDownload.Services.SimpleIoc.Register<Services.DbService>();
@@ -52,11 +51,20 @@ namespace AilianBT
             var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
             dbservice.DownloadDbContext.Database.Migrate();
 
-            //{
-            //    StatusBar statusBar = .StatusBar.GetForCurrentView();
-            //    statusBar.BackgroundOpacity = 1;
-            //    statusBar.BackgroundColor = color;
-            //}
+            this.EnteredBackground += App_EnteredBackground;
+            this.LeavingBackground += App_LeavingBackground;
+        }
+        private bool _isInBackgroundMode;
+
+        public bool IsInBackgroundMode => _isInBackgroundMode;
+        private void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            _isInBackgroundMode = false;
+        }
+
+        private void App_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        {
+            _isInBackgroundMode = true;
         }
 
         /// <summary>

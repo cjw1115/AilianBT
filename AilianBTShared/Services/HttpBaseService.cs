@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -79,8 +78,7 @@ namespace AilianBTShared.Services
                  InMemoryRandomAccessStream ras = new InMemoryRandomAccessStream();
                 ras.Size = length.Value;
                 var inputStream = await _client.GetInputStreamAsync(new Uri(uri));
-                RandomAccessStream.CopyAsync(inputStream, ras);
-                await Task.Delay(500);
+                await RandomAccessStream.CopyAsync(inputStream, ras);
                 return ras;
             }
             catch

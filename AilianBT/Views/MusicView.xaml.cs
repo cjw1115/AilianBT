@@ -1,4 +1,5 @@
-﻿using AilianBT.ViewModels;
+﻿using AilianBT.Models;
+using AilianBT.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,9 +38,21 @@ namespace AilianBT.Views
         {
             MusicVM = new MusicVM(this.Dispatcher);
             this.InitializeComponent();
+            this.Loaded += MusicView_Loaded;
         }
 
-        
+        private void MusicView_Loaded(object sender, RoutedEventArgs e)
+        {
+            MusicVM.Load();
+        }
+
+        private void Grid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            var grid=sender as FrameworkElement;
+            //ListViewItemPresenter presenter = (ListViewItemPresenter)VisualTreeHelper.GetParent(grid);
+            //ListViewItem item = (ListViewItem)VisualTreeHelper.GetParent(presenter);
+            MusicVM.ItemClick(grid.DataContext as MusicModel);
+        }
     }
     public class BoolToVisibility : IValueConverter
     {

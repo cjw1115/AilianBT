@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
-namespace AilianBTShared.Helpers
+namespace AilianBT.Helpers
 {
     public class JsonHelper
     {

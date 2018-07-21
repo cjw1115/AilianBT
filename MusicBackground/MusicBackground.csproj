@@ -113,12 +113,6 @@
       <Version>6.1.5</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AilianBTShared\AilianBTShared.csproj">
-      <Project>{87d06a2f-8d73-4f51-9206-74c7920914dc}</Project>
-      <Name>AilianBTShared</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
