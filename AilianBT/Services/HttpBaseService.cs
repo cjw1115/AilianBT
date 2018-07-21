@@ -26,7 +26,7 @@ namespace AilianBT.Services
             _client.DefaultRequestHeaders.Add("User-Agent", user_agent);
             //_client.DefaultRequestHeaders.UserAgent.Clear();
             //_client.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue(user_agent));
-
+            _client.Timeout = TimeSpan.FromMilliseconds(5000);
         }
         public async Task<string> SendRequst(string uri, bool isGb2312 = false, bool ispost=false,IDictionary <string,string> dic=null, string referUri = "", CancellationToken cancellation = new CancellationToken())
         {

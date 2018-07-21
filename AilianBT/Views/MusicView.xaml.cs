@@ -56,9 +56,14 @@ namespace AilianBT.Views
     }
     public class BoolToVisibility : IValueConverter
     {
+        public bool Inverse { get; set; }
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             bool status = (bool)value;
+            if(Inverse)
+            {
+                status = !status;
+            }
             if (status == true)
             {
                 return Visibility.Visible;

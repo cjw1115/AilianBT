@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
-        <local:BoolToVisibility x:Key="BoolToVisibility"></local:BoolToVisibility>
+        <local:BoolToVisibility x:Key="FalseToVisibility" Inverse="True"></local:BoolToVisibility>
         <local:PlayStatusVisibility x:Key="PlayStatusVisibility"></local:PlayStatusVisibility>
         <Style TargetType="Button">
             <Setter Property="Background" Value="{ThemeResource ButtonBackground}"/>
@@ -78,14 +78,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        
         <ListView Grid.ColumnSpan="3" Grid.Row="0" x:Name="list_music" 
                   ItemsSource="{x:Bind MusicVM.MusicList,Mode=OneWay}"
                   IsItemClickEnabled="True" SelectionMode="Single" 
@@ -116,13 +117,16 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <Grid Grid.Row="1">
+        <Grid  Grid.Row="1" Background="{ThemeResource AilianBtGridBackground2}">
+            <ProgressBar Visibility="{x:Bind MusicVM.IsLoading,Mode=OneWay}" BorderThickness="0" HorizontalAlignment="Stretch" Height="8" Foreground="{StaticResource AilianBtMainColor}" IsIndeterminate="True"/>
+        </Grid>
+        <Grid Grid.Row="2">
             <TextBlock TextWrapping="Wrap" Visibility="{x:Bind MusicVM.Title,Mode=OneWay,Converter={StaticResource PlayStatusVisibility}}">
                 <Run Foreground="{ThemeResource AilianBtListOtherForeground}" Text="正在播放："></Run>
                 <Run  Foreground="{ThemeResource AilianBtMainColor}" Text="{x:Bind MusicVM.Title,Mode=OneWay}"></Run>
             </TextBlock>
         </Grid>
-        <Grid Grid.Row="2" Background="#FFF4F4F4">
+        <Grid Grid.Row="3" Background="#FFF4F4F4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -140,12 +144,12 @@
             </Button>
             <Button Grid.Row="1" Grid.Column="1"   x:Name="btn_play" Margin="4"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Click="{x:Bind MusicVM.play_Click}"
-                      Visibility="{x:Bind MusicVM.IsPlayVisible,Mode=OneWay,Converter={StaticResource BoolToVisibility}}">
+                      Visibility="{x:Bind MusicVM.IsPlaying,Mode=OneWay,Converter={StaticResource FalseToVisibility}}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;"></TextBlock>
             </Button>
             <Button Grid.Row="1" Grid.Column="1"  x:Name="btn_pause" Margin="4"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Click="{x:Bind MusicVM.pause_Click}"
-                       Visibility="{x:Bind MusicVM.IsPauseVisible,Mode=OneWay,Converter={StaticResource BoolToVisibility}}">
+                       Visibility="{x:Bind MusicVM.IsPlaying,Mode=OneWay}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE769;"></TextBlock>
             </Button>
             <Button Grid.Row="1" Grid.Column="3"   x:Name="btn_next" Margin="4"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

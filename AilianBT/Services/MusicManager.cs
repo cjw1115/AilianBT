@@ -33,8 +33,15 @@ namespace AilianBT.Services
 
             _mediaPlaybackList.MaxPlayedItemsToKeepOpen = 3;
             _mediaPlayer = new MediaPlayer();
+            _mediaPlayer.AutoPlay = false;
             _mediaPlayer.Source = _mediaPlaybackList;
+
+
         }
+
+        public event Action<MusicModel> MediaLoaded;
+        public event Action<MusicModel> MediaFailed;
+        public event Action<MusicModel, MusicModel> MediaChanged;
 
         private void _mediaPlaybackList_ItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
         {
@@ -44,6 +51,7 @@ namespace AilianBT.Services
             System.Diagnostics.Debug.WriteLine("Open Failed:");
             System.Diagnostics.Debug.WriteLine(modelJson);
 #endif
+            MediaFailed?.Invoke(model);
         }
 
         private void _mediaPlaybackList_ItemOpened(MediaPlaybackList sender, MediaPlaybackItemOpenedEventArgs args)
@@ -56,11 +64,24 @@ namespace AilianBT.Services
             System.Diagnostics.Debug.WriteLine("Open Successfully:");
             System.Diagnostics.Debug.WriteLine(modelJson);
 #endif
+            MediaLoaded?.Invoke(model);
         }
 
         private void _mediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
-            
+            MusicModel newModel = null;
+            MusicModel oldModel= null;
+            if(args.NewItem!=null)
+            {
+                var newModelJson = args.NewItem.Source.CustomProperties["model"] as string;
+                newModel = JsonHelper.DerializeObjec<MusicModel>(newModelJson);
+            }
+            if (args.OldItem != null)
+            {
+                var oldModelJson = args.OldItem.Source.CustomProperties["model"] as string;
+                oldModel = JsonHelper.DerializeObjec<MusicModel>(oldModelJson);
+            }
+            MediaChanged?.Invoke(newModel, oldModel);
         }
         
         public async void Add(MusicModel model,int? index=null)

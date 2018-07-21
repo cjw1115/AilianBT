@@ -29,19 +29,54 @@ namespace AilianBT.ViewModels
         MusicService musicService = new MusicService();
         
         CoreDispatcher _coreDispatcher;
-        MusicManager musicManager = new MusicManager();
+        private MusicManager musicManager;
         public MusicVM(CoreDispatcher coreDispatcher) : this()
         {
             _coreDispatcher = coreDispatcher;
         }
+        System.Threading.SynchronizationContext SynchronizationContext = System.Threading.SynchronizationContext.Current;
         public MusicVM()
-        {   
+        {
+            musicManager = new MusicManager();
+            musicManager.MediaFailed += MusicManager_MediaFailed;
+            musicManager.MediaLoaded += MusicManager_MediaLoaded;
+            musicManager.MediaChanged += MusicManager_MediaChanged;
         }
-        
+
+        private void MusicManager_MediaChanged(MusicModel newModel, MusicModel oldModel)
+        {
+            SynchronizationContext.Post((o) =>
+            {
+                if (newModel != null)
+                {
+                    if (IsLoading == true)
+                    {
+                        IsLoading = false;
+                        IsPlaying = true;
+                    }
+                }
+                else
+                {
+                    IsPlaying = false;
+                    //stop play
+                }
+            }, null);
+        }
+
+        private void MusicManager_MediaLoaded(MusicModel obj)
+
+        {
+            
+        }
+
+        private void MusicManager_MediaFailed(MusicModel obj)
+        {
+            
+        }
+
         public async void Load()
         {
             await Init();
-            CacheMusic();
         }
         public void CacheMusic(int? index=null)
         {
@@ -126,9 +161,6 @@ namespace AilianBT.ViewModels
                 App.ShowNotification(e.Message);
                 return;
             }
-
-            IsPlayVisible = true;
-            IsPauseVisible = false;
             CanPreviou = true;
             CanNext = true;
         }
@@ -150,17 +182,17 @@ namespace AilianBT.ViewModels
             get { return _canNext; }
             set { _canNext = value; OnPropertyChanged(); }
         }
-        private bool _isPlayVisible;
-        public bool IsPlayVisible
+        private bool _isPlaying = false;
+        public bool IsPlaying
         {
-            get { return _isPlayVisible; }
-            set { _isPlayVisible = value; OnPropertyChanged(); }
-        }
-        private bool _isPauseVisible;
-        public bool IsPauseVisible
-        {
-            get { return _isPauseVisible; }
-            set { _isPauseVisible = value; OnPropertyChanged(); }
+            get { return _isPlaying; }
+            set
+            {
+                if(_isPlaying!=value)
+                {
+                    _isPlaying = value; OnPropertyChanged();
+                }
+            }
         }
         private string _title;
         public string Title
@@ -168,6 +200,21 @@ namespace AilianBT.ViewModels
             get { return _title; }
             set { _title = value; OnPropertyChanged(); }
         }
+        private bool _isLoading = false;
+
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                if (value != _isLoading)
+                {
+                    _isLoading = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         public void previou_Click()
         {
@@ -185,12 +232,28 @@ namespace AilianBT.ViewModels
 
         public void play_Click()
         {
-            CacheMusic();
-            musicManager.Play();
+            if(isPaused==true)
+            {
+                isPaused = false;
+                IsPlaying = true;
+                musicManager.Play();
+            }
+            else
+            {
+                IsLoading = true;
+                CacheMusic();
+                musicManager.Play();
+            }
+            
         }
-
+        /// <summary>
+        /// Mark status of pause.
+        /// </summary>
+        private bool isPaused = false;
         public void pause_Click()
         {
+            IsPlaying = false;
+            isPaused = true;
             musicManager.Pause();
         }
 
@@ -210,6 +273,7 @@ namespace AilianBT.ViewModels
         }
         public void ItemClick(MusicModel model)
         {
+            IsLoading = true;
             CacheMusic();
             musicManager.Play();
         }
