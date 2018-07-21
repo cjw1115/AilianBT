@@ -42,6 +42,7 @@ namespace AilianBT.Services
         public event Action<MusicModel> MediaLoaded;
         public event Action<MusicModel> MediaFailed;
         public event Action<MusicModel, MusicModel> MediaChanged;
+        public event Action<MusicModel> MediaLoading;
 
         private void _mediaPlaybackList_ItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
         {
@@ -84,7 +85,7 @@ namespace AilianBT.Services
             MediaChanged?.Invoke(newModel, oldModel);
         }
         
-        public async void Add(MusicModel model,int? index=null)
+        public async Task Add(MusicModel model,int? index=null)
         {
             IRandomAccessStream ras = null;
             try
@@ -94,7 +95,6 @@ namespace AilianBT.Services
             catch
             {
                 throw new OpenStreamFailedException();
-                return;
             }
 
             var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
@@ -135,13 +135,28 @@ namespace AilianBT.Services
                 _mediaPlaybackList.Items.RemoveAt(index.Value);
             }
         }
-        public void Previous()
+        public void Previous(MusicModel model)
         {
-            _mediaPlaybackList.MovePrevious();
+            var index = GetIndex(model);
+            if (index == null)
+            {
+                //Media is in downloading...
+                MediaLoading?.Invoke(model);
+                return;
+            }
+            _mediaPlaybackList.MoveTo(index.Value);
             _mediaPlayer.Play();
         }
-        public void Play()
+        public void Play(MusicModel model)
         {
+            var index = GetIndex(model);
+            if (index == null)
+            {
+                //Media is in downloading...
+                MediaLoading?.Invoke(model);
+                return;
+            }
+            _mediaPlaybackList.MoveTo(index.Value);
             _mediaPlayer.Play();
         }
         public void Pause()
@@ -149,10 +164,32 @@ namespace AilianBT.Services
             _mediaPlayer.Pause();
         }
 
-        public void Next()
+        public void Next(MusicModel model)
         {
-            _mediaPlaybackList.MoveNext();
+            var index = GetIndex(model);
+            if(index==null)
+            {
+                //Media is in downloading...
+                MediaLoading?.Invoke(model);
+                return;
+            }
+            _mediaPlaybackList.MoveTo(index.Value);
             _mediaPlayer.Play();
+        }
+
+        private uint? GetIndex(MusicModel model)
+        {
+            uint? index = null;
+            for (int i = 0; i < _mediaPlaybackList.Items.Count; i++)
+            {
+                var item = JsonHelper.DerializeObjec<MusicModel>(_mediaPlaybackList.Items[i].Source.CustomProperties["model"] as string);
+                if (model.Equals(item))
+                {
+                    index = (uint)i;
+                    break;
+                }
+            }
+            return index;
         }
     }
 }

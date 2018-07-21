@@ -41,6 +41,16 @@ namespace AilianBT.ViewModels
             musicManager.MediaFailed += MusicManager_MediaFailed;
             musicManager.MediaLoaded += MusicManager_MediaLoaded;
             musicManager.MediaChanged += MusicManager_MediaChanged;
+            musicManager.MediaLoading += MusicManager_MediaLoading;
+        }
+
+        private void MusicManager_MediaLoading(MusicModel model)
+        {
+            SynchronizationContext.Post((o) =>
+            {
+                IsLoading = true;
+            }, null);
+           
         }
 
         private void MusicManager_MediaChanged(MusicModel newModel, MusicModel oldModel)
@@ -63,10 +73,16 @@ namespace AilianBT.ViewModels
             }, null);
         }
 
-        private void MusicManager_MediaLoaded(MusicModel obj)
-
+        private void MusicManager_MediaLoaded(MusicModel model)
         {
-            
+            SynchronizationContext.Post((o) =>
+            {
+                if (model.Equals(MusicList[CurrentIndex]))
+                {
+                    IsLoading = false;
+                    musicManager.Play(model);
+                }
+            },null);
         }
 
         private void MusicManager_MediaFailed(MusicModel obj)
@@ -78,7 +94,7 @@ namespace AilianBT.ViewModels
         {
             await Init();
         }
-        public void CacheMusic(int? index=null)
+        public async Task CacheMusic(int? index=null)
         {
             var value = index == null ? CurrentIndex : index.Value;
             if (value < 0 || value >= MusicList.Count)
@@ -100,7 +116,7 @@ namespace AilianBT.ViewModels
                 musicManager.Add(MusicList[value-1]);
             }
 
-            musicManager.Add(MusicList[value]);
+            await musicManager.Add(MusicList[value]);
 
             if(MusicList.Count> value + 1)
             {
@@ -110,7 +126,7 @@ namespace AilianBT.ViewModels
             
             
         }
-        public void CacheNextMusic()
+        public async Task CacheNextMusic()
         {
             if(CurrentIndex!=0)
             {
@@ -127,7 +143,7 @@ namespace AilianBT.ViewModels
                 CanNext = false;
             }
         }
-        public void CachePreviousMusic()
+        public async Task CachePreviousMusic()
         {
             if (CurrentIndex != MusicList.Count-1)
             {
@@ -136,7 +152,7 @@ namespace AilianBT.ViewModels
             
             if (CurrentIndex - 1 >0)
             {
-                musicManager.Add(MusicList[CurrentIndex -2],0);
+               musicManager.Add(MusicList[CurrentIndex -2],0);
             }
             else
             {
@@ -215,8 +231,7 @@ namespace AilianBT.ViewModels
             }
         }
 
-
-        public void previou_Click()
+        public async void previou_Click()
         {
             if (CurrentIndex <=0)
             {
@@ -224,25 +239,25 @@ namespace AilianBT.ViewModels
             }
             if (CurrentIndex - 1 >=0)
             {
-                CachePreviousMusic();
-                musicManager.Previous();
+                await CachePreviousMusic();
+                musicManager.Previous(MusicList[CurrentIndex - 1]);
                 CurrentIndex--;
             }
         }
 
-        public void play_Click()
+        public async void play_Click()
         {
             if(isPaused==true)
             {
                 isPaused = false;
                 IsPlaying = true;
-                musicManager.Play();
+                musicManager.Play(MusicList[CurrentIndex]);
             }
             else
             {
                 IsLoading = true;
-                CacheMusic();
-                musicManager.Play();
+                await CacheMusic();
+                musicManager.Play(MusicList[CurrentIndex]);
             }
             
         }
@@ -257,7 +272,7 @@ namespace AilianBT.ViewModels
             musicManager.Pause();
         }
 
-        public void next_Click()
+        public async void next_Click()
         {
             if(CurrentIndex>=MusicList.Count-1)
             {
@@ -265,17 +280,19 @@ namespace AilianBT.ViewModels
             }
             if(CurrentIndex+1<=MusicList.Count-1)
             {
-                CacheNextMusic();
-                musicManager.Next();
+                await CacheNextMusic();
+                musicManager.Next(MusicList[CurrentIndex + 1]);
                 CurrentIndex++;
             }
             
         }
-        public void ItemClick(MusicModel model)
+        public async void ItemClick(MusicModel model)
         {
             IsLoading = true;
-            CacheMusic();
-            musicManager.Play();
+
+            await CacheMusic();
+            musicManager.Play(model);
         }
     }
 }
+

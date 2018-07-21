@@ -18,5 +18,21 @@ namespace AilianBT.Models
         public Uri Uri { get; set; }
         [DataMember]
         public Uri RealUri { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var model = obj as MusicModel;
+            if (model == null)
+                return false;
+            if (model.ID == ID &&
+                model.Title == Title &&
+                model.Uri == Uri &&
+                model.RealUri == RealUri)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
     }
 }
