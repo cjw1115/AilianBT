@@ -728,8 +728,10 @@
                     </SplitView.Content>
                 </SplitView>
             </RelativePanel>
-            <Grid x:Name="gridDetail"  Grid.Column="1">
-                <Frame x:Name="DetailFrame" >
+            <Grid x:Name="gridDetail"  Grid.Column="1" Background="{StaticResource AilianBtGridBackground2}">
+                <Image HorizontalAlignment="Right" VerticalAlignment="Stretch" Source="/Assets/background.png">
+                </Image>
+                <Frame x:Name="DetailFrame" Background="Transparent">
                 </Frame>
             </Grid>
         </Grid>

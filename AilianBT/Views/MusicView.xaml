@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AilianBT.Views"
     xmlns:models="using:AilianBT.Models"
+    xmlns:converters="using:AilianBT.ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -78,6 +79,9 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <converters:VisibilityInverseConverter x:Key="VisibilityInverseConverter"></converters:VisibilityInverseConverter>
+        <converters:NullToVisibityConverter x:Key="NullToVisibityConverter"></converters:NullToVisibityConverter>
+        <converters:PadleftConverter x:Key="PadleftConverter" PadCount="4"></converters:PadleftConverter>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -96,11 +100,16 @@
                 <DataTemplate x:DataType="models:MusicModel">
                     <Grid Background="Transparent" IsDoubleTapEnabled="True" DoubleTapped="Grid_DoubleTapped" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="48"/>
                             <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Text="{x:Bind ID,Mode=OneWay}" Margin="4,0,4,0"></TextBlock>
+                        <TextBlock VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Text="{x:Bind ID,Mode=OneWay,Converter={StaticResource PadleftConverter}}" Margin="4,0,4,0"></TextBlock>
                         <TextBlock VerticalAlignment="Center" Grid.Column="1" Text="{x:Bind Title,Mode=OneWay}" TextWrapping="Wrap" Margin="4,0,4,0"></TextBlock>
+                        <TextBlock Width="40" Grid.Column="2" VerticalAlignment="Center" Margin="4" FontSize="20" Text="&#xf05d;" FontFamily="{StaticResource FontAwesome}"
+                                   Foreground="{ThemeResource AilianBtTitleUnselectForeground}" Visibility="{Binding Path=Visibility,ElementName=tbIconCached,Converter={StaticResource VisibilityInverseConverter}}"></TextBlock>
+                        <TextBlock x:Name="tbIconCached" Width="40" Grid.Column="2" VerticalAlignment="Center" Margin="4" FontSize="20" Text="&#xf05d;" FontFamily="{StaticResource FontAwesome}"
+                                   Foreground="{ThemeResource AilianBtMainColor}" Visibility="{x:Bind HasCached,Mode=OneWay}"></TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -120,11 +129,11 @@
         <Grid  Grid.Row="1" Background="{ThemeResource AilianBtGridBackground2}">
             <ProgressBar Visibility="{x:Bind MusicVM.IsLoading,Mode=OneWay}" BorderThickness="0" HorizontalAlignment="Stretch" Height="8" Foreground="{StaticResource AilianBtMainColor}" IsIndeterminate="True"/>
         </Grid>
-        <Grid Grid.Row="2">
-            <TextBlock TextWrapping="Wrap" Visibility="{x:Bind MusicVM.Title,Mode=OneWay,Converter={StaticResource PlayStatusVisibility}}">
-                <Run Foreground="{ThemeResource AilianBtListOtherForeground}" Text="正在播放："></Run>
-                <Run  Foreground="{ThemeResource AilianBtMainColor}" Text="{x:Bind MusicVM.Title,Mode=OneWay}"></Run>
-            </TextBlock>
+        <Grid Grid.Row="2" Padding="10,0,10,0" Background="{ThemeResource AilianBtMainColor}">
+            <StackPanel   Height="40" Visibility="{x:Bind tbMusicTitle.Text,Mode=OneWay,Converter={StaticResource NullToVisibityConverter}}" Orientation="Horizontal">
+                <TextBlock  VerticalAlignment="Center" FontSize="20" Foreground="White" Text="&#xf001;" FontFamily="{StaticResource FontAwesome}"></TextBlock>
+                <TextBlock  VerticalAlignment="Center" FontSize="16" Foreground="White" Margin="8,0,0,0" x:Name="tbMusicTitle" Text="{x:Bind MusicVM.Title,Mode=OneWay}" TextWrapping="Wrap"/>
+            </StackPanel>
         </Grid>
         <Grid Grid.Row="3" Background="#FFF4F4F4">
             <Grid.ColumnDefinitions>

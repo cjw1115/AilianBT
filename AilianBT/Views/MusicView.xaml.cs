@@ -36,8 +36,8 @@ namespace AilianBT.Views
         public MusicVM MusicVM { get; set; }
         public MusicView()
         {
-            MusicVM = new MusicVM(this.Dispatcher);
             this.InitializeComponent();
+            MusicVM = new MusicVM(this.Dispatcher);
             this.Loaded += MusicView_Loaded;
         }
 

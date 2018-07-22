@@ -147,12 +147,15 @@
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\SimpleIoc.cs" />
     <Compile Include="Triggers\NavigationViewAdaptiveTrigger.cs" />
+    <Compile Include="ValueConverters\ListIndexConverter.cs" />
+    <Compile Include="ValueConverters\NullToVisibityConverter.cs" />
     <Compile Include="ValueConverters\BoolToVisibityConverter.cs" />
     <Compile Include="ValueConverters\BytesToImageSouceConverter.cs" />
     <Compile Include="ValueConverters\DataSizeConverter.cs" />
     <Compile Include="ValueConverters\DownloadStatusToIconConverter.cs" />
     <Compile Include="ValueConverters\NavigationListItemConverter.cs" />
     <Compile Include="ValueConverters\PullHeightConverter.cs" />
+    <Compile Include="ValueConverters\VisibilityInverseConverter.cs" />
     <Compile Include="ViewModels\DownloadedVM.cs" />
     <Compile Include="ViewModels\DownloadingVM.cs" />
     <Compile Include="ViewModels\KeyVM.cs" />
@@ -161,6 +164,7 @@
     <Compile Include="ViewModels\NavigationVM.cs" />
     <Compile Include="ViewModels\SearchVM.cs" />
     <Compile Include="ViewModels\ShowVM.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\DefaultDetailView.xaml.cs">
       <DependentUpon>DefaultDetailView.xaml</DependentUpon>
@@ -202,6 +206,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\background.png" />
     <Content Include="Assets\JS\GetHeight.js" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\Square150x150Logo.scale-100.png" />
