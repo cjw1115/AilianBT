@@ -40,9 +40,24 @@ namespace AilianBT.Views
             this.imgbackground.Source = await FileService.GetBackgroundImage();
 
             var folder =await FileService.GetDownloadFolder();
-            tbDownload.Content = folder.Path;
+            if(folder!=null)
+            {
+                tbDownload.Content = folder.Path;
+            }
+
             var taostswitch=FileService.GetLocalSetting<bool>("toastswitch");
             this.toast_switch.IsOn = taostswitch;
+
+            var livingmode = FileService.GetLocalSetting<bool?>("livingmode");
+            if(livingmode==null)
+            {
+                this.switchLivingMode.IsOn = true;
+                FileService.SetLocalSetting<bool?>("livingmode",true);
+            }
+            else
+            {
+                this.switchLivingMode.IsOn = livingmode.Value;
+            }
 
             ThemeColors.Clear();
             var colors = Services.SettingService.GetAllColor();
@@ -53,8 +68,13 @@ namespace AilianBT.Views
             
             AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
             var theme=await setting.GetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name);
-            theme=ThemeColors.Where(m => m.Name == theme.Name).FirstOrDefault();
-            SelectedTheme= theme;
+            if(theme==null)
+            {
+                theme = ThemeColors.First();
+                await setting.SetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name, theme);
+                
+            }
+            SelectedTheme= ThemeColors.Where(m=>m.ThemeColor==theme.ThemeColor).First();
         }
 
         private async void  DownloadLocation_Click(object sender, RoutedEventArgs e)
@@ -109,6 +129,10 @@ namespace AilianBT.Views
             PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName));
         }
 
+        private void switchLivingMode_Toggled(object sender, RoutedEventArgs e)
+        {
+            FileService.SetLocalSetting<bool?>("livingmode", switchLivingMode.IsOn);
+        }
     }
     public class ColorBrushConverter : IValueConverter
     {

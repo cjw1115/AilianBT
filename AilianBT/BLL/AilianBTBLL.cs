@@ -88,15 +88,16 @@ namespace AilianBT.BLL
                 var pasrser = new HtmlParser();
                 var doc = pasrser.Parse(content);
 
+                var isLiving = BtDownload.Services.FileService.GetLocalSetting<bool?>("livingmode").Value;
 
-                //var links=doc.GetElementsByTagName("link").Where(m => m.HasAttribute("rel") && m.GetAttribute("rel") == "stylesheet");
-                //foreach(var item in links)
-                //{
-                //    var href = item.GetAttribute("href");
-                //    item.SetAttribute("href", 首页 + href);
-                //    html += item.OuterHtml + "<br/>";
-                //}
-
+                string torrent_url = null;
+                string magnet_url = null;
+                if (isLiving)
+                {
+                    var hasCode = doc.Title.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Last();
+                    torrent_url = $"http://v2.uploadbt.com/?r=down&hash={hasCode}";
+                    magnet_url = $"magnet:?xt=urn:btih:{hasCode}";
+                }
                 var ul = doc.GetElementsByClassName("content detail").FirstOrDefault();
                 var imgs = ul.QuerySelectorAll("img");
                 foreach (var item in imgs)
@@ -113,15 +114,24 @@ namespace AilianBT.BLL
                     item.SetAttribute("src", 首页 + link);
                 }
                 model.FileInfo = file.OuterHtml;
-
-                var div = doc.GetElementsByClassName("down").FirstOrDefault();
-                if (div != null)
+                
+                if(isLiving)
                 {
-                    var link = 首页 + div.Children[0].GetElementsByTagName("a").FirstOrDefault().GetAttribute("href");
-                    model.BtLink = link;
-                    link = div.Children[1].GetElementsByTagName("a").FirstOrDefault().GetAttribute("onclick");
-                    link = Regex.Match(link, @"magnet[\w\W]*(?=')").ToString();
-                    model.MagnetLink = link;
+
+                    model.BtLink = torrent_url;
+                    model.MagnetLink = magnet_url;
+                }
+                else
+                {
+                    var div = doc.GetElementsByClassName("down").FirstOrDefault();
+                    if (div != null)
+                    {
+                        var link = 首页 + div.Children[0].GetElementsByTagName("a").FirstOrDefault().GetAttribute("href");
+                        model.BtLink = link;
+                        link = div.Children[1].GetElementsByTagName("a").FirstOrDefault().GetAttribute("onclick");
+                        link = Regex.Match(link, @"magnet[\w\W]*(?=')").ToString();
+                        model.MagnetLink = link;
+                    }
                 }
                 return model;
             }

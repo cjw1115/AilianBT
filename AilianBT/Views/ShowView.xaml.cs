@@ -32,6 +32,15 @@ namespace AilianBT.Views
             ShowVM = locator.ShowVM;
             this.Loaded += ShowView_Loaded;
             this.InitializeComponent();
+            this.SizeChanged += ShowView_SizeChanged;
+        }
+        private bool hasNavigated = false;
+        private void ShowView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(hasNavigated)
+            {
+                WebViewSummary_NavigationCompleted(null, null);
+            }
         }
 
         private object naviParam;
@@ -46,7 +55,8 @@ namespace AilianBT.Views
 
         private async void WebViewSummary_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            var webView=sender as WebView;
+            hasNavigated = true;
+            var webView = webViewSummary;
             var jsfile=await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/JS/GetHeight.js"));
             string jsContent = "";
             using (var stream = await jsfile.OpenStreamForReadAsync())

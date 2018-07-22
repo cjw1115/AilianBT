@@ -127,7 +127,12 @@ namespace BtDownload.Views
             //await SetStorageFolder();
 
             defaultFolder = await FileService.GetDownloadFolder();
-
+            if (defaultFolder == null)
+            {
+                AilianBT.App.ShowNotification("需要选择默认下载地址");
+                return;
+            }
+                
             try
             {
                 var uri = DownloadService.GetDownloadUri(this.tbUri.Text);
