@@ -130,6 +130,7 @@ namespace AilianBT
             }
 
             LoadBasicSetting();
+            InitLivingMode();
         }
 
         /// <summary>
@@ -166,6 +167,7 @@ namespace AilianBT
 
         public async void LoadBasicSetting()
         {
+            
             AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
             var model = await setting.GetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name);
             if (model != null)
@@ -174,6 +176,14 @@ namespace AilianBT
             {
                 var brush = Application.Current.Resources["AilianBtMainColor"] as SolidColorBrush;
                 Services.SettingService.SetThemeColor(brush.Color);
+            }
+        }
+        public void InitLivingMode()
+        {
+            var livingmode = FileService.GetLocalSetting<bool?>("livingmode");
+            if (livingmode == null)
+            {
+                FileService.SetLocalSetting<bool?>("livingmode", true);
             }
         }
     }
