@@ -31,6 +31,7 @@ namespace AilianBT.Views
         public ViewModels.MainVM MainVM { get; set; }
         public MainView()
         {
+            NavigationCacheMode = NavigationCacheMode.Required;
             var locator = App.Current.Resources["Locator"] as ViewModels.ViewModelLocator;
             MainVM = locator.MainVM;
             this.InitializeComponent();

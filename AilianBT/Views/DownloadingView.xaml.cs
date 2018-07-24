@@ -46,6 +46,7 @@ namespace BtDownload.Views
             DownloadedVM = SimpleIoc.GetInstance<DownloadedVM>();
             _downloadService = new DownloadService();
 
+            NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
             this.Loaded += DownloadingView_Loaded;
 

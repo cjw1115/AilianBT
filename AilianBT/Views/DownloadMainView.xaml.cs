@@ -29,7 +29,7 @@ namespace BtDownload.Views
         
         public DownloadMainView()
         {
-            this.NavigationCacheMode = NavigationCacheMode.Enabled;
+            this.NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
         }
     }
