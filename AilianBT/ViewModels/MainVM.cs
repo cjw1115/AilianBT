@@ -57,7 +57,7 @@ namespace AilianBT.ViewModels
 
         }
         
-        public async void LoadMore()
+        public async Task LoadMore()
         {
             IList<AilianResModel> newlist = null;
             try
@@ -90,7 +90,7 @@ namespace AilianBT.ViewModels
             set { Set(ref _isRefreshing, value); }
         }
 
-        public async void Refresh()
+        public async Task Refresh()
         {
             _pageIndex = 1;
             IList<AilianResModel> newlist = null;

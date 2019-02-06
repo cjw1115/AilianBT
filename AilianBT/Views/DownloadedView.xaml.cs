@@ -30,7 +30,7 @@ namespace BtDownload.Views
         public DownloadedVM DownloadedVM { get; set; }
         public DownloadedView()
         {
-            
+            NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
             this.Loaded += DownloadedView_Loaded; ;
             DownloadedVM = SimpleIoc.GetInstance<DownloadedVM>();

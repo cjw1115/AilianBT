@@ -120,7 +120,7 @@
         <StackPanel Padding="20" >
             <StackPanel Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">下载目录</TextBlock>
-                <Button Margin="8,0,0,0"  Foreground="{StaticResource  AilianBtListMainForeground}" Name="tbDownload" Click="DownloadLocation_Click" HorizontalAlignment="Stretch">
+                <Button Margin="8,0,0,0" MinHeight="20" Foreground="{StaticResource  AilianBtListMainForeground}" Name="tbDownload" Click="DownloadLocation_Click" HorizontalAlignment="Stretch">
                     <Button.Template>
                         <ControlTemplate>
                             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource  AilianBtGridBackground2}" IsTapEnabled="False" >
@@ -142,15 +142,23 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel  Margin="0,20,0,0">
+                <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}" Text="生存战略模式"></TextBlock>
+                <TextBlock Margin="8,0,8,0" FontSize="12" Foreground="{StaticResource   AilianBtTitleUnselectForeground}" TextWrapping="Wrap">"生存战略模式"又称为 "生存模式"、 "贤者模式"、 "飞行模式"、 "上岸模式"</TextBlock>
+                <StackPanel Margin="8,0,0,0"  Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center"  Foreground="{StaticResource  AilianBtListMainForeground}">是否打开该模式</TextBlock>
+                    <ToggleSwitch x:Name="switchLivingMode" Margin="8,0,0,0"  Toggled="switchLivingMode_Toggled"></ToggleSwitch>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel  Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">当前版本</TextBlock>
                 <TextBlock Margin="8,0,0,0" Foreground="{StaticResource  AilianBtListMainForeground}" Text="{x:Bind Version,Mode=OneTime}"></TextBlock>
             </StackPanel>
             <StackPanel Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource  AilianBtMainColor}">主色调</TextBlock>
-                <ListView Margin="8" 
-                          ItemContainerStyle="{StaticResource ListViewItem}"
-                          Foreground="{ThemeResource AilianBtMainColor}" 
+                <ListView Margin="8"  x:Name="lvThemes" ItemContainerStyle="{StaticResource ListViewItem}" Foreground="{ThemeResource AilianBtMainColor}" 
+                           SelectedItem="{x:Bind SelectedTheme,Mode=OneWay}"
                           ItemsSource="{x:Bind ThemeColors,Mode=OneWay}"
+                         SelectionMode="Single"
                        IsItemClickEnabled="True" ItemClick="ThemeItemClick">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>

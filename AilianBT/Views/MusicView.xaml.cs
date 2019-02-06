@@ -1,7 +1,5 @@
-﻿using AilianBT.ViewModels;
-using AilianBTShared.Helpers;
-using AilianBTShared.Models;
-using AilianBTShared.Services;
+﻿using AilianBT.Models;
+using AilianBT.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,17 +36,35 @@ namespace AilianBT.Views
         public MusicVM MusicVM { get; set; }
         public MusicView()
         {
-            MusicVM = new MusicVM(this.Dispatcher);
+            NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
+            MusicVM = new MusicVM(this.Dispatcher);
+            this.Loaded += MusicView_Loaded;
         }
 
-        
+        private void MusicView_Loaded(object sender, RoutedEventArgs e)
+        {
+            MusicVM.Load();
+        }
+
+        private void Grid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            var grid=sender as FrameworkElement;
+            //ListViewItemPresenter presenter = (ListViewItemPresenter)VisualTreeHelper.GetParent(grid);
+            //ListViewItem item = (ListViewItem)VisualTreeHelper.GetParent(presenter);
+            MusicVM.ItemClick(grid.DataContext as MusicModel);
+        }
     }
     public class BoolToVisibility : IValueConverter
     {
+        public bool Inverse { get; set; }
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             bool status = (bool)value;
+            if(Inverse)
+            {
+                status = !status;
+            }
             if (status == true)
             {
                 return Visibility.Visible;

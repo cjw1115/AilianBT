@@ -8,34 +8,47 @@
     mc:Ignorable="d"
     Height="32" >
     <UserControl.Resources>
-        <Style TargetType="Button">
+        <Style x:Key="SearchButton" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Grid x:Name="RootGrid">
+                        <Grid x:Name="RootGrid" Background="Transparent" Width="32">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup>
                                     <VisualState x:Name="Normal"></VisualState>
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="rectBackground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="iconSearch">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#ffffff"/>
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="rectBackground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}"/>
                                             </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="iconSearch">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#ffffff"/>
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="scaleTrans.ScaleX" Value="0.8"></Setter>
+                                            <Setter Target="scaleTrans.ScaleY" Value="0.8"></Setter>
+                                        </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentPresenter" VerticalContentAlignment="Center" Width="40" HorizontalContentAlignment="Center"></ContentPresenter>
+                            <Rectangle x:Name="rectBackground" Fill="Transparent"></Rectangle>
+                            <TextBlock x:Name="iconSearch" HorizontalAlignment="Center" Foreground="{StaticResource AilianBtMainColor}" VerticalAlignment="Center"  FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"
+                                       RenderTransformOrigin="0.5,0.5">
+                                <TextBlock.RenderTransform>
+                                    <ScaleTransform x:Name="scaleTrans" ScaleX="1" ScaleY="1"></ScaleTransform>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -52,10 +65,8 @@
         <TextBox Padding="8,4,8,4" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="{StaticResource AilianBtMainColor }"
                  x:Name="tbSearch" MinWidth="300"  Text="{x:Bind SearchKey,Mode=OneWay}"
                  PlaceholderText="请输入关键字" BorderThickness="0"/>
-        <Button Foreground="{StaticResource AilianBtMainColor}" Background="Transparent" HorizontalAlignment="Center" Grid.Column="1" BorderThickness="0" x:Name="btnSearch"  VerticalAlignment="Stretch">
-            <Button.Content>
-                <TextBlock  FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"></TextBlock>
-            </Button.Content>
+        <Button  Style="{StaticResource SearchButton}" Background="Transparent" HorizontalAlignment="Center" Grid.Column="1" BorderThickness="0" x:Name="btnSearch"  VerticalAlignment="Stretch">
+            
         </Button>
     </Grid>
 </UserControl>

@@ -10,7 +10,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
-        <converters:PullHeightConverter x:Key="PullHeightConverter"></converters:PullHeightConverter>
         <Style  TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
             <Setter Property="Template">
@@ -371,34 +370,25 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <!--<ListView.Template>
-                <ControlTemplate>
-                    <ScrollViewer x:Name="scrollViewer" VerticalContentAlignment="Bottom" VerticalScrollBarVisibility="Hidden">
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition />
-                                <RowDefinition Height="auto"></RowDefinition>
-                            </Grid.RowDefinitions>
-                           
-
-                            <ItemsPresenter Grid.Row="1"></ItemsPresenter>
-                            
-                            <Rectangle Grid.Row="1" Grid.RowSpan="2" Height="{Binding ElementName=scrollViewer,
-                                Path=ViewportHeight,Mode=OneWay,Converter={StaticResource PullHeightConverter}}"></Rectangle>
-                        </Grid>
-
-                    </ScrollViewer>
-                </ControlTemplate>
-            </ListView.Template>-->
             <ListView.Footer>
-                <Button  Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Content="点击加载更多" Click="Button_Click"></Button>
+                <Grid>
+                    <TextBlock x:Name="iconLoadingMore" Visibility="Visible" Foreground="{StaticResource AilianBtMainColor}" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center" Text="&#xf110;" FontFamily="{StaticResource FontAwesome}"></TextBlock>
+                    <Button x:Name="iconNeedMore" Visibility="Collapsed" Foreground="{StaticResource AilianBtMainColor}" Background="Transparent"  BorderThickness="0" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Click="Button_Click"
+                        Content="&#xf103;" FontSize="36" FontFamily="{StaticResource FontAwesome}" >
+                        <Button.Template>
+                            <ControlTemplate>
+                                <ContentPresenter HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></ContentPresenter>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    
+                </Grid>
             </ListView.Footer>
         </ListView>
         <ProgressRing Grid.Row="0" Height="120" x:Name="progressRing"  ></ProgressRing>
-        <CommandBar Style="{StaticResource AilianBtCommandBar}"  Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent">
-            <AppBarButton Foreground="White" Icon="Find" Label="查找"  Click="{x:Bind MainVM.Search_Click}"></AppBarButton>
-            <AppBarButton x:Name="btnRefresh"   Foreground="White"  Label="刷新" Click="Refresh_Click"  Icon="Refresh"/>
+        <CommandBar Foreground="{StaticResource AilianBtMainColor}" Style="{StaticResource CommandBarRevealStyle}"  Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Background="Transparent">
+            <AppBarButton Foreground="{StaticResource AilianBtMainColor}" Icon="Find" Label="查找"  Click="{x:Bind MainVM.Search_Click}"></AppBarButton>
+            <AppBarButton x:Name="btnRefresh"   Foreground="{StaticResource AilianBtMainColor}"  Label="刷新" Click="Refresh_Click"  Icon="Refresh"/>
         </CommandBar>
 
     </Grid>

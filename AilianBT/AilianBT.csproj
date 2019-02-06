@@ -11,16 +11,20 @@
     <AssemblyName>AilianBT</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>AilianBT_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Never</AppxBundle>
-    <PackageCertificateThumbprint>78A12491525D0B51D427BD3207912539576C497D</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>DA718AA002AB72D5BB5284B3019DDF8ED7ED3ECA</PackageCertificateThumbprint>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
+    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -83,6 +87,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -99,7 +104,6 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="AilianBT_StoreKey.pfx" />
-    <None Include="AilianBT_TemporaryKey.pfx" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +117,8 @@
     </Compile>
     <Compile Include="DAL\Class1.cs" />
     <Compile Include="Exceptions\Exceptions.cs" />
+    <Compile Include="Exceptions\OpenStreamFailedException.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\VisualTreeHelperTool.cs" />
     <Compile Include="Migrations\20160731064812_init.cs" />
     <Compile Include="Migrations\20160731064812_init.designer.cs">
@@ -124,6 +130,7 @@
     </Compile>
     <Compile Include="Migrations\DownloadDbContextModelSnapshot.cs" />
     <Compile Include="Models\AilianResModel.cs" />
+    <Compile Include="Models\MusicModel.cs" />
     <Compile Include="Models\ThemeColorModel.cs" />
     <Compile Include="Models\DownloadDbContext.cs" />
     <Compile Include="Models\DownloadedInfo.cs" />
@@ -140,17 +147,21 @@
     <Compile Include="Services\DownloadService.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\HttpBaseService.cs" />
+    <Compile Include="Services\MusicManager.cs" />
     <Compile Include="Services\MusicService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Services\SimpleIoc.cs" />
     <Compile Include="Triggers\NavigationViewAdaptiveTrigger.cs" />
+    <Compile Include="ValueConverters\ListIndexConverter.cs" />
+    <Compile Include="ValueConverters\NullToVisibityConverter.cs" />
     <Compile Include="ValueConverters\BoolToVisibityConverter.cs" />
     <Compile Include="ValueConverters\BytesToImageSouceConverter.cs" />
     <Compile Include="ValueConverters\DataSizeConverter.cs" />
     <Compile Include="ValueConverters\DownloadStatusToIconConverter.cs" />
     <Compile Include="ValueConverters\NavigationListItemConverter.cs" />
     <Compile Include="ValueConverters\PullHeightConverter.cs" />
+    <Compile Include="ValueConverters\VisibilityInverseConverter.cs" />
     <Compile Include="ViewModels\DownloadedVM.cs" />
     <Compile Include="ViewModels\DownloadingVM.cs" />
     <Compile Include="ViewModels\KeyVM.cs" />
@@ -159,6 +170,7 @@
     <Compile Include="ViewModels\NavigationVM.cs" />
     <Compile Include="ViewModels\SearchVM.cs" />
     <Compile Include="ViewModels\ShowVM.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\DefaultDetailView.xaml.cs">
       <DependentUpon>DefaultDetailView.xaml</DependentUpon>
@@ -200,6 +212,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\background.png" />
+    <Content Include="Assets\JS\GetHeight.js" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\Square150x150Logo.scale-100.png" />
     <Content Include="Assets\Square310x310Logo.scale-100.png" />
@@ -210,6 +224,7 @@
     <Content Include="Images\background\2.png" />
     <Content Include="Images\background\3.png" />
     <Content Include="Images\Startup\1.png" />
+    <Content Include="Assets\Fonts\fontawesome-webfont.ttf" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -301,17 +316,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MusciBackgroundShared\AilianBTShared.csproj">
-      <Project>{87d06a2f-8d73-4f51-9206-74c7920914dc}</Project>
-      <Name>AilianBTShared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MusciBackground\MusicBackground.csproj">
-      <Project>{a9dcfeec-0e58-4203-bb01-f844d0b8c707}</Project>
-      <Name>MusicBackground</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

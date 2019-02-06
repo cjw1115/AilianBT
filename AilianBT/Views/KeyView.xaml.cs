@@ -27,6 +27,7 @@ namespace AilianBT.Views
         {
             var locator = App.Current.Resources["Locator"] as ViewModels.ViewModelLocator;
             KeyVM = locator.KeyVM;
+            NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
             this.Loaded += KeyView_Loaded;
         }

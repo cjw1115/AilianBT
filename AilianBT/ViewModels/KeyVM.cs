@@ -17,10 +17,6 @@ namespace AilianBT.ViewModels
         public KeyVM()
         {
             _ailianBtBll = new BLL.AilianBTBLL();
-            //CollectionViewSource = new CollectionViewSource();
-            //CollectionViewSource.IsSourceGrouped = true;
-            //CollectionViewSource.ItemsPath = new Windows.UI.Xaml.PropertyPath("Keys");
-            //CollectionViewSource.Source = Groups;
         }
         public async void Loaded()
         {
@@ -41,14 +37,6 @@ namespace AilianBT.ViewModels
             
         }
        
-        //private CollectionViewSource _collectionViewSource;
-        //public CollectionViewSource CollectionViewSource
-        //{
-        //    get { return _collectionViewSource; }
-        //    set { Set(ref _collectionViewSource, value); }
-        //}
-
-        
         public ObservableCollection<KeyGroupModel> Groups { get; set; } = new ObservableCollection<KeyGroupModel>();
 
         public  void GridView_ItemClick(object param)

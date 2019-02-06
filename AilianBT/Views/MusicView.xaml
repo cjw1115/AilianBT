@@ -3,12 +3,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AilianBT.Views"
-    xmlns:models="using:AilianBTShared.Models"
+    xmlns:models="using:AilianBT.Models"
+    xmlns:converters="using:AilianBT.ValueConverters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
-        <local:BoolToVisibility x:Key="BoolToVisibility"></local:BoolToVisibility>
+        <local:BoolToVisibility x:Key="FalseToVisibility" Inverse="True"></local:BoolToVisibility>
         <local:PlayStatusVisibility x:Key="PlayStatusVisibility"></local:PlayStatusVisibility>
         <Style TargetType="Button">
             <Setter Property="Background" Value="{ThemeResource ButtonBackground}"/>
@@ -78,44 +79,63 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        <converters:VisibilityInverseConverter x:Key="VisibilityInverseConverter"></converters:VisibilityInverseConverter>
+        <converters:NullToVisibityConverter x:Key="NullToVisibityConverter"></converters:NullToVisibityConverter>
+        <converters:PadleftConverter x:Key="PadleftConverter" PadCount="4"></converters:PadleftConverter>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        
         <ListView Grid.ColumnSpan="3" Grid.Row="0" x:Name="list_music" 
                   ItemsSource="{x:Bind MusicVM.MusicList,Mode=OneWay}"
                   IsItemClickEnabled="True" SelectionMode="Single" 
-                  ItemClick="{x:Bind MusicVM.ItemClick}"
+                  SelectedIndex="{x:Bind MusicVM.CurrentIndex,Mode=TwoWay}"
                   Background="{ThemeResource AilianBtGridBackground2}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:MusicModel">
-                    <Grid>
+                    <Grid Background="Transparent" IsDoubleTapEnabled="True" DoubleTapped="Grid_DoubleTapped" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="48"/>
                             <ColumnDefinition/>
+                            <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" HorizontalAlignment="Right" Text="{x:Bind ID,Mode=OneWay}" Margin="4,0,4,0"></TextBlock>
-                        <TextBlock Grid.Column="1" Text="{x:Bind Title,Mode=OneWay}" TextWrapping="Wrap" Margin="4,0,4,0"></TextBlock>
+                        <TextBlock VerticalAlignment="Center" Grid.Column="0" HorizontalAlignment="Right" Text="{x:Bind ID,Mode=OneWay,Converter={StaticResource PadleftConverter}}" Margin="4,0,4,0"></TextBlock>
+                        <TextBlock VerticalAlignment="Center" Grid.Column="1" Text="{x:Bind Title,Mode=OneWay}" TextWrapping="Wrap" Margin="4,0,4,0"></TextBlock>
+                        <TextBlock Width="40" Grid.Column="2" VerticalAlignment="Center" Margin="4" FontSize="20" Text="&#xf05d;" FontFamily="{StaticResource FontAwesome}"
+                                   Foreground="{ThemeResource AilianBtTitleUnselectForeground}" Visibility="{Binding Path=Visibility,ElementName=tbIconCached,Converter={StaticResource VisibilityInverseConverter}}"></TextBlock>
+                        <TextBlock x:Name="tbIconCached" Width="40" Grid.Column="2" VerticalAlignment="Center" Margin="4" FontSize="20" Text="&#xf05d;" FontFamily="{StaticResource FontAwesome}"
+                                   Foreground="{ThemeResource AilianBtMainColor}" Visibility="{x:Bind HasCached,Mode=OneWay}"></TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+                    <Setter Property="Height" Value="50"></Setter>
+                    <Setter Property="Margin" Value="0"></Setter>
+                    <Setter Property="Padding" Value="0"></Setter>
+                    <Setter Property="MinHeight" Value="0"></Setter>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <Grid Grid.Row="1">
-            <TextBlock TextWrapping="Wrap" Visibility="{x:Bind MusicVM.Title,Mode=OneWay,Converter={StaticResource PlayStatusVisibility}}">
-                <Run Foreground="{ThemeResource AilianBtListOtherForeground}" Text="正在播放："></Run>
-                <Run  Foreground="{ThemeResource AilianBtMainColor}" Text="{x:Bind MusicVM.Title,Mode=OneWay}"></Run>
-            </TextBlock>
+        <Grid  Grid.Row="1" Background="{ThemeResource AilianBtGridBackground2}">
+            <ProgressBar Visibility="{x:Bind MusicVM.IsLoading,Mode=OneWay}" BorderThickness="0" HorizontalAlignment="Stretch" Height="8" Foreground="{StaticResource AilianBtMainColor}" IsIndeterminate="True"/>
         </Grid>
-        <Grid Grid.Row="2" Background="#FFF4F4F4">
+        <Grid Grid.Row="2" Padding="10,0,10,0" Background="{ThemeResource AilianBtMainColor}">
+            <StackPanel   Height="40" Visibility="{x:Bind tbMusicTitle.Text,Mode=OneWay,Converter={StaticResource NullToVisibityConverter}}" Orientation="Horizontal">
+                <TextBlock  VerticalAlignment="Center" FontSize="20" Foreground="White" Text="&#xf001;" FontFamily="{StaticResource FontAwesome}"></TextBlock>
+                <TextBlock  VerticalAlignment="Center" FontSize="16" Foreground="White" Margin="8,0,0,0" x:Name="tbMusicTitle" Text="{x:Bind MusicVM.Title,Mode=OneWay}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="3" Background="#FFF4F4F4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -133,12 +153,12 @@
             </Button>
             <Button Grid.Row="1" Grid.Column="1"   x:Name="btn_play" Margin="4"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Click="{x:Bind MusicVM.play_Click}"
-                      Visibility="{x:Bind MusicVM.IsPlayVisible,Mode=OneWay,Converter={StaticResource BoolToVisibility}}">
+                      Visibility="{x:Bind MusicVM.IsPlaying,Mode=OneWay,Converter={StaticResource FalseToVisibility}}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;"></TextBlock>
             </Button>
             <Button Grid.Row="1" Grid.Column="1"  x:Name="btn_pause" Margin="4"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Click="{x:Bind MusicVM.pause_Click}"
-                       Visibility="{x:Bind MusicVM.IsPauseVisible,Mode=OneWay,Converter={StaticResource BoolToVisibility}}">
+                       Visibility="{x:Bind MusicVM.IsPlaying,Mode=OneWay}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE769;"></TextBlock>
             </Button>
             <Button Grid.Row="1" Grid.Column="3"   x:Name="btn_next" Margin="4"   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

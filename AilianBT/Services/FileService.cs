@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -48,21 +49,38 @@ namespace BtDownload.Services
         {
             await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
         }
-        public static StorageFolder DefaultDownloadFolder
+        
+        public static async Task<StorageFolder> PickDefaultDownloadFolder()
         {
-            get { return Windows.Storage.ApplicationData.Current.LocalFolder; }
+            FolderPicker picker = new FolderPicker();
+            picker.FileTypeFilter.Add(".ailianbt");
+            var folder = await picker.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                FileService.SetDownloadFolder(folder);
+                return folder;
+            }
+            return null;
         }
         public static async Task<StorageFolder> GetDownloadFolder()
         {
             try
             {
                 var path = GetLocalSetting<string>("downloadfolder");
-                var re = await StorageFolder.GetFolderFromPathAsync(path);
-                return re ?? DefaultDownloadFolder;
+                StorageFolder folder = null;
+                if (path == null)
+                {
+                    folder = await PickDefaultDownloadFolder();
+                }
+                else
+                {
+                    folder = await StorageFolder.GetFolderFromPathAsync(path);
+                }
+                return folder;
             }
             catch
             {
-                return DefaultDownloadFolder;
+                return null;
             }
         }
             

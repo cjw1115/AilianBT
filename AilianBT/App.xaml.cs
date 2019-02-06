@@ -44,7 +44,6 @@ namespace AilianBT
             //    dbcontext.Database.Migrate();
             //}
             
-
             BtDownload.Services.SimpleIoc.Register<BtDownload.VIewModels.DownloadedVM>();
             BtDownload.Services.SimpleIoc.Register<BtDownload.VIewModels.DownloadingVM>();
             BtDownload.Services.SimpleIoc.Register<Services.DbService>();
@@ -52,11 +51,20 @@ namespace AilianBT
             var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
             dbservice.DownloadDbContext.Database.Migrate();
 
-            //{
-            //    StatusBar statusBar = .StatusBar.GetForCurrentView();
-            //    statusBar.BackgroundOpacity = 1;
-            //    statusBar.BackgroundColor = color;
-            //}
+            this.EnteredBackground += App_EnteredBackground;
+            this.LeavingBackground += App_LeavingBackground;
+        }
+        private bool _isInBackgroundMode;
+
+        public bool IsInBackgroundMode => _isInBackgroundMode;
+        private void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            _isInBackgroundMode = false;
+        }
+
+        private void App_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        {
+            _isInBackgroundMode = true;
         }
 
         /// <summary>
@@ -66,12 +74,12 @@ namespace AilianBT
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-#if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                this.DebugSettings.EnableFrameRateCounter = true;
-            }
-#endif
+//#if DEBUG
+//            if (System.Diagnostics.Debugger.IsAttached)
+//            {
+//                this.DebugSettings.EnableFrameRateCounter = true;
+//            }
+//#endif
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
@@ -122,6 +130,7 @@ namespace AilianBT
             }
 
             LoadBasicSetting();
+            InitLivingMode();
         }
 
         /// <summary>
@@ -158,6 +167,7 @@ namespace AilianBT
 
         public async void LoadBasicSetting()
         {
+            
             AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
             var model = await setting.GetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name);
             if (model != null)
@@ -166,6 +176,14 @@ namespace AilianBT
             {
                 var brush = Application.Current.Resources["AilianBtMainColor"] as SolidColorBrush;
                 Services.SettingService.SetThemeColor(brush.Color);
+            }
+        }
+        public void InitLivingMode()
+        {
+            var livingmode = FileService.GetLocalSetting<bool?>("livingmode");
+            if (livingmode == null)
+            {
+                FileService.SetLocalSetting<bool?>("livingmode", true);
             }
         }
     }
