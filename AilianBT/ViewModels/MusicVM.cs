@@ -52,7 +52,8 @@ namespace AilianBT.ViewModels
             }
             catch(Exception e)
             {
-                App.ShowNotification(e.Message);
+                //App.ShowNotification(e.Message);
+                App.ShowNotification("Music 当前不可用");
                 return;
             }
           
