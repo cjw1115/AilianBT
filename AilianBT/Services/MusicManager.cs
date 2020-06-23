@@ -1,18 +1,10 @@
-﻿using AilianBT.Common.Helpers;
-using AilianBT.Common.Models;
+﻿using AilianBT.Common.Models;
 using AilianBT.Common.Services;
 using AilianBT.Exceptions;
-using AilianBT.Helpers;
-using AilianBT.Models;
-using AilianBT.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Background;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -75,7 +67,7 @@ namespace AilianBT.Services
             if (value == null)
                 return;
             var modelJson = value as string;
-            var model = JsonHelper.DerializeObjec<MusicModel>(modelJson);
+            var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine("Open Failed:");
             System.Diagnostics.Debug.WriteLine(modelJson);
@@ -87,7 +79,7 @@ namespace AilianBT.Services
         {
 
             var modelJson = args.Item.Source.CustomProperties["model"] as string;
-            var model = JsonHelper.DerializeObjec<MusicModel>(modelJson);
+            var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
 
 #if DEBUG
             System.Diagnostics.Debug.WriteLine("Open Successfully:");
@@ -109,12 +101,12 @@ namespace AilianBT.Services
             if(args.NewItem!=null)
             {
                 var newModelJson = args.NewItem.Source.CustomProperties["model"] as string;
-                newModel = JsonHelper.DerializeObjec<MusicModel>(newModelJson);
+                newModel = JsonSerializer.Deserialize<MusicModel>(newModelJson);
             }
             if (args.OldItem != null)
             {
                 var oldModelJson = args.OldItem.Source.CustomProperties["model"] as string;
-                oldModel = JsonHelper.DerializeObjec<MusicModel>(oldModelJson);
+                oldModel = JsonSerializer.Deserialize<MusicModel>(oldModelJson);
             }
             MediaChanged?.Invoke(newModel, oldModel);
         }
@@ -126,7 +118,7 @@ namespace AilianBT.Services
                 var customProperties = _mediaPlaybackList.Items[i].Source.CustomProperties;
                 if(customProperties.ContainsKey("model"))
                 {
-                    var cacheItem = JsonHelper.DerializeObjec<MusicModel>(customProperties["model"] as string);
+                    var cacheItem = JsonSerializer.Deserialize<MusicModel>(customProperties["model"] as string);
                     if(cacheItem.Equals(model))
                     {
                         if (i != index)
@@ -181,7 +173,7 @@ namespace AilianBT.Services
             
             //Create Media source
             var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
-            var modelJson = JsonHelper.SerializeObject<MusicModel>(model);
+            var modelJson = JsonSerializer.Serialize<MusicModel>(model);
             source.CustomProperties["model"] = modelJson;
             MediaPlaybackItem item = new MediaPlaybackItem(source);
 
@@ -258,7 +250,7 @@ namespace AilianBT.Services
                 _mediaPlaybackList.Items[i].Source.CustomProperties.TryGetValue("model", out object value);
                 if (value == null)
                     continue;
-                var item = JsonHelper.DerializeObjec<MusicModel>(value as string);
+                var item = JsonSerializer.Deserialize<MusicModel>(value as string);
                 if (model.Equals(item))
                 {
                     index = (uint)i;

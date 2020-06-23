@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AilianBT.Models;
-using AngleSharp.Dom;
 using System.Text.RegularExpressions;
 using AilianBT.Exceptions;
 using System.Collections.ObjectModel;
 using AilianBT.Common.Services;
+using System.Text;
+using System.Net.Http;
 using AngleSharp.Html.Parser;
 
 namespace AilianBT.BLL
 {
     public class AilianBTBLL
     {
-        public static HttpBaseService _httpService = new HttpBaseService();
+        public static HttpService _httpService = new HttpService();
 
-        private readonly string 首页 = "http://m.kisssub.org/";
-        private readonly string 搜索= "http://m.kisssub.org/search.php?keyword=";
-        private readonly string 新番 = "http://m.kisssub.org/addon.php?r=bangumi/plain_format";
+        private const string KISSSUB_HOME = "http://m.kisssub.org/";
+        private const string KISSSUB_SEARCH = "http://m.kisssub.org/search.php?keyword=";
+        private const string KISSSUB_NEW_FAN = "http://m.kisssub.org/addon.php?r=bangumi/plain_format";
 
         public async Task<IList<AilianResModel>> GetResList(int pageIndex = 1)
         {
@@ -26,7 +27,7 @@ namespace AilianBT.BLL
             string content = null;
             try
             {
-                content = await _httpService.SendRequst(首页+ pageIndex + ".html");
+                content = await _httpService.SendRequestForString(KISSSUB_HOME + pageIndex + ".html", HttpMethod.Get, Encoding.UTF8);
             }
             catch(Exception e)
             {
@@ -47,7 +48,7 @@ namespace AilianBT.BLL
                         AilianResModel model = new AilianResModel();
                         var re = item.Children[0].Children[0].TextContent;
                         model.Title = Regex.Replace(re, @"/\*([\w\W]*)\*/", string.Empty) ?? re;
-                        model.Link = 首页 + item.Children[0].Children[0].GetAttribute("href");
+                        model.Link = KISSSUB_HOME + item.Children[0].Children[0].GetAttribute("href");
                         //
                         var temp = item.Children[1].Children[0].ChildNodes.Last().TextContent.Replace("\n", "").Trim();
 
@@ -74,7 +75,7 @@ namespace AilianBT.BLL
             string content = null;
             try
             {
-                content = await _httpService.SendRequst(detailUri);
+                content = await _httpService.SendRequestForString(detailUri, HttpMethod.Get, Encoding.UTF8);
             }
             catch(Exception e)
             {
@@ -109,7 +110,7 @@ namespace AilianBT.BLL
                 foreach (var item in imgs)
                 {
                     var link = item.GetAttribute("src");
-                    item.SetAttribute("src", 首页 + link);
+                    item.SetAttribute("src", KISSSUB_HOME + link);
                 }
                 model.FileInfo = file.OuterHtml;
                 
@@ -124,7 +125,7 @@ namespace AilianBT.BLL
                     var div = doc.GetElementsByClassName("down").FirstOrDefault();
                     if (div != null)
                     {
-                        var link = 首页 + div.Children[0].GetElementsByTagName("a").FirstOrDefault().GetAttribute("href");
+                        var link = KISSSUB_HOME + div.Children[0].GetElementsByTagName("a").FirstOrDefault().GetAttribute("href");
                         model.BtLink = link;
                         link = div.Children[1].GetElementsByTagName("a").FirstOrDefault().GetAttribute("onclick");
                         link = Regex.Match(link, @"magnet[\w\W]*(?=')").ToString();
@@ -145,7 +146,7 @@ namespace AilianBT.BLL
             string content = null;
             try
             {
-                content = await _httpService.SendRequst(搜索 + searchiKey + "&page=" + pageIndex);
+                content = await _httpService.SendRequestForString(KISSSUB_SEARCH + searchiKey + "&page=" + pageIndex, HttpMethod.Get, Encoding.UTF8);
             }
             catch(Exception e)
             {
@@ -167,7 +168,7 @@ namespace AilianBT.BLL
                         AilianResModel model = new AilianResModel();
                         var re = item.Children[0].Children[0].TextContent;
                         model.Title = Regex.Replace(re, @"/\*([\w\W]*)\*/", string.Empty) ?? re;
-                        model.Link = 首页 + item.Children[0].Children[0].GetAttribute("href");
+                        model.Link = KISSSUB_HOME + item.Children[0].Children[0].GetAttribute("href");
                         //
                         var temp = item.Children[1].Children[0].ChildNodes.Last().TextContent.Replace("\n", "").Trim();
 
@@ -194,7 +195,7 @@ namespace AilianBT.BLL
 
             try
             {
-                content = await _httpService.SendRequst(新番);
+                content = await _httpService.SendRequestForString(KISSSUB_NEW_FAN, HttpMethod.Get, Encoding.UTF8);
             }
             catch (Exception e)
             {

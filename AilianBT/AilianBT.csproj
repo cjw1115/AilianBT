@@ -167,7 +167,6 @@
     <Compile Include="ViewModels\NavigationVM.cs" />
     <Compile Include="ViewModels\SearchVM.cs" />
     <Compile Include="ViewModels\ShowVM.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\DefaultDetailView.xaml.cs">
       <DependentUpon>DefaultDetailView.xaml</DependentUpon>
@@ -310,6 +309,9 @@
     </PackageReference>
     <PackageReference Include="System.Text.Encoding.CodePages">
       <Version>4.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>4.7.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,8 @@
 ﻿using AilianBT.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Security.Cryptography;
@@ -11,13 +13,15 @@ namespace AilianBT.Common.Services
 {
     public class MusicService
     {
-        private readonly string listUri = "http://www.kisssub.org/addon/player/app/scm-music-player/playlist.js?time=";
-        private readonly string kisssUbUri = "http://www.kisssub.org/";
-        private static HttpBaseService _httpService = new HttpBaseService(true);
+        private const string KISSSUB_PLAYLIST = "http://www.kisssub.org/addon/player/app/scm-music-player/playlist.js?time=";
+        private const string KISSSUB_HOST = "http://www.kisssub.org/";
+
+        private static HttpService _httpService = new HttpService(true);
+
         public async Task<IList<MusicModel>> GetNetPlayList()
         {
             List<MusicModel> musicList = new List<MusicModel>();
-            var re=await _httpService.SendRequst(listUri+DateTime.Now.Millisecond.ToString());
+            var re = await _httpService.SendRequestForString(KISSSUB_PLAYLIST + DateTime.Now.Millisecond.ToString(), HttpMethod.Get, Encoding.UTF8);
             if (re != null)
             {
                 var startStr = "shuffle(";
@@ -43,7 +47,11 @@ namespace AilianBT.Common.Services
         public async Task<IRandomAccessStream> GetMusicStream(Uri uri)
         {
             var newUri=uri.ToString() + "?date=" + DateTime.Now.Millisecond;
-            var re = await _httpService.GetUriStream(newUri, referUri: kisssUbUri);
+            var headers = new Dictionary<string, string>
+            {
+                { "Referer", KISSSUB_HOST }
+            };
+            var re = await _httpService.SendRequestForRAS(newUri, HttpMethod.Get, appendHeaders: headers);
             return re;
         }
 

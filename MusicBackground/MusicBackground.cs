@@ -1,9 +1,9 @@
-﻿using AilianBT.Common.Helpers;
-using AilianBT.Common.Models;
+﻿using AilianBT.Common.Models;
 using AilianBT.Common.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Media;
@@ -101,11 +101,10 @@ namespace MusicBackground
                     case "next":next(); break;
                     case "previou":previou(); break;
                     case "update":
-                        object listObject = null;
-                        valueSet.TryGetValue("musiclist", out listObject);
+                        valueSet.TryGetValue("musiclist", out object listObject);
                         if (listObject != null)
                         {
-                            var list=JsonHelper.DerializeObjec<List<MusicModel>>((string)listObject);
+                            var list = JsonSerializer.Deserialize<List<MusicModel>>((string)listObject);
                             musicList.Clear();
                             musicList.AddRange(list);
                             currentID = musicList.FirstOrDefault().ID;

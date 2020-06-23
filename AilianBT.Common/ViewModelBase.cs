@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AilianBT.ViewModels
+namespace AilianBT.Common
 {
     public class ViewModelBase: INotifyPropertyChanged
     {
@@ -21,6 +16,7 @@ namespace AilianBT.ViewModels
             field = newValue;
             OnPropertyChanged(propertyName);
         }
+
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

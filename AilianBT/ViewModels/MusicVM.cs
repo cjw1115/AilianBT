@@ -1,22 +1,13 @@
 ﻿using AilianBT.Services;
-using AilianBT.Helpers;
-using AilianBT.Models;
-using AilianBT.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation.Collections;
-using Windows.Media;
-using Windows.Media.Playback;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
 using AilianBT.Common.Models;
 using AilianBT.Common.Services;
+using AilianBT.Common;
 
 namespace AilianBT.ViewModels
 {
