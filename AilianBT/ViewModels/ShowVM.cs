@@ -1,10 +1,8 @@
-﻿using BtDownload.Services;
+﻿using AilianBT.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
@@ -20,6 +18,8 @@ namespace AilianBT.ViewModels
             get { return _showModel; }
             set { Set(ref _showModel, value); }
         }
+
+        private DownloadService _downloadService = SimpleIoc.Default.GetInstance<DownloadService>();
 
         public ShowVM()
         {
@@ -67,7 +67,7 @@ namespace AilianBT.ViewModels
         {
             var link = (string)param;
             Uri uri = new Uri(link);
-            DownloadService.CreateBackDownload(ShowModel.Title+".torrent",uri);
+            _downloadService.CreateBackDownload(ShowModel.Title+".torrent",uri);
 
             App.ShowNotification("已加入下载队列");
         }

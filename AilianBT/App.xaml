@@ -2,18 +2,14 @@
     x:Class="AilianBT.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:AilianBT"
     xmlns:vm="using:AilianBT.ViewModels"
     RequestedTheme="Light">
-
     <Application.Resources>
         <ResourceDictionary >
             <vm:ViewModelLocator x:Key="Locator"></vm:ViewModelLocator>
             <!--整体主色调，适用于大标题背景，小标题前景-->
             <SolidColorBrush x:Key="AilianBtMainColor"  Color="#FFE777AB"></SolidColorBrush>
-            
             <SolidColorBrush x:Key="AilinaBtItemHoverColor" Color="#FFE7ADC8"></SolidColorBrush>
-            
             <SolidColorBrush x:Key="AilinaBtItemSelectColor" Color="#FFAE517D"></SolidColorBrush>
             <!--未选中标题-->
             <SolidColorBrush x:Name="AilianBtTitleUnselectForeground" Color="#FF7F7E7D"></SolidColorBrush>
@@ -93,8 +89,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
-            
+
             <!--appbarButton-->
             <Style TargetType="AppBarButton">
                 <Setter Property="Background" Value="Transparent"/>
@@ -217,7 +212,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
+
             <!--CommandBar-->
             <Style x:Key="AilianBtCommandBar" TargetType="CommandBar">
                 <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumBrush}" />
@@ -1006,10 +1001,10 @@
                                                 </CommandBarOverflowPresenter.RenderTransform>
                                                 <CommandBarOverflowPresenter.ItemContainerStyle>
                                                     <Style TargetType="FrameworkElement">
-                                                        
-                                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                                    <Setter Property="Width" Value="NaN"/>
-                                                </Style>
+
+                                                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                                        <Setter Property="Width" Value="NaN"/>
+                                                    </Style>
                                                 </CommandBarOverflowPresenter.ItemContainerStyle>
                                             </CommandBarOverflowPresenter>
                                         </Grid>
@@ -1021,8 +1016,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
-
 
             <Style TargetType="Pivot">
                 <Setter Property="Margin" Value="0" />
@@ -1323,7 +1316,6 @@
                 </Setter>
             </Style>
 
-
             <ResourceDictionary x:Key="ThemeColors">
                 <Color x:Key="少女粉">#FFE777AB</Color>
                 <Color x:Key="落日黄">#FFFF9923</Color>
@@ -1331,8 +1323,8 @@
                 <Color x:Key="烟波蓝">#FF1D91FF</Color>
                 <Color x:Key="浪漫紫" >#FFBE3CFD</Color>
             </ResourceDictionary>
+            
             <x:String x:Key="FontAwesome">/Assets/Fonts/fontawesome-webfont.ttf#FontAwesome</x:String>
         </ResourceDictionary>
     </Application.Resources>
-
 </Application>

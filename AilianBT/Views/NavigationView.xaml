@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:AilianBT.Views"
     xmlns:models="using:AilianBT.Models"
-    xmlns:controls="using:AilianBT.Controls"
+    xmlns:controls="using:AilianBT.Views.Controls"
     xmlns:triggers="using:AilianBT.Triggers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -729,7 +729,7 @@
                 </SplitView>
             </RelativePanel>
             <Grid x:Name="gridDetail"  Grid.Column="1" Background="{StaticResource AilianBtGridBackground2}">
-                <Image HorizontalAlignment="Right" VerticalAlignment="Stretch" Source="/Assets/background.png">
+                <Image HorizontalAlignment="Right" VerticalAlignment="Stretch" Source="/Assets/Images/Background/detail.png">
                 </Image>
                 <Frame x:Name="DetailFrame" Background="Transparent">
                 </Frame>

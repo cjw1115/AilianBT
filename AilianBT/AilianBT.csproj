@@ -102,31 +102,22 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="AilianBTShared.csproj" />
-    <None Include="AilianBT_StoreKey.pfx" />
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BLL\AilianBTBLL.cs" />
-    <Compile Include="Controls\KeyPannelControl.cs" />
-    <Compile Include="Controls\Notification.xaml.cs">
+    <Compile Include="Constant\Definition.cs" />
+    <Compile Include="Helpers\AssertsHelper.cs" />
+    <Compile Include="Views\Controls\KeyPannelControl.cs" />
+    <Compile Include="Views\Controls\Notification.xaml.cs">
       <DependentUpon>Notification.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DAL\Class1.cs" />
     <Compile Include="Exceptions\Exceptions.cs" />
     <Compile Include="Exceptions\OpenStreamFailedException.cs" />
     <Compile Include="Helpers\VisualTreeHelperTool.cs" />
     <Compile Include="Migrations\20160731064812_init.cs" />
     <Compile Include="Migrations\20160731064812_init.designer.cs">
       <DependentUpon>20160731064812_init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20160810075533_change.cs" />
-    <Compile Include="Migrations\20160810075533_change.designer.cs">
-      <DependentUpon>20160810075533_change.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\DownloadDbContextModelSnapshot.cs" />
     <Compile Include="Models\AilianResModel.cs" />
@@ -139,16 +130,15 @@
     <Compile Include="Models\NewKeyModel.cs" />
     <Compile Include="Models\ShowModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Controls\SearchBox.xaml.cs">
+    <Compile Include="Views\Controls\SearchBox.xaml.cs">
       <DependentUpon>SearchBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\DbService.cs" />
     <Compile Include="Services\DownloadService.cs" />
-    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\StorageService.cs" />
     <Compile Include="Services\MusicManager.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\SettingService.cs" />
-    <Compile Include="Services\SimpleIoc.cs" />
     <Compile Include="Triggers\NavigationViewAdaptiveTrigger.cs" />
     <Compile Include="ValueConverters\ListIndexConverter.cs" />
     <Compile Include="ValueConverters\NullToVisibityConverter.cs" />
@@ -208,7 +198,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\background.png" />
+    <Content Include="Assets\Images\Background\detail.png" />
     <Content Include="Assets\JS\GetHeight.js" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\Square150x150Logo.scale-100.png" />
@@ -216,10 +206,9 @@
     <Content Include="Assets\Square44x44Logo.scale-100.png" />
     <Content Include="Assets\Square71x71Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
-    <Content Include="Images\background\1.png" />
-    <Content Include="Images\background\2.png" />
-    <Content Include="Images\background\3.png" />
-    <Content Include="Images\Startup\1.png" />
+    <Content Include="Assets\Images\Background\1.png" />
+    <Content Include="Assets\Images\Background\2.png" />
+    <Content Include="Assets\Images\Background\3.png" />
     <Content Include="Assets\Fonts\fontawesome-webfont.ttf" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
@@ -231,11 +220,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\Notification.xaml">
+    <Page Include="Views\Controls\Notification.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SearchBox.xaml">
+    <Page Include="Views\Controls\SearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -329,6 +318,7 @@
       <Name>MusicBackground</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

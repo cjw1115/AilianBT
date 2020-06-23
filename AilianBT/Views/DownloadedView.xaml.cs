@@ -1,21 +1,13 @@
 ﻿using AilianBT.Services;
 using BtDownload.Models;
-using BtDownload.Services;
 using BtDownload.VIewModels;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
@@ -28,20 +20,23 @@ namespace BtDownload.Views
     public sealed partial class DownloadedView : Page
     {
         public DownloadedVM DownloadedVM { get; set; }
+        private DbService _dbService = SimpleIoc.Default.GetInstance<DbService>();
+        private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
+
         public DownloadedView()
         {
             NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
             this.Loaded += DownloadedView_Loaded; ;
-            DownloadedVM = SimpleIoc.GetInstance<DownloadedVM>();
+            DownloadedVM = SimpleIoc.Default.GetInstance<DownloadedVM>();
 
            
         }
 
         private void DownloadedView_Loaded(object sender, RoutedEventArgs e)
         {
-            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
-            var list = dbservice.DownloadDbContext.DownloadedInfos;
+            
+            var list = _dbService.DownloadDbContext.DownloadedInfos;
 
             DownloadedVM.DownloadedInfoList.Clear();
             foreach (var item in list)
@@ -63,9 +58,8 @@ namespace BtDownload.Views
                 DownloadedVM.DownloadedInfoList.Remove(item);
             }
 
-            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
-            dbservice.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
-            dbservice.DownloadDbContext.SaveChanges();
+            _dbService.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
+            _dbService.DownloadDbContext.SaveChanges();
             
             SetDefaultSelectStatus();
         }
@@ -82,9 +76,8 @@ namespace BtDownload.Views
                 DownloadedVM.DownloadedInfoList.Remove(item);
             }
 
-            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
-            dbservice.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
-            dbservice.DownloadDbContext.SaveChanges();
+            _dbService.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
+            _dbService.DownloadDbContext.SaveChanges();
             
 
             try
@@ -92,8 +85,8 @@ namespace BtDownload.Views
                 foreach (var item in removes)
                 {
                     //var file = await StorageFile.GetFileFromPathAsync(item.FilePath);
-                    var file = await FileService.GetFile(item.FilePath);
-                    await FileService.DeleteFile(file);
+                    var file = await _storageService.GetFile(item.FilePath);
+                    await _storageService.DeleteFile(file);
                 }
             }
             catch (FileNotFoundException notfound)

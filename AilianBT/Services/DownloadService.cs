@@ -1,21 +1,25 @@
 ﻿using AilianBT.Services;
+using AilianBT.Views.Controls;
 using BtDownload.Models;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage.AccessCache;
+using Windows.Storage.Pickers;
 
-namespace BtDownload.Services
+namespace AilianBT.Services
 {
     public class DownloadService
     {
-        private static BackgroundDownloader _downloader = new BackgroundDownloader();
+        private  BackgroundDownloader _downloader = new BackgroundDownloader();
+
+        private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
+        private DbService _dbService = SimpleIoc.Default.GetInstance<DbService > ();
+        private NotificationService _notificationService= SimpleIoc.Default.GetInstance<NotificationService>();
 
         public DownloadService()
         {
@@ -39,7 +43,7 @@ namespace BtDownload.Services
                 FileName = file.Name
             };
 
-            info.Thumb = await FileService.GetThumbBytes(file);
+            info.Thumb = await _storageService.GetThumbBytes(file);
 
             info.ID = info.FileName.GetHashCode();
 
@@ -47,7 +51,7 @@ namespace BtDownload.Services
         }
 
         //将正在下载信息转换为下载完成信息
-        public static async Task<DownloadedInfo> FinishedDownload(DownloadInfo downloadInfo)
+        public  async Task<DownloadedInfo> FinishedDownload(DownloadInfo downloadInfo)
         {
             DownloadedInfo downloadedInfo = new DownloadedInfo();
             downloadedInfo.DownloadedTime = DateTime.Now;
@@ -56,16 +60,16 @@ namespace BtDownload.Services
             downloadedInfo.Size = downloadInfo.TotalToReceive;
 
             var file = downloadInfo.DownloadOperation.ResultFile;
-            downloadedInfo.Thumb = await FileService.GetThumbBytes(file);
+            downloadedInfo.Thumb = await _storageService.GetThumbBytes(file);
 
             return downloadedInfo;
         }
 
         //创建后台下载任务
-        public async static void CreateBackDownload(string filename,Uri uri)
+        public async  void CreateBackDownload(string filename,Uri uri)
         {
-            var folder = await FileService.GetDownloadFolder();
-            var file = await FileService.CreaterFile(folder, filename);
+            var folder = await GetDownloadFolder();
+            var file = await _storageService.CreaterFile(folder, filename);
             var operation = _downloader.CreateDownload(uri, file);
             try
             {
@@ -74,7 +78,7 @@ namespace BtDownload.Services
             catch
             {
             }
-            var thumb = await FileService.GetThumbBytes(file);
+            var thumb = await _storageService.GetThumbBytes(file);
             DownloadedInfo info = new DownloadedInfo()
             {
                 DownloadedTime = DateTime.Now,
@@ -85,23 +89,21 @@ namespace BtDownload.Services
             };
             StoreDownloadedInfo(info);
 
-            NotificationService.ShowDownloadFinishedToast(info.FileName);
+            _notificationService.ShowDownloadFinishedToast(info.FileName);
         }
 
         //存储下载完成的信息
-        public static async void StoreDownloadedInfo(DownloadedInfo downloadedInfo)
+        public async void StoreDownloadedInfo(DownloadedInfo downloadedInfo)
         {
-            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
-            dbservice.DownloadDbContext.DownloadedInfos.Add(downloadedInfo);
-            await dbservice.DownloadDbContext.SaveChangesAsync();
+            _dbService.DownloadDbContext.DownloadedInfos.Add(downloadedInfo);
+            await _dbService.DownloadDbContext.SaveChangesAsync();
         }
 
         //存储下载完成的信息
-        public static async void StoreDownloadedInfo(IEnumerable<DownloadedInfo> downloadedInfos)
+        public async void StoreDownloadedInfo(IEnumerable<DownloadedInfo> downloadedInfos)
         {
-            var dbservice = BtDownload.Services.SimpleIoc.GetInstance<DbService>();
-            dbservice.DownloadDbContext.DownloadedInfos.AddRange(downloadedInfos);
-            await dbservice.DownloadDbContext.SaveChangesAsync();
+            _dbService.DownloadDbContext.DownloadedInfos.AddRange(downloadedInfos);
+            await _dbService.DownloadDbContext.SaveChangesAsync();
         }
 
         //获取当前所有的下载信息
@@ -129,7 +131,7 @@ namespace BtDownload.Services
                     info.ID = info.FileName.GetHashCode();
                     info.Cts = cts;
 
-                    info.Thumb = await FileService.GetThumbBytes(item.ResultFile);
+                    info.Thumb = await _storageService.GetThumbBytes(item.ResultFile);
 
 
                     Progress<DownloadOperation> progress = new Progress<DownloadOperation>(handler);
@@ -145,7 +147,7 @@ namespace BtDownload.Services
         }
 
         //蒋字符串链接解析为uri
-        public static Uri GetDownloadUri(string uriString)
+        public  Uri GetDownloadUri(string uriString)
         {
             var re = uriString.Trim();
             Uri uri = new Uri(re);
@@ -153,7 +155,7 @@ namespace BtDownload.Services
         }
 
         //更具下载链接获取文件名
-        public static string GetDownloadFileName(string uriString)
+        public  string GetDownloadFileName(string uriString)
         {
             uriString = uriString.Trim();
             var index = uriString.LastIndexOf('/');
@@ -164,6 +166,48 @@ namespace BtDownload.Services
                 filename = filename.Substring(0, index);
             }
             return filename;
+        }
+
+
+        public  async Task<StorageFolder> PickDefaultDownloadFolder()
+        {
+            FolderPicker picker = new FolderPicker();
+            picker.FileTypeFilter.Add(".ailianbt");
+            var folder = await picker.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                SetDownloadFolder(folder);
+                return folder;
+            }
+            return null;
+        }
+
+        public  async Task<StorageFolder> GetDownloadFolder()
+        {
+            try
+            {
+                var path = _storageService.GetLocalSetting<string>("downloadfolder");
+                StorageFolder folder = null;
+                if (path == null)
+                {
+                    folder = await PickDefaultDownloadFolder();
+                }
+                else
+                {
+                    folder = await StorageFolder.GetFolderFromPathAsync(path);
+                }
+                return folder;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public void SetDownloadFolder(StorageFolder folder)
+        {
+            _storageService.SetLocalSetting("downloadfolder", folder.Path);
+            StorageApplicationPermissions.FutureAccessList.Add(folder);
         }
     }
 }

@@ -1,34 +1,28 @@
-﻿using BtDownload.Services;
+﻿using AilianBT.Constant;
+using AilianBT.Helpers;
+using AilianBT.Models;
+using AilianBT.Services;
+using GalaSoft.MvvmLight.Ioc;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
 
 namespace AilianBT.Views
 {
-    /// <summary>
-    /// 可用于自身或导航至 Frame 内部的空白页。
-    /// </summary>
     public sealed partial class SettingView : Page,INotifyPropertyChanged
     {
-        public string Version =>  $"{Windows.ApplicationModel.Package.Current.Id.Version.Major}.{Windows.ApplicationModel.Package.Current.Id.Version.Minor}.{Windows.ApplicationModel.Package.Current.Id.Version.Build}"; 
+        public string Version =>  $"{Windows.ApplicationModel.Package.Current.Id.Version.Major}.{Windows.ApplicationModel.Package.Current.Id.Version.Minor}.{Windows.ApplicationModel.Package.Current.Id.Version.Build}";
+        private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
+        private DownloadService _downloadService = SimpleIoc.Default.GetInstance<DownloadService>();
+
         public SettingView()
         {
             this.InitializeComponent();
@@ -37,22 +31,22 @@ namespace AilianBT.Views
 
         private async void SettingView_Loaded(object sender, RoutedEventArgs e)
         {
-            this.imgbackground.Source = await FileService.GetBackgroundImage();
+            this.imgbackground.Source = await AssertsHelper.GetRandomBackgroundImage();
 
-            var folder =await FileService.GetDownloadFolder();
+            var folder =await _downloadService.GetDownloadFolder();
             if(folder!=null)
             {
                 tbDownload.Content = folder.Path;
             }
 
-            var taostswitch=FileService.GetLocalSetting<bool>("toastswitch");
+            var taostswitch= _storageService.GetLocalSetting<bool>("toastswitch");
             this.toast_switch.IsOn = taostswitch;
 
-            var livingmode = FileService.GetLocalSetting<bool?>("livingmode");
+            var livingmode = _storageService.GetLocalSetting<bool?>(Definition.KISSSUB_LIVING_MODE);
             if(livingmode==null)
             {
                 this.switchLivingMode.IsOn = true;
-                FileService.SetLocalSetting<bool?>("livingmode",true);
+                _storageService.SetLocalSetting<bool?>(Definition.KISSSUB_LIVING_MODE, true);
             }
             else
             {
@@ -65,14 +59,12 @@ namespace AilianBT.Views
             {
                 ThemeColors.Add(item);
             }
-            
-            AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
-            var theme=await setting.GetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name);
+
+            var theme = _storageService.GetLocalSetting<ThemeColorModel>(nameof(ThemeColorModel));
             if(theme==null)
             {
                 theme = ThemeColors.First();
-                await setting.SetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name, theme);
-                
+                _storageService.SetLocalSetting(nameof(ThemeColorModel), theme);
             }
             SelectedTheme= ThemeColors.Where(m=>m.ThemeColor==theme.ThemeColor).First();
         }
@@ -85,13 +77,13 @@ namespace AilianBT.Views
             if (folder != null)
             {
                 ((Button)sender).Content = folder.Path;
-                FileService.SetDownloadFolder(folder);
+                _downloadService.SetDownloadFolder(folder);
             }
         }
         
         private void toast_switch_Toggled(object sender, RoutedEventArgs e)
         {
-            FileService.SetLocalSetting<bool>("toastswitch", toast_switch.IsOn);
+            _storageService.SetLocalSetting<bool>("toastswitch", toast_switch.IsOn);
         }
 
         #region 用户主题设置
@@ -116,9 +108,7 @@ namespace AilianBT.Views
             Services.SettingService.SetThemeColor(item.ThemeColor);
             SelectedTheme = item;
 
-            //存储颜色
-            AilianBT.DAL.LocalSetting setting = new DAL.LocalSetting();
-            await setting.SetLocalInfo<Models.ThemeColorModel>(typeof(Models.ThemeColorModel).Name, item);
+            _storageService.SetLocalSetting(nameof(ThemeColorModel), item);
         }
         #endregion
 
@@ -131,7 +121,7 @@ namespace AilianBT.Views
 
         private void switchLivingMode_Toggled(object sender, RoutedEventArgs e)
         {
-            FileService.SetLocalSetting<bool?>("livingmode", switchLivingMode.IsOn);
+            _storageService.SetLocalSetting<bool?>(Constant.Definition.KISSSUB_LIVING_MODE, switchLivingMode.IsOn);
         }
     }
     public class ColorBrushConverter : IValueConverter

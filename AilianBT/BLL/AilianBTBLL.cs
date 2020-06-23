@@ -10,6 +10,9 @@ using AilianBT.Common.Services;
 using System.Text;
 using System.Net.Http;
 using AngleSharp.Html.Parser;
+using AilianBT.Constant;
+using AilianBT.Services;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace AilianBT.BLL
 {
@@ -20,6 +23,8 @@ namespace AilianBT.BLL
         private const string KISSSUB_HOME = "http://m.kisssub.org/";
         private const string KISSSUB_SEARCH = "http://m.kisssub.org/search.php?keyword=";
         private const string KISSSUB_NEW_FAN = "http://m.kisssub.org/addon.php?r=bangumi/plain_format";
+
+        private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
 
         public async Task<IList<AilianResModel>> GetResList(int pageIndex = 1)
         {
@@ -87,7 +92,7 @@ namespace AilianBT.BLL
                 var pasrser = new HtmlParser();
                 var doc = pasrser.ParseDocument(content);
 
-                var isLiving = BtDownload.Services.FileService.GetLocalSetting<bool?>("livingmode").Value;
+                var isLiving = _storageService.GetLocalSetting<bool?>(Definition.KISSSUB_LIVING_MODE).Value;
 
                 string torrent_url = null;
                 string magnet_url = null;

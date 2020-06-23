@@ -1,9 +1,4 @@
-﻿using BtDownload.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GalaSoft.MvvmLight.Ioc;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 
@@ -11,10 +6,13 @@ namespace AilianBT.Services
 {
     public class NotificationService
     {
-        private static ToastNotifier _notifier= ToastNotificationManager.CreateToastNotifier();
-        public static  void ShowDownloadFinishedToast(string message)
+        private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
+
+        private ToastNotifier _notifier= ToastNotificationManager.CreateToastNotifier();
+
+        public void ShowDownloadFinishedToast(string message)
         {
-            var ison = FileService.GetLocalSetting<bool>("toastswitch");
+            var ison = _storageService.GetLocalSetting<bool>("toastswitch");
             if (ison == false)
                 return;
             try
@@ -27,9 +25,7 @@ namespace AilianBT.Services
             }
             catch
             {
-
             }
-            
         }
     }
 }

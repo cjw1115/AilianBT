@@ -40,7 +40,6 @@ namespace AilianBT.Views
 
 
             DetailFrame.Navigated += DetailFrame_Navigated;
-            DetailFrame.Navigate(typeof(Views.DefaultDetailView));
 
             SystemNavigationManager.GetForCurrentView().BackRequested += NavigationView_BackRequested;
 
@@ -88,9 +87,8 @@ namespace AilianBT.Views
 
         private void DetailFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if (e.SourcePageType == typeof(Views.DefaultDetailView))
+            if (e.SourcePageType != typeof(Views.DefaultDetailView))
             {
-
             }
             else
             {

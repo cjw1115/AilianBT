@@ -2,32 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.Networking;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Storage.Pickers;
 using Windows.Storage;
-using System.Threading;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.Storage.FileProperties;
-using BtDownload.Services;
 using BtDownload.VIewModels;
 using BtDownload.Models;
-using Windows.Storage.AccessCache;
 using AilianBT.Services;
+using GalaSoft.MvvmLight.Ioc;
 //“空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 上有介绍
 
 namespace BtDownload.Views
@@ -37,20 +22,17 @@ namespace BtDownload.Views
     /// </summary>
     public sealed partial class DownloadingView : Page
     {
-        private DownloadService _downloadService;
-        public DownloadingVM DownloadingVM { get; set; }
-        public DownloadedVM DownloadedVM { get; set; }
+        private DownloadService _downloadService = SimpleIoc.Default.GetInstance<DownloadService>();
+        private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
+        private NotificationService _notificationService = SimpleIoc.Default.GetInstance<NotificationService>();
+        public DownloadingVM DownloadingVM { get; private set; } = SimpleIoc.Default.GetInstance<DownloadingVM>();
+        public DownloadedVM DownloadedVM { get; private set; } = SimpleIoc.Default.GetInstance<DownloadedVM>();
+
         public DownloadingView()
         {
-            DownloadingVM = SimpleIoc.GetInstance<DownloadingVM>();
-            DownloadedVM = SimpleIoc.GetInstance<DownloadedVM>();
-            _downloadService = new DownloadService();
-
             NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
             this.Loaded += DownloadingView_Loaded;
-
-            
         }
 
         private async void DownloadingView_Loaded(object sender, RoutedEventArgs e)
@@ -83,20 +65,20 @@ namespace BtDownload.Views
             picker.FileTypeFilter.Add(".ailianbt");
             defaultFolder = await picker.PickSingleFolderAsync();
 
-            FileService.SetDownloadFolder(defaultFolder);
+            _downloadService.SetDownloadFolder(defaultFolder);
         }
 
         public async void FinishedDownload(DownloadInfo downloadInfo)
         {
             DownloadingVM.DownloadOperations.Remove(downloadInfo);
-            var re=await DownloadService.FinishedDownload(downloadInfo);
+            var re=await _downloadService.FinishedDownload(downloadInfo);
             
             DownloadedVM.DownloadedInfoList.Add(re);
 
             //存储到数据库中
-            DownloadService.StoreDownloadedInfo(re);
+            _downloadService.StoreDownloadedInfo(re);
 
-            NotificationService.ShowDownloadFinishedToast(downloadInfo.FileName);
+            _notificationService.ShowDownloadFinishedToast(downloadInfo.FileName);
         }
 
         public async Task StarDownload(string filename,Uri uri)
@@ -104,7 +86,7 @@ namespace BtDownload.Views
             //创建文件
             //td:此处添加文件存在检测逻辑
             //
-            var file = await FileService.CreaterFile(defaultFolder, filename);
+            var file = await _storageService.CreaterFile(defaultFolder, filename);
 
             var downloadinfo = await _downloadService.CreateDownload(uri, file, DownloadProgress);
             DownloadingVM.DownloadOperations.Add(downloadinfo);
@@ -127,7 +109,7 @@ namespace BtDownload.Views
         {
             //await SetStorageFolder();
 
-            defaultFolder = await FileService.GetDownloadFolder();
+            defaultFolder = await _downloadService.GetDownloadFolder();
             if (defaultFolder == null)
             {
                 AilianBT.App.ShowNotification("需要选择默认下载地址");
@@ -136,8 +118,8 @@ namespace BtDownload.Views
                 
             try
             {
-                var uri = DownloadService.GetDownloadUri(this.tbUri.Text);
-                var filename = DownloadService.GetDownloadFileName(this.tbUri.Text);
+                var uri = _downloadService.GetDownloadUri(this.tbUri.Text);
+                var filename = _downloadService.GetDownloadFileName(this.tbUri.Text);
                 await StarDownload(filename, uri);
             }
             catch(System.UriFormatException uriFormartException)
@@ -256,7 +238,7 @@ namespace BtDownload.Views
             {
                 foreach (var item in removes)
                 {
-                    await FileService.DeleteFile((StorageFile)item.DownloadOperation.ResultFile);
+                    await _storageService.DeleteFile((StorageFile)item.DownloadOperation.ResultFile);
                 }
             }
             catch(FileNotFoundException notfound)

@@ -1,31 +1,18 @@
-﻿using BtDownload.Services;
+﻿using AilianBT.Helpers;
+using AilianBT.Services;
+using GalaSoft.MvvmLight.Ioc;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-using Windows.Web.Http;
-
-// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
 
 namespace AilianBT.Views
 {
-    /// <summary>
-    /// 可用于自身或导航至 Frame 内部的空白页。
-    /// </summary>
     public sealed partial class MainView : Page
     {
         public ViewModels.MainVM MainVM { get; set; }
@@ -93,7 +80,7 @@ namespace AilianBT.Views
 
         private async void MainView_Loaded(object sender, RoutedEventArgs e)
         {
-            this.imgbackground.Source = await FileService.GetBackgroundImage();
+            this.imgbackground.Source = await AssertsHelper.GetRandomBackgroundImage();
             MainVM.Loaded();
             Init();
 
