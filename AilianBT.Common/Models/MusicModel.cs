@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AilianBT.Models
+namespace AilianBT.Common.Models
 {
     [DataContract]
     public class MusicModel: INotifyPropertyChanged
@@ -64,6 +64,11 @@ namespace AilianBT.Models
             }
             else
                 return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         //public static bool operator ==(MusicModel obj1, MusicModel obj2)

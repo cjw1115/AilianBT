@@ -1,11 +1,9 @@
-﻿using AilianBTShared.Helpers;
-using AilianBTShared.Models;
-using AilianBTShared.Services;
+﻿using AilianBT.Common.Helpers;
+using AilianBT.Common.Models;
+using AilianBT.Common.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Media;
@@ -272,3 +270,4 @@ namespace MusicBackground
         }
     }
 }
+

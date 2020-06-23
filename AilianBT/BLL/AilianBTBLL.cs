@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AilianBT.Models;
 using AngleSharp.Dom;
-using AngleSharp.Parser.Html;
-using Windows.Web.Http;
 using System.Text.RegularExpressions;
 using AilianBT.Exceptions;
 using System.Collections.ObjectModel;
-using AilianBT.Services;
+using AilianBT.Common.Services;
+using AngleSharp.Html.Parser;
 
 namespace AilianBT.BLL
 {
@@ -38,7 +36,7 @@ namespace AilianBT.BLL
             try
             {
                 var pasrser = new HtmlParser();
-                var doc = pasrser.Parse(content);
+                var doc = pasrser.ParseDocument(content);
                 var ul = doc.GetElementsByTagName("ul").Skip(1).FirstOrDefault();
                 if (ul != null)
                 {
@@ -86,7 +84,7 @@ namespace AilianBT.BLL
             try
             {
                 var pasrser = new HtmlParser();
-                var doc = pasrser.Parse(content);
+                var doc = pasrser.ParseDocument(content);
 
                 var isLiving = BtDownload.Services.FileService.GetLocalSetting<bool?>("livingmode").Value;
 
@@ -158,7 +156,7 @@ namespace AilianBT.BLL
                 var index = content.IndexOf("<div class=\"lists\">");
                 content = content.Substring(index);
                 var pasrser = new HtmlParser();
-                var doc = pasrser.Parse(content);
+                var doc = pasrser.ParseDocument(content);
                 var ul = doc.GetElementsByTagName("ul").FirstOrDefault();
                 if (ul != null)
                 {

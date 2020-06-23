@@ -1,4 +1,5 @@
-﻿using AilianBT.Models;
+﻿using AilianBT.Common.Models;
+using AilianBT.Models;
 using AilianBT.ViewModels;
 using System;
 using System.Collections.Generic;

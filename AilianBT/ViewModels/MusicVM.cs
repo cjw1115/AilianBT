@@ -15,6 +15,8 @@ using Windows.Media;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
+using AilianBT.Common.Models;
+using AilianBT.Common.Services;
 
 namespace AilianBT.ViewModels
 {
