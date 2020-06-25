@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -12,15 +10,27 @@ namespace AilianBT.Helpers
     {
         public static async Task<ImageSource> GetRandomBackgroundImage()
         {
-            var imageFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets//images//background/{DateTime.Now.Millisecond % 3 + 1}.png"));
-            if (imageFile != null)
+            try
             {
-                BitmapImage bitmap = new BitmapImage();
-                using (var ras = await imageFile.OpenReadAsync())
+                var firstFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets//images//background/1.png"));
+                var backgroundFolder = System.IO.Path.GetDirectoryName(firstFile.Path);
+                var backgrounds = System.IO.Directory.GetFiles(backgroundFolder);
+               
+                var selectedBackground = backgrounds[DateTime.Now.Millisecond % backgrounds.Length];
+                if (selectedBackground != null)
                 {
-                    bitmap.SetSource(ras);
+                    var backgroundFile = await StorageFile.GetFileFromPathAsync(selectedBackground);
+                    BitmapImage bitmap = new BitmapImage();
+                    using (var ras = await backgroundFile.OpenReadAsync())
+                    {
+                        bitmap.SetSource(ras);
+                    }
+                    return bitmap;
                 }
-                return bitmap;
+            }
+            catch 
+            {
+                // TODO: Log error message
             }
             return null;
         }

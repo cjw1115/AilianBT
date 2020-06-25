@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace AilianBT.Helpers
 {
@@ -20,11 +15,10 @@ namespace AilianBT.Helpers
                 int count = Windows.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(item);
                 for (int i = 0; i < count; i++)
                 {
-                    var re = Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(item, i);
-                    
-                    if (re is T)
+                    var re = Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(item, i);       
+                    if (re is T reT)
                     {
-                        return re as T;
+                        return reT;
                     }
                     else
                     {
@@ -32,9 +26,9 @@ namespace AilianBT.Helpers
                     }
                 }
             }
-
             return null;
         }
+
         public static T FindNamedVisualChild<T>(DependencyObject obj, string name) where T : FrameworkElement
         {
             Queue<DependencyObject> queue = new Queue<DependencyObject>();
@@ -57,8 +51,6 @@ namespace AilianBT.Helpers
                     }
                 }
             }
-
-
             return null;
         }
 
@@ -66,14 +58,12 @@ namespace AilianBT.Helpers
         {
             if (element == null || string.IsNullOrWhiteSpace(name))
                 return null;
-
             IList<VisualStateGroup> groups = VisualStateManager.GetVisualStateGroups(element);
             foreach (var group in groups)
             {
                 if (group.Name == name)
                     return group;
             }
-
             return null;
         }
     }

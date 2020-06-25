@@ -1,4 +1,5 @@
-﻿using AilianBT.Constant;
+﻿using AilianBT.Common.Services;
+using AilianBT.Constant;
 using AilianBT.Models;
 using AilianBT.Services;
 using GalaSoft.MvvmLight.Ioc;
@@ -106,7 +107,7 @@ namespace AilianBT
             }
         }
 
-        private async void _loadBasicSettings()
+        private void _loadBasicSettings()
         {
             var model = _storageService.GetLocalSetting<ThemeColorModel>(nameof(ThemeColorModel));
             if (model != null)
@@ -129,12 +130,12 @@ namespace AilianBT
 
         private void _registerService()
         {
-            SimpleIoc.Default.Register<BtDownload.VIewModels.DownloadedVM>();
-            SimpleIoc.Default.Register<BtDownload.VIewModels.DownloadingVM>();
             SimpleIoc.Default.Register<DbService>();
             SimpleIoc.Default.Register<StorageService>();
             SimpleIoc.Default.Register<NotificationService>();
             SimpleIoc.Default.Register<DownloadService>();
+            SimpleIoc.Default.Register<MusicService>();
+            SimpleIoc.Default.Register<AilianBTService>();
         }
     }
 }

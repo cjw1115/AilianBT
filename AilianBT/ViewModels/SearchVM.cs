@@ -1,35 +1,27 @@
 ﻿using AilianBT.Models;
+using AilianBT.Services;
 using GalaSoft.MvvmLight;
-using System;
+using GalaSoft.MvvmLight.Ioc;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace AilianBT.ViewModels
 {
     public class SearchVM : ViewModelBase
     {
-        BLL.AilianBTBLL bll;
-        public SearchVM()
-        {
-            bll = new BLL.AilianBTBLL();
-            AilianRes = new ObservableCollection<AilianResModel>();
-        }
-        private ObservableCollection<AilianResModel> _ailianRes;
+        private AilianBTService _ailianBTService = SimpleIoc.Default.GetInstance<AilianBTService>();
+
+        private ObservableCollection<AilianResModel> _ailianRes = new ObservableCollection<AilianResModel>();
         public ObservableCollection<AilianResModel> AilianRes
         {
             get { return _ailianRes; }
-            set
-            {
-                Set(ref _ailianRes, value);
-            }
+            set { Set(ref _ailianRes, value); }
         }
 
         private int _pageIndex = 1;
+
         public  void Loaded(object param)
         {
             SearchKey = (string)param;
@@ -41,7 +33,7 @@ namespace AilianBT.ViewModels
             IList<AilianResModel> newlist = null;
             try
             {
-                newlist = await bll.SerachResList(SearchKey, _pageIndex++);
+                newlist = await _ailianBTService.SerachResList(SearchKey, _pageIndex++);
                 if (newlist != null)
                 {
                     foreach (var item in newlist)
@@ -76,7 +68,7 @@ namespace AilianBT.ViewModels
             IList<AilianResModel> newlist = null;
             try
             {
-                newlist = await bll.SerachResList(SearchKey, _pageIndex++);
+                newlist = await _ailianBTService.SerachResList(SearchKey, _pageIndex++);
 
                 if (newlist != null && newlist.Count > 0)
                 {
@@ -113,14 +105,12 @@ namespace AilianBT.ViewModels
             NavigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
         }
 
-
         private string _searchKey;
         public string SearchKey
         {
             get { return _searchKey; }
             set { Set(ref _searchKey, value); }
         }
-        
         
         public async void Search()
         {
@@ -133,7 +123,7 @@ namespace AilianBT.ViewModels
             _pageIndex = 1;
             try
             {
-                var newlist = await bll.SerachResList(SearchKey, _pageIndex++);
+                var newlist = await _ailianBTService.SerachResList(SearchKey, _pageIndex++);
                 AilianRes.Clear();
                 if (newlist != null && newlist.Count > 0)
                 {

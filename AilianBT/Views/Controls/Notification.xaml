@@ -1,16 +1,17 @@
-﻿<UserControl x:Name="userControl"
+﻿<UserControl
     x:Class="AilianBT.Views.Controls.Notification"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:AilianBT.Views.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:AilianBT.Views.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+    x:Name="userControl"
     d:DesignHeight="100"
-    d:DesignWidth="200">
+    d:DesignWidth="200"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <Storyboard x:Name="Storyboard">
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="userControl">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="userControl" Storyboard.TargetProperty="(UIElement.Visibility)">
                 <DiscreteObjectKeyFrame KeyTime="0">
                     <DiscreteObjectKeyFrame.Value>
                         <Visibility>Collapsed</Visibility>
@@ -32,19 +33,29 @@
                     </DiscreteObjectKeyFrame.Value>
                 </DiscreteObjectKeyFrame>
             </ObjectAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="userControl">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:2.1" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:2.3" Value="0"/>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="userControl" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:2.1" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:2.3" Value="0" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
 
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Rectangle Width="200" Height="100" Fill="{StaticResource AilianBtMainColor }" Opacity="0.5"></Rectangle>
-        <TextBlock MaxWidth="200" VerticalAlignment="Center" Foreground="GhostWhite" HorizontalAlignment="Center" TextWrapping="Wrap"
-                   x:Name="tbMsg" Text="{x:Bind NotifyMessage,Mode=OneWay}"></TextBlock>
+        <Rectangle
+            Width="200"
+            Height="100"
+            Fill="{StaticResource AilianBtMainColor}"
+            Opacity="0.5" />
+        <TextBlock
+            x:Name="tbMsg"
+            MaxWidth="200"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="GhostWhite"
+            Text="{x:Bind NotifyMessage, Mode=OneWay}"
+            TextWrapping="Wrap" />
 
     </Grid>
 </UserControl>

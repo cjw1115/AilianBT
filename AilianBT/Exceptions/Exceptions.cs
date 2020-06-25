@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AilianBT.Exceptions
 {
@@ -12,18 +8,22 @@ namespace AilianBT.Exceptions
         {
         }
     }
+
     public class ResolveException : Exception
     {
         public ResolveException(string message) : base(message)
         {
         }
     }
+
     public class UriIllegalException : Exception
     {
         public UriIllegalException(string message) : base(message)
         {
         }
     }
-    
 
+    public class OpenStreamFailedException : Exception
+    {
+    }
 }

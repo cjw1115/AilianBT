@@ -9,11 +9,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Storage.Pickers;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
 
 namespace AilianBT.Views
 {
@@ -102,10 +99,10 @@ namespace AilianBT.Views
                 }
             } 
         }
-        public async void ThemeItemClick(object sender, ItemClickEventArgs e)
+        public void ThemeItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as Models.ThemeColorModel;
-            Services.SettingService.SetThemeColor(item.ThemeColor);
+            SettingService.SetThemeColor(item.ThemeColor);
             SelectedTheme = item;
 
             _storageService.SetLocalSetting(nameof(ThemeColorModel), item);
@@ -122,20 +119,6 @@ namespace AilianBT.Views
         private void switchLivingMode_Toggled(object sender, RoutedEventArgs e)
         {
             _storageService.SetLocalSetting<bool?>(Constant.Definition.KISSSUB_LIVING_MODE, switchLivingMode.IsOn);
-        }
-    }
-    public class ColorBrushConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            Color color = (Color)value;
-            return new SolidColorBrush(color);
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
         }
     }
 }

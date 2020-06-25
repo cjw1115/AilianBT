@@ -11,7 +11,9 @@ namespace AilianBT.ViewModels
 {
     public class ShowVM:ViewModelBase
     {
-        private BLL.AilianBTBLL bll = new BLL.AilianBTBLL();
+        private AilianBTService _ailianBTService = SimpleIoc.Default.GetInstance<AilianBTService>();
+        private DownloadService _downloadService = SimpleIoc.Default.GetInstance<DownloadService>();
+
         private Models.ShowModel _showModel;
         public Models.ShowModel ShowModel
         {
@@ -19,13 +21,12 @@ namespace AilianBT.ViewModels
             set { Set(ref _showModel, value); }
         }
 
-        private DownloadService _downloadService = SimpleIoc.Default.GetInstance<DownloadService>();
-
         public ShowVM()
         {
             DownloadBtCommand = new RelayCommand<object>(DownloadBt);
             DownloadMagnetCommand = new RelayCommand<object>(DownloadMagnet);
         }
+
         public async void Loaded(object parm)
         {
             var model = parm as Models.AilianResModel;
@@ -56,9 +57,10 @@ namespace AilianBT.ViewModels
 
             ShowModel = show;
         }
+
         public async Task<Models.ShowModel> GetDetailInfo(string showUri)
         {
-            var re=await bll.GetDetailHtml(showUri);
+            var re=await _ailianBTService.GetDetailHtml(showUri);
             return re;
         }
 

@@ -1,8 +1,5 @@
-﻿using System;
+﻿using AilianBT.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -28,16 +25,16 @@ namespace AilianBT.Services
                     statusBar.BackgroundOpacity = 1;
                     statusBar.BackgroundColor = color;
                 }
-
             }
         }
-        public static List<Models.ThemeColorModel> GetAllColor()
+
+        public static List<ThemeColorModel> GetAllColor()
         {
-            List<Models.ThemeColorModel> list = new List<Models.ThemeColorModel>();
+            var list = new List<ThemeColorModel>();
             var colors = Application.Current.Resources["ThemeColors"] as ResourceDictionary;
             foreach (var item in colors)
             {
-                Models.ThemeColorModel model = new Models.ThemeColorModel();
+                var model = new ThemeColorModel();
                 model.Name = (string)item.Key;
                 model.ThemeColor = (Color)item.Value;
                 list.Add(model);

@@ -1,25 +1,19 @@
 ﻿using AilianBT.Services;
-using BtDownload.Models;
-using BtDownload.VIewModels;
+using AilianBT.ViewModels;
+using AilianBT.Models;
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Windows.Storage.FileProperties;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
-
-namespace BtDownload.Views
+namespace AilianBT.Views
 {
-    /// <summary>
-    /// 可用于自身或导航至 Frame 内部的空白页。
-    /// </summary>
     public sealed partial class DownloadedView : Page
     {
-        public DownloadedVM DownloadedVM { get; set; }
+        public DownloadedViewModel DownloadedVM { get; private set; } = ViewModelLocator.Instance.DownloadedVM;
         private DbService _dbService = SimpleIoc.Default.GetInstance<DbService>();
         private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
 
@@ -27,15 +21,12 @@ namespace BtDownload.Views
         {
             NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
-            this.Loaded += DownloadedView_Loaded; ;
-            DownloadedVM = SimpleIoc.Default.GetInstance<DownloadedVM>();
-
-           
+            this.Loaded += DownloadedView_Loaded;
         }
 
         private void DownloadedView_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
             var list = _dbService.DownloadDbContext.DownloadedInfos;
 
             DownloadedVM.DownloadedInfoList.Clear();
@@ -48,7 +39,7 @@ namespace BtDownload.Views
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
             List<DownloadedInfo> removes = new List<DownloadedInfo>();
-            var list=this.downList.SelectedItems;
+            var list = this.downList.SelectedItems;
             foreach (var item in list)
             {
                 removes.Add((DownloadedInfo)item);
@@ -60,7 +51,7 @@ namespace BtDownload.Views
 
             _dbService.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
             _dbService.DownloadDbContext.SaveChanges();
-            
+
             SetDefaultSelectStatus();
         }
         private async void DeleteFile_Click(object sender, RoutedEventArgs e)
@@ -78,7 +69,7 @@ namespace BtDownload.Views
 
             _dbService.DownloadDbContext.DownloadedInfos.RemoveRange(removes);
             _dbService.DownloadDbContext.SaveChanges();
-            
+
 
             try
             {
@@ -95,7 +86,6 @@ namespace BtDownload.Views
             }
             SetDefaultSelectStatus();
         }
-
 
         private void btnSelectAll_Click(object sender, RoutedEventArgs e)
         {
@@ -121,7 +111,7 @@ namespace BtDownload.Views
             if (list == null)
             {
                 this.DownloadedVM.IsEnableRemove = false;
-                
+
                 return;
             }
             if (list.Count > 0)
@@ -129,7 +119,7 @@ namespace BtDownload.Views
             else
                 this.DownloadedVM.IsEnableRemove = false;
 
-            
+
         }
 
         private void SetDefaultSelectStatus()
@@ -139,10 +129,5 @@ namespace BtDownload.Views
             this.downList.SelectionMode = ListViewSelectionMode.Single;
             btnSelectAll.Label = "选择";
         }
-
-
-       
-
-        
     }
 }

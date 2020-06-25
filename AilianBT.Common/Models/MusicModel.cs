@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight;
+using System;
 using System.Runtime.Serialization;
 
 namespace AilianBT.Common.Models
@@ -21,10 +22,7 @@ namespace AilianBT.Common.Models
         public bool HasCached
         {
             get=> _hasCached;
-            set
-            {
-                Set(ref _hasCached, value);
-            }
+            set => Set(ref _hasCached, value);
         }
 
         public override bool Equals(object obj)

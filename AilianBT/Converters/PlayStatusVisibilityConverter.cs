@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace BtDownload.ValueConverters
+namespace AilianBT.Converters
 {
-    class BoolToVisibityConverter : IValueConverter
+    public class PlayStatusVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            bool re = (bool)value;
-            if (re)
+            if(value is string title && string.IsNullOrWhiteSpace(title))
+            {
+                return Visibility.Collapsed;
+            }
+            else
             {
                 return Visibility.Visible;
             }
-            else
-                return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -1,29 +1,29 @@
 ﻿using AilianBT.Models;
+using AilianBT.Services;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace AilianBT.ViewModels
 {
     public class KeyVM:ViewModelBase
     {
-        private BLL.AilianBTBLL _ailianBtBll;
-        public KeyVM()
+        private AilianBTService _ailianBTService = SimpleIoc.Default.GetInstance<AilianBTService>();
+
+        public ObservableCollection<KeyGroupModel> _groups = new ObservableCollection<KeyGroupModel>();
+        public ObservableCollection<KeyGroupModel> Groups
         {
-            _ailianBtBll = new BLL.AilianBTBLL();
+            get => _groups;
+            set => Set(ref _groups, value);
         }
+
         public async void Loaded()
         {
             try
             {
-                var newkeys = await _ailianBtBll.GetNewKeyList();
-
+                var newkeys = await _ailianBTService.GetNewKeyList();
                 Groups.Clear();
                 for (int i = 0; i < newkeys.Count; i++)
                 {
@@ -34,12 +34,9 @@ namespace AilianBT.ViewModels
             {
                 App.ShowNotification(e.Message);
             }
-            
         }
-       
-        public ObservableCollection<KeyGroupModel> Groups { get; set; } = new ObservableCollection<KeyGroupModel>();
 
-        public  void GridView_ItemClick(object param)
+        public void GridView_ItemClick(object param)
         {
             NewKeyModel item = param as NewKeyModel;
 
@@ -49,6 +46,5 @@ namespace AilianBT.ViewModels
 
             NavigationVM.DetailFrame.Navigate(typeof(Views.SearchView), searchViewParam);
         }
-
     }
 }

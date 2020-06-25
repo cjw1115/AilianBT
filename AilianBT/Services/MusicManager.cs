@@ -1,6 +1,7 @@
 ﻿using AilianBT.Common.Models;
 using AilianBT.Common.Services;
 using AilianBT.Exceptions;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -18,7 +19,8 @@ namespace AilianBT.Services
         private MediaPlaybackList _mediaPlaybackList;
         private List<MusicModel> _cachedMusicList;
         public List<MusicModel> CachedMusicList => _cachedMusicList;
-        private MusicService musicService = new MusicService();
+
+        private MusicService musicService = SimpleIoc.Default.GetInstance<MusicService>();
 
         public MusicManager()
         {
@@ -27,8 +29,6 @@ namespace AilianBT.Services
             _mediaPlaybackList.ItemOpened += _mediaPlaybackList_ItemOpened;
             _mediaPlaybackList.ItemFailed += _mediaPlaybackList_ItemFailed;
             _mediaPlaybackList.AutoRepeatEnabled = false;
-            
-
 
             _mediaPlaybackList.MaxPlayedItemsToKeepOpen = 3;
             _mediaPlayer = new MediaPlayer();
@@ -130,20 +130,16 @@ namespace AilianBT.Services
                         }
                         else
                         {
-
                         }
                         return;
                     }
                 }
             }
 
-            //GetLocal
-            IRandomAccessStream ras = null;
-            ras = await musicService.GetCahchedMusicAsync(model);
-            if(ras==null)
+            IRandomAccessStream ras = await musicService.GetCahchedMusicAsync(model);
+            if (ras == null)
             {
                 MediaLoading?.Invoke(model);
-
                 try
                 {
                     ras = await musicService.GetMusicStream(model.Uri);
@@ -152,6 +148,7 @@ namespace AilianBT.Services
                 {
                     throw new OpenStreamFailedException();
                 }
+
                 //Cache media and send a notification when cache successfully.
                 var cachedResult = await musicService.CahcheMusicAsync(ras, model);
                 if (cachedResult == true)
@@ -159,12 +156,7 @@ namespace AilianBT.Services
                     MediaCached?.Invoke(model);
                 }
             }
-            else
-            {
-
-            }
             
-            //
             if (!model.Equals(_cachedMusicList[index]))
             {
                 ras.Dispose();
@@ -173,8 +165,7 @@ namespace AilianBT.Services
             
             //Create Media source
             var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
-            var modelJson = JsonSerializer.Serialize<MusicModel>(model);
-            source.CustomProperties["model"] = modelJson;
+            source.CustomProperties["model"] = JsonSerializer.Serialize(model);
             MediaPlaybackItem item = new MediaPlaybackItem(source);
 
             //Set STMC
@@ -200,9 +191,10 @@ namespace AilianBT.Services
             _mediaPlaybackList.MoveTo(index.Value);
             _mediaPlayer.Play();
         }
+
         public void Play(MusicModel model)
         {
-            if(_isPaused==true)
+            if (_isPaused)
             {
                 _mediaPlayer.Play();
             }

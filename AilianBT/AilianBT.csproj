@@ -16,66 +16,17 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>AilianBT_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>
+    </PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Never</AppxBundle>
-    <PackageCertificateThumbprint>DA718AA002AB72D5BB5284B3019DDF8ED7ED3ECA</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>D991B440254E768180A7B2A539D901222D5BB771</PackageCertificateThumbprint>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <Optimize>false</Optimize>
-    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
-    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -105,15 +56,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BLL\AilianBTBLL.cs" />
+    <Compile Include="Services\AilianBTService.cs" />
     <Compile Include="Constant\Definition.cs" />
+    <Compile Include="Converters\ColorBrushConverter.cs" />
+    <Compile Include="Converters\DayOfWeekConverter.cs" />
+    <Compile Include="Converters\PlayStatusVisibilityConverter.cs" />
     <Compile Include="Helpers\AssertsHelper.cs" />
+    <Compile Include="Models\DownloadStatus.cs" />
     <Compile Include="Views\Controls\KeyPannelControl.cs" />
     <Compile Include="Views\Controls\Notification.xaml.cs">
       <DependentUpon>Notification.xaml</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\Exceptions.cs" />
-    <Compile Include="Exceptions\OpenStreamFailedException.cs" />
     <Compile Include="Helpers\VisualTreeHelperTool.cs" />
     <Compile Include="Migrations\20160731064812_init.cs" />
     <Compile Include="Migrations\20160731064812_init.designer.cs">
@@ -140,17 +94,17 @@
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\SettingService.cs" />
     <Compile Include="Triggers\NavigationViewAdaptiveTrigger.cs" />
-    <Compile Include="ValueConverters\ListIndexConverter.cs" />
-    <Compile Include="ValueConverters\NullToVisibityConverter.cs" />
-    <Compile Include="ValueConverters\BoolToVisibityConverter.cs" />
-    <Compile Include="ValueConverters\BytesToImageSouceConverter.cs" />
-    <Compile Include="ValueConverters\DataSizeConverter.cs" />
-    <Compile Include="ValueConverters\DownloadStatusToIconConverter.cs" />
-    <Compile Include="ValueConverters\NavigationListItemConverter.cs" />
-    <Compile Include="ValueConverters\PullHeightConverter.cs" />
-    <Compile Include="ValueConverters\VisibilityInverseConverter.cs" />
-    <Compile Include="ViewModels\DownloadedVM.cs" />
-    <Compile Include="ViewModels\DownloadingVM.cs" />
+    <Compile Include="Converters\ListIndexConverter.cs" />
+    <Compile Include="Converters\NullToVisibityConverter.cs" />
+    <Compile Include="Converters\BoolToVisibityConverter.cs" />
+    <Compile Include="Converters\BytesToImageSouceConverter.cs" />
+    <Compile Include="Converters\DataSizeConverter.cs" />
+    <Compile Include="Converters\DownloadStatusToIconConverter.cs" />
+    <Compile Include="Converters\NavigationListItemConverter.cs" />
+    <Compile Include="Converters\PullHeightConverter.cs" />
+    <Compile Include="Converters\VisibilityInverseConverter.cs" />
+    <Compile Include="ViewModels\DownloadedViewModel.cs" />
+    <Compile Include="ViewModels\DownloadingViewModel.cs" />
     <Compile Include="ViewModels\KeyVM.cs" />
     <Compile Include="ViewModels\MainVM.cs" />
     <Compile Include="ViewModels\MusicVM.cs" />
@@ -198,7 +152,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Images\Background\detail.png" />
+    <Content Include="Assets\Images\backpage-background.png" />
     <Content Include="Assets\JS\GetHeight.js" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\Square150x150Logo.scale-100.png" />
@@ -210,6 +164,7 @@
     <Content Include="Assets\Images\Background\2.png" />
     <Content Include="Assets\Images\Background\3.png" />
     <Content Include="Assets\Fonts\fontawesome-webfont.ttf" />
+    <None Include="AilianBT_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -220,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Styles\Buttons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Controls\Notification.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -227,10 +186,6 @@
     <Page Include="Views\Controls\SearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\DefaultDetailView.xaml">
       <SubType>Designer</SubType>
@@ -313,14 +268,38 @@
       <Project>{0891d52e-4d8e-4da4-acdd-f1f8c45ca898}</Project>
       <Name>AilianBT.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MusicBackground\MusicBackground.csproj">
-      <Project>{a9dcfeec-0e58-4203-bb01-f844d0b8c707}</Project>
-      <Name>MusicBackground</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
+    <OutputPath>bin\ARM64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

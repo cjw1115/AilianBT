@@ -241,6 +241,8 @@
     <Language Code="no-no" InMinimumRequirementSet="true" />
     <Language Code="nso" InMinimumRequirementSet="true" />
     <Language Code="nso-za" InMinimumRequirementSet="true" />
+    <Language Code="om" InMinimumRequirementSet="false" />
+    <Language Code="om-et" InMinimumRequirementSet="false" />
     <Language Code="or" InMinimumRequirementSet="true" />
     <Language Code="or-in" InMinimumRequirementSet="true" />
     <Language Code="pa" InMinimumRequirementSet="true" />
@@ -366,12 +368,26 @@
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
-    <MainPackageIdentityName>43612cjw1115.DolbyTest</MainPackageIdentityName>
-    <MainPackageIdentityName>43612cjw1115.SayHelloFromUWP</MainPackageIdentityName>
+    <MainPackageIdentityName>43612cjw1115.AudiCapture</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.ULove</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.2457283754C76</MainPackageIdentityName>
-    <MainPackageIdentityName>43612cjw1115.52401D68F12FA</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.WP8.1</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NBLGGH4TFBW" />
+  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NBLGGH4TFBW">
+    <PackageInfo>
+      <OsMinVersion>0.0.0.0</OsMinVersion>
+      <PackageArchitecture>Arm</PackageArchitecture>
+      <PackageMaxArchitectureVersion>1.6.0.0</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>0.0.0.0</OsMinVersion>
+      <PackageArchitecture>X64</PackageArchitecture>
+      <PackageMaxArchitectureVersion>1.6.0.0</PackageMaxArchitectureVersion>
+    </PackageInfo>
+    <PackageInfo>
+      <OsMinVersion>0.0.0.0</OsMinVersion>
+      <PackageArchitecture>X86</PackageArchitecture>
+      <PackageMaxArchitectureVersion>1.6.0.0</PackageMaxArchitectureVersion>
+    </PackageInfo>
+  </PackageInfoList>
 </StoreAssociation>

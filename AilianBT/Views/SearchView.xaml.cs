@@ -8,27 +8,19 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
 
-// “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=234238 上有介绍
-
 namespace AilianBT.Views
 {
-    /// <summary>
-    /// 可用于自身或导航至 Frame 内部的空白页。
-    /// </summary>
     public sealed partial class SearchView : Page
     {
-        public SearchVM SearchVM { get; set;}
+        public SearchVM SearchVM { get; set; } = ViewModelLocator.Instance.SearchVM;
         public SearchView()
         {
-            var locator = App.Current.Resources["Locator"] as ViewModelLocator;
-            SearchVM = locator.SearchVM;
             this.InitializeComponent();
             this.Loaded += SearchView_Loaded;
-            
-
         }
 
         private ScrollViewer scrollView;
+
         public void Init()
         {
             scrollView = Helpers.VisualTreeHelperTool.FindVisualChild<ScrollViewer>(this.listView);
@@ -120,6 +112,7 @@ namespace AilianBT.Views
         }
         #endregion
     }
+
     public class SearchViewParam
     {
         public bool IsTo { get; set; } = false;

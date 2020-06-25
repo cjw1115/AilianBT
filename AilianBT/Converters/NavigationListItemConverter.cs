@@ -1,12 +1,8 @@
 ﻿using AilianBT.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
-namespace AilianBT.ValueConverters
+namespace AilianBT.Converters
 {
     public class NavigationListItemConverter : IValueConverter
     {

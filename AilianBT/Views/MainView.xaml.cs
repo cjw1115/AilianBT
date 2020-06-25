@@ -1,14 +1,10 @@
 ﻿using AilianBT.Helpers;
-using AilianBT.Services;
-using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace AilianBT.Views
@@ -16,6 +12,7 @@ namespace AilianBT.Views
     public sealed partial class MainView : Page
     {
         public ViewModels.MainVM MainVM { get; set; }
+
         public MainView()
         {
             NavigationCacheMode = NavigationCacheMode.Required;
@@ -25,7 +22,6 @@ namespace AilianBT.Views
             this.Loaded += MainView_Loaded;
         }
 
-      
         public void Init()
         {
             var scrollView = Helpers.VisualTreeHelperTool.FindVisualChild<ScrollViewer>(this.listView);
@@ -34,6 +30,7 @@ namespace AilianBT.Views
             scrollView.ViewChanged -= ScrollView_ViewChanged;
             scrollView.ViewChanged += ScrollView_ViewChanged;
         }
+
         private bool _isLoadMore = false;
         public bool IsLoadMore
         {
@@ -52,6 +49,7 @@ namespace AilianBT.Views
                 }
             }
         }
+
         private ProgressRing _progressRing => Helpers.VisualTreeHelperTool.FindVisualChild<ProgressRing>(this.listView);
         private void ScrollView_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
@@ -77,7 +75,6 @@ namespace AilianBT.Views
             }
         }
 
-
         private async void MainView_Loaded(object sender, RoutedEventArgs e)
         {
             this.imgbackground.Source = await AssertsHelper.GetRandomBackgroundImage();
@@ -91,6 +88,7 @@ namespace AilianBT.Views
         {
             await MainVM.LoadMore();
         }
+
         private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
             await MainVM.Refresh();
@@ -98,6 +96,7 @@ namespace AilianBT.Views
 
         #region Animation
         private Compositor _compositor => Window.Current.Compositor;
+
         public void InitLoadingMoreAnimation()
         {
             var angleAnimation= _compositor.CreateScalarKeyFrameAnimation();

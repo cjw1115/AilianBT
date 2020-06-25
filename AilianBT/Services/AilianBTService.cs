@@ -11,12 +11,11 @@ using System.Text;
 using System.Net.Http;
 using AngleSharp.Html.Parser;
 using AilianBT.Constant;
-using AilianBT.Services;
 using GalaSoft.MvvmLight.Ioc;
 
-namespace AilianBT.BLL
+namespace AilianBT.Services
 {
-    public class AilianBTBLL
+    public class AilianBTService
     {
         public static HttpService _httpService = new HttpService();
 
@@ -223,6 +222,5 @@ namespace AilianBT.BLL
 
             return newKeys;
         }
-
     }
 }

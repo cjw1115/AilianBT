@@ -9,35 +9,32 @@ using Windows.Networking.BackgroundTransfer;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using System.Threading.Tasks;
-using BtDownload.VIewModels;
-using BtDownload.Models;
+using AilianBT.Models;
 using AilianBT.Services;
 using GalaSoft.MvvmLight.Ioc;
-//“空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 上有介绍
+using AilianBT.ViewModels;
 
-namespace BtDownload.Views
+namespace AilianBT.Views
 {
-    /// <summary>
-    /// 可用于自身或导航至 Frame 内部的空白页。
-    /// </summary>
     public sealed partial class DownloadingView : Page
     {
         private DownloadService _downloadService = SimpleIoc.Default.GetInstance<DownloadService>();
         private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
         private NotificationService _notificationService = SimpleIoc.Default.GetInstance<NotificationService>();
-        public DownloadingVM DownloadingVM { get; private set; } = SimpleIoc.Default.GetInstance<DownloadingVM>();
-        public DownloadedVM DownloadedVM { get; private set; } = SimpleIoc.Default.GetInstance<DownloadedVM>();
+
+        public DownloadingViewModel DownloadingVM { get; private set; } = ViewModelLocator.Instance.DownloadingVM;
+        public DownloadedViewModel DownloadedVM { get; private set; } = ViewModelLocator.Instance.DownloadedVM;
 
         public DownloadingView()
         {
             NavigationCacheMode = NavigationCacheMode.Required;
             this.InitializeComponent();
-            this.Loaded += DownloadingView_Loaded;
+            this.Loaded += _downloadingViewLoaded;
         }
 
-        private async void DownloadingView_Loaded(object sender, RoutedEventArgs e)
+        private async void _downloadingViewLoaded(object sender, RoutedEventArgs e)
         {
-            List<Task> downloadtasks = new List<Task>();
+            var downloadtasks = new List<Task>();
             var downloadInfos = await _downloadService.GetAllDownloadInfoAsync(DownloadProgress);
             DownloadingVM.DownloadOperations.Clear();
             foreach (var item in downloadInfos)
@@ -53,11 +50,11 @@ namespace BtDownload.Views
             {
                 await Task.WhenAll(downloadtasks);
             }
-            catch (TaskCanceledException cancell)
+            catch (TaskCanceledException)
             {
-
             }
         }
+
         private StorageFolder defaultFolder;
         private async Task SetStorageFolder()
         {
@@ -85,7 +82,6 @@ namespace BtDownload.Views
         {
             //创建文件
             //td:此处添加文件存在检测逻辑
-            //
             var file = await _storageService.CreaterFile(defaultFolder, filename);
 
             var downloadinfo = await _downloadService.CreateDownload(uri, file, DownloadProgress);
@@ -99,9 +95,8 @@ namespace BtDownload.Views
                 DownloadingVM.DownloadOperations.Remove(downloadinfo);
                 FinishedDownload(downloadinfo);
             }
-            catch (TaskCanceledException exception)
+            catch (TaskCanceledException)
             {
-
             }
         }
 
@@ -130,16 +125,14 @@ namespace BtDownload.Views
             {
                 AilianBT.App.ShowNotification("下载参数异常：" + argumentException.Message);
             }
-            catch(Exception exception)
+            catch(Exception)
             {
                 AilianBT.App.ShowNotification("下载超时");
             }
-            
-
         }
+
         public void DownloadProgress(DownloadOperation operation)
         {
-
             var re = DownloadingVM.DownloadOperations.Where(m => m.DownloadOperation == operation).FirstOrDefault();
             if (re != null)
             {
@@ -150,11 +143,8 @@ namespace BtDownload.Views
                 {
                     re.FinishedPercent = Math.Round((double)(re.ReceivedBytes * 100) / re.TotalToReceive, 2);
                 }
-
             }
         }
-
-        
 
         private void btnControl_Click(object sender, RoutedEventArgs e)
         {
@@ -305,6 +295,4 @@ namespace BtDownload.Views
                 this.DownloadingVM.IsEnablePause = false;
         }
     }
-
-    
 }

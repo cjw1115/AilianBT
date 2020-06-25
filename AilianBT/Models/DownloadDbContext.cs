@@ -1,12 +1,6 @@
-﻿using BtDownload.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace BtDownload.Models
+namespace AilianBT.Models
 {
     public class DownloadDbContext:DbContext
     {

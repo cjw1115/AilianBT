@@ -1,12 +1,7 @@
 ﻿using AilianBT.Models;
 using GalaSoft.MvvmLight;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using BtDownload.Views;
 namespace AilianBT.ViewModels
 {
     public class NavigationVM:ViewModelBase
@@ -17,12 +12,12 @@ namespace AilianBT.ViewModels
            new NavigationListItem { Title="首页", PageType=typeof(Views.MainView),Icon="\xE80F" },
            new NavigationListItem { Title="番组", PageType=typeof(Views.KeyView),Icon="\xE192"},
            new NavigationListItem { Title="音乐", PageType=typeof(Views.MusicView),Icon="\xE8D6"},
-           new NavigationListItem { Title="下载", PageType=typeof(DownloadMainView) ,Icon="\xE896"}
+           new NavigationListItem { Title="下载", PageType=typeof(Views.DownloadMainView) ,Icon="\xE896"}
         };
 
         public static Frame FuncFrame { get; set; }
         public static Frame DetailFrame { get; set; }
-        //public ViewModels.MusicVM MusicVM { get; set; } = new MusicVM();
+        
         private string _mainTitle;
         public string MainTitle
         {
@@ -31,19 +26,17 @@ namespace AilianBT.ViewModels
         }
 
         private int _selectedIndex;
-
         public int SelectedIndex
         {
             get { return _selectedIndex; }
             set { Set(ref _selectedIndex, value); }
         }
 
-
         public void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SelectedIndex < 0)
                 return;
-            Models.NavigationListItem item = NavigationList[SelectedIndex];
+            NavigationListItem item = NavigationList[SelectedIndex];
             if (item != null && item.PageType != null)
             {
                 MainTitle = item.Title;

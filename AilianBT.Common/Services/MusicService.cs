@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -44,6 +45,7 @@ namespace AilianBT.Common.Services
             }
             return musicList;
         }
+
         public async Task<IRandomAccessStream> GetMusicStream(Uri uri)
         {
             var newUri=uri.ToString() + "?date=" + DateTime.Now.Millisecond;
@@ -71,14 +73,16 @@ namespace AilianBT.Common.Services
                 System.Diagnostics.Debug.WriteLine($"Exception:{IOException.Message}");
 #endif
             }
+
             if (folder == null)
             {
                 folder = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFolderAsync("CachedMusic");
             }
+
             Windows.Storage.StorageFile cacheFile = null;
             try
             {
-                cacheFile = await folder.CreateFileAsync(model.Title, Windows.Storage.CreationCollisionOption.FailIfExists);
+                cacheFile = await folder.CreateFileAsync(_createFileName(model), Windows.Storage.CreationCollisionOption.FailIfExists);
             }
             catch (ArgumentNullException)
             {
@@ -105,6 +109,10 @@ namespace AilianBT.Common.Services
                 cacheFileStream?.Dispose();
             }
         }
+
+        /// <summary>
+        /// Get music stream from the local cache
+        /// </summary>
         public async Task<IRandomAccessStream> GetCahchedMusicAsync(MusicModel model)
         {
             Windows.Storage.StorageFolder folder = null;
@@ -123,7 +131,7 @@ namespace AilianBT.Common.Services
             Windows.Storage.StorageFile cachedFile = null;
             try
             {
-                cachedFile = await folder.GetFileAsync(model.Title);
+                cachedFile = await folder.GetFileAsync(_createFileName(model));
                 return await cachedFile.OpenAsync(Windows.Storage.FileAccessMode.Read);
             }
             catch (System.Exception e)
@@ -133,25 +141,6 @@ namespace AilianBT.Common.Services
 #endif
                 return null;
             }
-        }
-
-        private string CreateFileName(string arg)
-        {
-            if (string.IsNullOrEmpty(arg))
-                throw new ArgumentNullException("Filename should't be nullable");
-
-            string strAlgName = HashAlgorithmNames.Sha1;
-            
-            HashAlgorithmProvider objAlgProv = HashAlgorithmProvider.OpenAlgorithm(strAlgName);
-
-            CryptographicHash objHash = objAlgProv.CreateHash();
-
-            
-            IBuffer buffMsg1 = CryptographicBuffer.ConvertStringToBinary(arg.Trim(), BinaryStringEncoding.Utf16BE);
-            objHash.Append(buffMsg1);
-            IBuffer buffHash1 = objHash.GetValueAndReset();
-            string strHash1 = CryptographicBuffer.EncodeToBase64String(buffHash1);
-            return strHash1;
         }
 
         public async Task CheckCachedMusic(IList<MusicModel> models,System.Threading.SynchronizationContext context)
@@ -189,6 +178,19 @@ namespace AilianBT.Common.Services
 #endif
                 }
             }
+        }
+
+        private string _createFileName(MusicModel model)
+        {
+            byte[] sor = Encoding.UTF8.GetBytes(model.Title);
+            MD5 md5 = MD5.Create();
+            byte[] result = md5.ComputeHash(sor);
+            StringBuilder strbul = new StringBuilder(40);
+            for (int i = 0; i < result.Length; i++)
+            {
+                strbul.Append(result[i].ToString("x2"));
+            }
+            return strbul.ToString();
         }
     }
 }

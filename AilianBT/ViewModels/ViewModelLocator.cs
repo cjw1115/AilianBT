@@ -1,23 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Ioc;
+﻿using GalaSoft.MvvmLight.Ioc;
+using Windows.UI.Xaml;
+
 namespace AilianBT.ViewModels
 {
     public class ViewModelLocator
     {
+        private static ViewModelLocator _instance;
+        public static ViewModelLocator Instance 
+        {
+            get
+            {
+                if(_instance==null)
+                {
+                    _instance = Application.Current.Resources["Locator"] as ViewModelLocator;
+                }
+                return _instance;
+            }
+        }
+        
         public ViewModelLocator()
         {
-            SimpleIoc.Default.Register<ViewModels.NavigationVM>();
-            SimpleIoc.Default.Register<ViewModels.MainVM>();
-            SimpleIoc.Default.Register<ViewModels.ShowVM>();
-            SimpleIoc.Default.Register<ViewModels.SearchVM>();
-            SimpleIoc.Default.Register<ViewModels.KeyVM>();
-
+            SimpleIoc.Default.Register<NavigationVM>();
+            SimpleIoc.Default.Register<MainVM>();
+            SimpleIoc.Default.Register<ShowVM>();
+            SimpleIoc.Default.Register<SearchVM>();
+            SimpleIoc.Default.Register<KeyVM>();
+            SimpleIoc.Default.Register<MusicVM>();
+            SimpleIoc.Default.Register<DownloadedViewModel>();
+            SimpleIoc.Default.Register<DownloadingViewModel>();
         }
-
 
         public NavigationVM NavigationVM
         {
@@ -38,6 +49,18 @@ namespace AilianBT.ViewModels
         public KeyVM KeyVM
         {
             get { return SimpleIoc.Default.GetInstance<KeyVM>(); }
+        }
+        public MusicVM MusicVM
+        {
+            get { return SimpleIoc.Default.GetInstance<MusicVM>(); }
+        }
+        public DownloadedViewModel DownloadedVM
+        {
+            get { return SimpleIoc.Default.GetInstance<DownloadedViewModel>(); }
+        }
+        public DownloadingViewModel DownloadingVM
+        {
+            get { return SimpleIoc.Default.GetInstance<DownloadingViewModel>(); }
         }
     }
 }

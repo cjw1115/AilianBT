@@ -1,6 +1,4 @@
-﻿using AilianBT.Services;
-using AilianBT.Views.Controls;
-using BtDownload.Models;
+﻿using AilianBT.Models;
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
@@ -16,23 +14,16 @@ namespace AilianBT.Services
     public class DownloadService
     {
         private  BackgroundDownloader _downloader = new BackgroundDownloader();
-
         private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
         private DbService _dbService = SimpleIoc.Default.GetInstance<DbService > ();
         private NotificationService _notificationService= SimpleIoc.Default.GetInstance<NotificationService>();
 
-        public DownloadService()
-        {
-            
-        }
-       
         //直接创建下载任务，有ui
         public async Task<DownloadInfo> CreateDownload(Uri uri,IStorageFile file,Action<DownloadOperation> handler)
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             Progress<DownloadOperation> progress = new Progress<DownloadOperation>(handler);
             var operation = _downloader.CreateDownload(uri, file);
-
 
             DownloadInfo info = new DownloadInfo
             {
@@ -167,7 +158,6 @@ namespace AilianBT.Services
             }
             return filename;
         }
-
 
         public  async Task<StorageFolder> PickDefaultDownloadFolder()
         {
