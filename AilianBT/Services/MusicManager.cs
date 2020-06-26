@@ -1,15 +1,16 @@
-﻿using AilianBT.Common.Models;
-using AilianBT.Common.Services;
-using AilianBT.Exceptions;
+﻿using AilianBT.Exceptions;
+using AilianBT.Models;
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Core;
+using Windows.Media.MediaProperties;
 using Windows.Media.Playback;
-using Windows.Storage.Streams;
 
 namespace AilianBT.Services
 {
@@ -17,43 +18,28 @@ namespace AilianBT.Services
     {
         private MediaPlayer _mediaPlayer;
         private MediaPlaybackList _mediaPlaybackList;
-        private List<MusicModel> _cachedMusicList;
-        public List<MusicModel> CachedMusicList => _cachedMusicList;
-
         private MusicService musicService = SimpleIoc.Default.GetInstance<MusicService>();
+
+        public List<MusicModel> CachedMusicList { get; private set; } = new List<MusicModel>();
 
         public MusicManager()
         {
             _mediaPlaybackList = new MediaPlaybackList();
-            _mediaPlaybackList.CurrentItemChanged += _mediaPlaybackList_CurrentItemChanged;
-            _mediaPlaybackList.ItemOpened += _mediaPlaybackList_ItemOpened;
-            _mediaPlaybackList.ItemFailed += _mediaPlaybackList_ItemFailed;
+            _mediaPlaybackList.CurrentItemChanged += _mediaPlaybackListCurrentItemChanged;
+            _mediaPlaybackList.ItemOpened += _mediaPlaybackListItemOpened;
+            _mediaPlaybackList.ItemFailed += _mediaPlaybackListItemFailed;
             _mediaPlaybackList.AutoRepeatEnabled = false;
-
             _mediaPlaybackList.MaxPlayedItemsToKeepOpen = 3;
+
+            _mediaPlaybackList.Items.Add(_createPlaceholderItem());
+            _mediaPlaybackList.Items.Add(_createPlaceholderItem());
+            _mediaPlaybackList.Items.Add(_createPlaceholderItem());
+
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.AutoPlay = false;
             _mediaPlayer.Source = _mediaPlaybackList;
-
-            InitSource();
-
-            _cachedMusicList = new List<MusicModel>(3);
-            _cachedMusicList.Add(new MusicModel());
-            _cachedMusicList.Add(new MusicModel());
-            _cachedMusicList.Add(new MusicModel());
-
         }
-        private void InitSource()
-        {
-            _mediaPlaybackList.Items.Add(GetPlaceholderItem());
-            _mediaPlaybackList.Items.Add(GetPlaceholderItem());
-            _mediaPlaybackList.Items.Add(GetPlaceholderItem());
-        }
-        public MediaPlaybackItem GetPlaceholderItem()
-        {
-            MediaPlaybackItem item1 = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri("cq://cq")));
-            return item1;
-        }
+
         public event Action<MusicModel> MediaLoaded;
         public event Action<MusicModel> MediaFailed;
         public event Action<MusicModel, MusicModel> MediaChanged;
@@ -61,34 +47,8 @@ namespace AilianBT.Services
         public event Action<MusicModel> MediaCached;
         public event Action MediaEnd;
 
-        private void _mediaPlaybackList_ItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
-        {
-            args.Item.Source.CustomProperties.TryGetValue("model",out object value);
-            if (value == null)
-                return;
-            var modelJson = value as string;
-            var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("Open Failed:");
-            System.Diagnostics.Debug.WriteLine(modelJson);
-#endif
-            MediaFailed?.Invoke(model);
-        }
-
-        private void _mediaPlaybackList_ItemOpened(MediaPlaybackList sender, MediaPlaybackItemOpenedEventArgs args)
-        {
-
-            var modelJson = args.Item.Source.CustomProperties["model"] as string;
-            var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
-
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("Open Successfully:");
-            System.Diagnostics.Debug.WriteLine(modelJson);
-#endif
-            MediaLoaded?.Invoke(model);
-        }
-
-        private void _mediaPlaybackList_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        #region MediaPlaybackList callbacks
+        private void _mediaPlaybackListCurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
             if(args.Reason== MediaPlaybackItemChangedReason.EndOfStream)
             {
@@ -96,6 +56,7 @@ namespace AilianBT.Services
                 MediaEnd?.Invoke();
                 return;
             }
+
             MusicModel newModel = null;
             MusicModel oldModel= null;
             if(args.NewItem!=null)
@@ -110,87 +71,83 @@ namespace AilianBT.Services
             }
             MediaChanged?.Invoke(newModel, oldModel);
         }
-        
-        public async Task Add(MusicModel model,int index)
-        {
-            for (int i = 0; i < _mediaPlaybackList.Items.Count; i++)
-            {
-                var customProperties = _mediaPlaybackList.Items[i].Source.CustomProperties;
-                if(customProperties.ContainsKey("model"))
-                {
-                    var cacheItem = JsonSerializer.Deserialize<MusicModel>(customProperties["model"] as string);
-                    if(cacheItem.Equals(model))
-                    {
-                        if (i != index)
-                        {
-                            var temp=_mediaPlaybackList.Items[i];
-                            _mediaPlaybackList.Items.RemoveAt(i);
-                            _mediaPlaybackList.Items.Insert(i, GetPlaceholderItem());
-                            _mediaPlaybackList.Items[index] = temp;
-                        }
-                        else
-                        {
-                        }
-                        return;
-                    }
-                }
-            }
 
-            IRandomAccessStream ras = await musicService.GetCahchedMusicAsync(model);
-            if (ras == null)
+        private void _mediaPlaybackListItemOpened(MediaPlaybackList sender, MediaPlaybackItemOpenedEventArgs args)
+        {
+            var modelJson = args.Item.Source.CustomProperties["model"] as string;
+            var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("Open Successfully:");
+            System.Diagnostics.Debug.WriteLine(modelJson);
+#endif
+            MediaLoaded?.Invoke(model);
+        }
+
+        private void _mediaPlaybackListItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
+        {
+            if(args.Item.Source.CustomProperties.TryGetValue("model", out object value))
+            {
+                var modelJson = value as string;
+                var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("Open Failed:");
+                System.Diagnostics.Debug.WriteLine(modelJson);
+#endif
+                MediaFailed?.Invoke(model);
+            }
+        }
+        #endregion
+
+        public async Task Add(MusicModel model)
+        {
+            var indexInPlaybackList = _getIndex(model);
+
+            // Prepare audio steam
+            var stream = await musicService.GetCahchedMusicAsync(model);
+            if (stream == null)
             {
                 MediaLoading?.Invoke(model);
                 try
                 {
-                    ras = await musicService.GetMusicStream(model.Uri);
+                    stream = await musicService.GetMusicStream(model.Uri);
                 }
                 catch
                 {
-                    throw new OpenStreamFailedException();
+                    MediaFailed?.Invoke(model);
+                    // TODO: Log message
                 }
 
                 //Cache media and send a notification when cache successfully.
-                var cachedResult = await musicService.CahcheMusicAsync(ras, model);
-                if (cachedResult == true)
-                {
-                    MediaCached?.Invoke(model);
-                }
+                musicService.CahcheMusic(stream, model);
+                MediaCached?.Invoke(model);
             }
-            
-            if (!model.Equals(_cachedMusicList[index]))
-            {
-                ras.Dispose();
-                return;
-            }
-            
-            //Create Media source
-            var source = MediaSource.CreateFromStream(ras, "audio/mpeg");
-            source.CustomProperties["model"] = JsonSerializer.Serialize(model);
-            MediaPlaybackItem item = new MediaPlaybackItem(source);
 
+            if (indexInPlaybackList != null)
+            {
+                _mediaPlaybackList.Items[indexInPlaybackList.Value] = _createMediaPlaybackItem(stream, model);
+            }
+            else
+            {
+                _mediaPlaybackList.Items.Add(_createMediaPlaybackItem(stream, model));
+            }
+        }
+
+        private MediaPlaybackItem _createMediaPlaybackItem(Stream sourceStream, MusicModel model)
+        {
+            //Create Media source
+            var source = MediaSource.CreateFromStream(sourceStream.AsRandomAccessStream(), "audio/mpeg");
+            source.CustomProperties["model"] = JsonSerializer.Serialize(model);
+            var item = new MediaPlaybackItem(source);
             //Set STMC
-            var props= item.GetDisplayProperties();
+            var props = item.GetDisplayProperties();
             props.Type = MediaPlaybackType.Music;
             props.MusicProperties.Title = model.Title;
             item.ApplyDisplayProperties(props);
-
-            _mediaPlaybackList.Items[index] = item;
+            return item;
         }
 
-        private const string CachedMusic = "CachedMusic";
-        
-        public void Previous(MusicModel model)
-        {
-            var index = GetIndex(model);
-            if (index == null)
-            {
-                //Media is in downloading...
-                MediaLoading?.Invoke(model);
-                return;
-            }
-            _mediaPlaybackList.MoveTo(index.Value);
-            _mediaPlayer.Play();
-        }
+        private bool _isPaused;
 
         public void Play(MusicModel model)
         {
@@ -200,18 +157,18 @@ namespace AilianBT.Services
             }
             else
             {
-                var index = GetIndex(model);
+                var index = _getIndex(model);
                 if (index == null)
                 {
                     //Media is in downloading...
                     MediaLoading?.Invoke(model);
                     return;
                 }
-                _mediaPlaybackList.MoveTo(index.Value);
+                _mediaPlaybackList.MoveTo((uint)index.Value);
                 _mediaPlayer.Play();
             }
         }
-        private bool _isPaused;
+
         public void Pause(bool stop = false)
         {
             if(stop!=true)
@@ -221,22 +178,35 @@ namespace AilianBT.Services
             _mediaPlayer.Pause();
         }
 
+        public void Previous(MusicModel model)
+        {
+            var index = _getIndex(model);
+            if (index == null)
+            {
+                //Media is in downloading...
+                MediaLoading?.Invoke(model);
+                return;
+            }
+            _mediaPlaybackList.MoveTo((uint)index.Value);
+            _mediaPlayer.Play();
+        }
+
         public void Next(MusicModel model)
         {
-            var index = GetIndex(model);
+            var index = _getIndex(model);
             if(index==null)
             {
                 //Media is in downloading...
                 MediaLoading?.Invoke(model);
                 return;
             }
-            _mediaPlaybackList.MoveTo(index.Value);
+            _mediaPlaybackList.MoveTo((uint)index.Value);
             _mediaPlayer.Play();
         }
 
-        private uint? GetIndex(MusicModel model)
+        private int? _getIndex(MusicModel model)
         {
-            uint? index = null;
+            int? index = null;
             for (int i = 0; i < _mediaPlaybackList.Items.Count; i++)
             {
                 _mediaPlaybackList.Items[i].Source.CustomProperties.TryGetValue("model", out object value);
@@ -245,11 +215,16 @@ namespace AilianBT.Services
                 var item = JsonSerializer.Deserialize<MusicModel>(value as string);
                 if (model.Equals(item))
                 {
-                    index = (uint)i;
+                    index = i;
                     break;
                 }
             }
             return index;
+        }
+
+        private MediaPlaybackItem _createPlaceholderItem()
+        {
+            return new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri("cq://cq")));
         }
     }
 }

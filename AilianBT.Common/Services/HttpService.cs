@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 
@@ -21,13 +20,13 @@ namespace AilianBT.Common.Services
             _handler = new HttpClientHandler();
             _handler.UseProxy = false;
             _handler.AllowAutoRedirect = allowRedirect;
-            
+
             _client = new HttpClient(_handler);
             _client.DefaultRequestHeaders.Add("User-Agent", USER_AGAENT);
             _client.Timeout = TimeSpan.FromMilliseconds(5000);
         }
 
-        public async Task<HttpResponseMessage> SendRequest(string url, HttpMethod method, HttpContent content = null, IDictionary<string, string> appendHeaders = null)
+        public async Task<HttpResponseMessage> SendRequest(string url, HttpMethod method, HttpContent content = null, IDictionary<string, string> appendHeaders = null, HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead)
         {
             HttpRequestMessage request = null;
             try
@@ -41,7 +40,7 @@ namespace AilianBT.Common.Services
                         request.Headers.Add(header.Key, header.Value);
                     }
                 }
-                return await _client.SendAsync(request);
+                return await _client.SendAsync(request, completionOption);
             }
             catch
             {
@@ -53,31 +52,10 @@ namespace AilianBT.Common.Services
             }
         }
 
-        public async Task<Stream> SendRequestForStream(string url, HttpMethod method, HttpContent content = null, IDictionary<string, string> appendHeaders = null)
+        public async Task<Stream> SendRequestForStream(string url, HttpMethod method, HttpContent content = null, IDictionary<string, string> appendHeaders = null, HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead)
         {
-            HttpRequestMessage request = null;
-            try
-            {
-                request = new HttpRequestMessage(method, url);
-                request.Content = content;
-                if (appendHeaders != null)
-                {
-                    foreach (var header in appendHeaders)
-                    {
-                        request.Headers.Add(header.Key, header.Value);
-                    }
-                }
-                var response = await _client.SendAsync(request);
-                return await response.Content.ReadAsStreamAsync();
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                request?.Dispose();
-            }
+            var response = await SendRequest(url, method, content, appendHeaders, completionOption);
+            return await response.Content.ReadAsStreamAsync();
         }
 
         public async Task<IRandomAccessStream> SendRequestForRAS(string url, HttpMethod method, HttpContent content = null, IDictionary<string, string> appendHeaders = null)
@@ -90,7 +68,7 @@ namespace AilianBT.Common.Services
         {
             using (var stream = await SendRequestForStream(url, method, content, appendHeaders))
             {
-                if(encoding==null)
+                if (encoding == null)
                 {
                     encoding = Encoding.UTF8;
                 }

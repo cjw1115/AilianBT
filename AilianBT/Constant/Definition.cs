@@ -9,5 +9,7 @@ namespace AilianBT.Constant
     public class Definition
     {
         public const string KISSSUB_LIVING_MODE = "livingmode";
+
+        public const string LOCALSTATE_CACHEDMUSIC = "CachedMusic";
     }
 }

@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace AilianBT.Common.Models
+namespace AilianBT.Models
 {
     [DataContract]
     public class MusicModel: ViewModelBase

@@ -1,5 +1,6 @@
 ﻿using AilianBT.Common.Services;
 using AilianBT.Constant;
+using AilianBT.Helpers;
 using AilianBT.Models;
 using AilianBT.Services;
 using GalaSoft.MvvmLight.Ioc;
@@ -130,6 +131,7 @@ namespace AilianBT
 
         private void _registerService()
         {
+            SimpleIoc.Default.Register<UtilityHelper>();
             SimpleIoc.Default.Register<DbService>();
             SimpleIoc.Default.Register<StorageService>();
             SimpleIoc.Default.Register<NotificationService>();
