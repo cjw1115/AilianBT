@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.Ioc;
+﻿using AilianBT.Constant;
+using GalaSoft.MvvmLight.Ioc;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 
@@ -12,8 +13,8 @@ namespace AilianBT.Services
 
         public void ShowDownloadFinishedToast(string message)
         {
-            var ison = _storageService.GetLocalSetting<bool>("toastswitch");
-            if (ison == false)
+            var isToastOn = _storageService.GetLocalSetting<bool>(Definition.SETTING_TOAST);
+            if (!isToastOn)
                 return;
             try
             {

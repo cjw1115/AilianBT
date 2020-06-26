@@ -68,6 +68,7 @@
     <Compile Include="Models\DownloadStatus.cs" />
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MusicService.cs" />
+    <Compile Include="ViewModels\SettingViewModel.cs" />
     <Compile Include="Views\Controls\KeyPannelControl.cs" />
     <Compile Include="Views\Controls\Notification.xaml.cs">
       <DependentUpon>Notification.xaml</DependentUpon>

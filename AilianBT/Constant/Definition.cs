@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AilianBT.Constant
+﻿namespace AilianBT.Constant
 {
     public class Definition
     {
         public const string KISSSUB_LIVING_MODE = "livingmode";
 
         public const string LOCALSTATE_CACHEDMUSIC = "CachedMusic";
+
+        public const string SETTING_TOAST = "toastswitch";
     }
 }

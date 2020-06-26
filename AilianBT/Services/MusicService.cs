@@ -127,9 +127,9 @@ namespace AilianBT.Services
             {
                 folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("CachedMusic");
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
-                _logger.Error($"Get music' cache folder failed", e);
+                _logger.Warning($"Get music's cache folder failed");
                 return null;
             }
 
@@ -158,9 +158,9 @@ namespace AilianBT.Services
             {
                 folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("CachedMusic");
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
-                _logger.Error($"Get music' cache folder failed", e);
+                _logger.Warning($"Get music' cache folder failed");
                 return;
             }
             
@@ -179,10 +179,10 @@ namespace AilianBT.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.Error($"Get cached music file failed, target file info:{Environment.NewLine}" +
+                    _logger.Warning($"Get cached music file failed, target file info:{Environment.NewLine}" +
                        $"\tTitle: {item.Title}{Environment.NewLine}" +
                        $"\tUrl: {item.Uri}"
-                       , e);
+                       );
                 }
             }
         }
@@ -196,7 +196,7 @@ namespace AilianBT.Services
             }
             catch (FileNotFoundException e)
             {
-                _logger.Error($"Get music' cache folder failed", e);
+                _logger.Warning($"Get music' cache folder failed");
             }
 
             if (folder == null)

@@ -28,6 +28,7 @@ namespace AilianBT.ViewModels
             SimpleIoc.Default.Register<MusicVM>();
             SimpleIoc.Default.Register<DownloadedViewModel>();
             SimpleIoc.Default.Register<DownloadingViewModel>();
+            SimpleIoc.Default.Register<SettingViewModel>();
         }
 
         public NavigationVM NavigationVM
@@ -61,6 +62,10 @@ namespace AilianBT.ViewModels
         public DownloadingViewModel DownloadingVM
         {
             get { return SimpleIoc.Default.GetInstance<DownloadingViewModel>(); }
+        }
+        public SettingViewModel SettingVM
+        {
+            get { return SimpleIoc.Default.GetInstance<SettingViewModel>(); }
         }
     }
 }

@@ -29,7 +29,7 @@ namespace AilianBT.Services
                     }
                     return JsonSerializer.Deserialize<T>(settingObj as string);
                 }
-                _logger.Error($"Didn't find {settingName} in local settings");
+                _logger.Warning($"Didn't find {settingName} in local settings");
             }
             catch(Exception e)
             {

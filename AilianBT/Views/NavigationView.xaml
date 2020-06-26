@@ -3,7 +3,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:AilianBT.Views.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="using:AilianBT.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:models="using:AilianBT.Models"
       xmlns:triggers="using:AilianBT.Triggers"
@@ -662,15 +661,12 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Padding="0,30,0,0" Background="{ThemeResource AilianBtMainColor}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="col1" Width="*" />
                 <ColumnDefinition x:Name="col2" Width="0" />
             </Grid.ColumnDefinitions>
-
-
-
             <RelativePanel x:Name="mainPanel" VerticalAlignment="Stretch">
                 <Grid x:Name="gridTopBar"
                       Height="44"

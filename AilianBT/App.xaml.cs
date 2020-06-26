@@ -1,7 +1,5 @@
-﻿using AilianBT.Common.Services;
-using AilianBT.Constant;
+﻿using AilianBT.Constant;
 using AilianBT.Helpers;
-using AilianBT.Models;
 using AilianBT.Services;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +9,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace AilianBT
@@ -21,6 +18,7 @@ namespace AilianBT
         public static Frame MainFrame { get; set; }
         private DbService _dbService;
         private StorageService _storageService;
+        private SettingService _settingService;
 
         public App()
         {
@@ -33,6 +31,7 @@ namespace AilianBT
             _dbService.DownloadDbContext.Database.Migrate();
 
             _storageService = SimpleIoc.Default.GetInstance<StorageService>();
+            _settingService = SimpleIoc.Default.GetInstance<SettingService>();
 
             EnteredBackground += _enteredBackground;
             LeavingBackground += _leavingBackground;
@@ -73,13 +72,9 @@ namespace AilianBT
             }
 
             MainFrame = rootFrame;
-
-            _adjustTitleBar();
-            _loadBasicSettings();
+            _adjustUI();
             _initLivingMode();
         }
-
-        
 
         private void _onNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
@@ -93,40 +88,18 @@ namespace AilianBT
             view.Notification.Show();
         }
 
-        private void _adjustTitleBar()
-        {
-            var applicationView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-            var colorBrush = Application.Current.Resources["AilianBtMainColor"] as SolidColorBrush;
-            applicationView.TitleBar.ButtonBackgroundColor = colorBrush.Color;
-            applicationView.TitleBar.BackgroundColor = colorBrush.Color;
-
-            if ("Windows.Mobile" == Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily)
-            {
-                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-                statusBar.BackgroundOpacity = 1;
-                statusBar.BackgroundColor = colorBrush.Color;
-            }
-        }
-
-        private void _loadBasicSettings()
-        {
-            var model = _storageService.GetLocalSetting<ThemeColorModel>(nameof(ThemeColorModel));
-            if (model != null)
-                SettingService.SetThemeColor(model.ThemeColor);
-            else
-            {
-                var brush = Application.Current.Resources["AilianBtMainColor"] as SolidColorBrush;
-                SettingService.SetThemeColor(brush.Color);
-            }
-        }
-
         private void _initLivingMode()
         {
-            if (_storageService.GetLocalSetting<bool?>(Definition.KISSSUB_LIVING_MODE) == null)
+            if (_settingService.GetLiveMode() == null)
             {
-                // Default turn on the livingmode
-                _storageService.SetLocalSetting(Definition.KISSSUB_LIVING_MODE, true.ToString());
+                _settingService.SetLiveMode(true);
             }
+        }
+
+        private void _adjustUI()
+        {
+            _settingService.AdjustTitleBar();
+            _settingService.SetThemeColor(_settingService.GetCachedTheme());
         }
 
         private void _registerService()
@@ -139,6 +112,7 @@ namespace AilianBT
             SimpleIoc.Default.Register<DownloadService>();
             SimpleIoc.Default.Register<MusicService>();
             SimpleIoc.Default.Register<AilianBTService>();
+            SimpleIoc.Default.Register<SettingService>();
         }
     }
 }

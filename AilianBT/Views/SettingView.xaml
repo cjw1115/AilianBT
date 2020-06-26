@@ -134,7 +134,8 @@
                         MinHeight="20"
                         Margin="8,0,0,0"
                         HorizontalAlignment="Stretch"
-                        Click="DownloadLocation_Click"
+                        Click="{x:Bind SettingVM.DownloadLocationClicked}"
+                        Content="{x:Bind SettingVM.DownloadFolder, Mode=OneWay}"
                         Foreground="{StaticResource AilianBtListMainForeground}">
                     <Button.Template>
                         <ControlTemplate>
@@ -146,8 +147,6 @@
                                     <ContentPresenter />
                                 </Border>
                             </Grid>
-
-
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
@@ -158,9 +157,7 @@
                            Text="通知&amp;提示" />
                 <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center" Foreground="{StaticResource AilianBtListMainForeground}">启用Toast通知</TextBlock>
-                    <ToggleSwitch x:Name="toast_switch"
-                                  Margin="8,0,0,0"
-                                  Toggled="toast_switch_Toggled" />
+                    <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsToastOn, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="0,20,0,0">
@@ -175,16 +172,14 @@
                 </TextBlock>
                 <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center" Foreground="{StaticResource AilianBtListMainForeground}">是否打开该模式</TextBlock>
-                    <ToggleSwitch x:Name="switchLivingMode"
-                                  Margin="8,0,0,0"
-                                  Toggled="switchLivingMode_Toggled" />
+                    <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsLiveModeOn, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">当前版本</TextBlock>
                 <TextBlock Margin="8,0,0,0"
                            Foreground="{StaticResource AilianBtListMainForeground}"
-                           Text="{x:Bind Version, Mode=OneTime}" />
+                           Text="{x:Bind SettingVM.Version, Mode=OneTime}" />
             </StackPanel>
             <StackPanel Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">主色调</TextBlock>
@@ -192,10 +187,10 @@
                           Margin="8"
                           Foreground="{ThemeResource AilianBtMainColor}"
                           IsItemClickEnabled="True"
-                          ItemClick="ThemeItemClick"
+                          ItemClick="{x:Bind SettingVM.ThemeItemClicked}"
                           ItemContainerStyle="{StaticResource ListViewItem}"
-                          ItemsSource="{x:Bind ThemeColors, Mode=OneWay}"
-                          SelectedItem="{x:Bind SelectedTheme, Mode=OneWay}"
+                          ItemsSource="{x:Bind SettingVM.ThemeColors, Mode=OneWay}"
+                          SelectedItem="{x:Bind SettingVM.SelectedTheme, Mode=OneWay}"
                           SelectionMode="Single">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -212,17 +207,6 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <!--<ListView Margin="8"
-                          ItemContainerStyle="{StaticResource ListViewItem}"
-                          Foreground="{ThemeResource AilianBtMainColor}"
-                          IsItemClickEnabled="True" ItemClick="ThemeItemClick">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid HorizontalAlignment="Left" Orientation="Horizontal"></ItemsWrapGrid>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <Rectangle Width="48" Height="48" Fill="Red"></Rectangle>
-                </ListView>-->
             </StackPanel>
             <StackPanel Margin="0,20,0,0">
                 <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">关于作者（CQ）</TextBlock>
@@ -236,8 +220,6 @@
 
                 </StackPanel>
             </StackPanel>
-
         </StackPanel>
     </Grid>
-
 </Page>
