@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AilianBT.Services;
+using GalaSoft.MvvmLight.Ioc;
+using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Media;
@@ -8,6 +10,8 @@ namespace AilianBT.Helpers
 {
     public class AssertsHelper
     {
+        private static LogService _logger = SimpleIoc.Default.GetInstance<LogService>();
+
         public static async Task<ImageSource> GetRandomBackgroundImage()
         {
             try
@@ -28,9 +32,9 @@ namespace AilianBT.Helpers
                     return bitmap;
                 }
             }
-            catch 
+            catch(Exception e)
             {
-                // TODO: Log error message
+                _logger.Error($"Query music list online", e);
             }
             return null;
         }

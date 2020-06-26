@@ -11,7 +11,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Streams;
 
 namespace AilianBT.Services
 {
@@ -22,10 +21,12 @@ namespace AilianBT.Services
 
         private HttpService _httpService = new HttpService(true);
         private UtilityHelper _utilityHelper;
+        private LogService _logger;
 
-        public MusicService(UtilityHelper utilityHelper)
+        public MusicService(UtilityHelper utilityHelper,LogService logger)
         {
             _utilityHelper = utilityHelper;
+            _logger = logger;
         }
 
         public async Task<IList<MusicModel>> GetNetPlayList()
@@ -56,9 +57,9 @@ namespace AilianBT.Services
                     }
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                // TODO: log error message
+                _logger.Error($"Query music list online", e);
             }
             return musicList;
         }
@@ -74,65 +75,12 @@ namespace AilianBT.Services
             return await _httpService.SendRequestForStream(newUri, HttpMethod.Get, appendHeaders: headers);
         }
 
-        public async Task<bool> CahcheMusicAsync(IRandomAccessStream stream, MusicModel model)
-        {
-            var buffer = new Windows.Storage.Streams.Buffer((uint)stream.Size);
-            stream.Seek(0);
-            await stream.ReadAsync(buffer, (uint)stream.Size, InputStreamOptions.None);
-            StorageFolder folder = null;
-            try
-            {
-                folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("CachedMusic");
-            }
-            catch (System.IO.FileNotFoundException IOException)
-            {
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine($"Exception:{IOException.Message}");
-#endif
-            }
-
-            if (folder == null)
-            {
-                folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("CachedMusic");
-            }
-
-            StorageFile cacheFile = null;
-            try
-            {
-                cacheFile = await folder.CreateFileAsync(_utilityHelper.CreateMd5HashString(model.Title), CreationCollisionOption.FailIfExists);
-            }
-            catch (ArgumentNullException)
-            {
-                //
-            }
-            catch (System.Exception)
-            {
-                return true;
-            }
-            IRandomAccessStream cacheFileStream = null;
-            try
-            {
-                cacheFileStream = await cacheFile.OpenAsync(FileAccessMode.ReadWrite);
-                await cacheFileStream.WriteAsync(buffer);
-                await cacheFileStream.FlushAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                cacheFileStream?.Dispose();
-            }
-        }
-
         public async Task CahcheMusic(Stream sourceStream, MusicModel model)
         {
             var cacheFile = await _createMusicFile(model);
             if (cacheFile == null)
             {
-                // TODO: Log error message
+                _logger.Error($"Create local file for storing music failed");
                 return;
             }
 
@@ -146,6 +94,8 @@ namespace AilianBT.Services
                         long totalSize = sourceStream.Length;
                         long cachedSize = 0;
                         byte[] tempBuffer = new byte[48000];
+
+                        _logger.Debug($"Start to save audio stream, expected {totalSize} bytes");
                         while (cachedSize <= totalSize)
                         {
                             var readSize = sourceStream.Read(tempBuffer, 0, tempBuffer.Length);
@@ -153,13 +103,17 @@ namespace AilianBT.Services
                             fileStream.Flush();
                             cachedSize += readSize;
                         }
+                        _logger.Debug($"Save audio stream successfully, cached {cachedSize} bytes");
                     }
                 });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
-            catch
+            catch (Exception e)
             {
-                // TODO: Log error message
+                _logger.Error($"Caching music:{Environment.NewLine}" +
+                    $"\tTitle: {model.Title}{Environment.NewLine}" +
+                    $"\tUrl: {model.Uri}"
+                    , e);
             }
         }
 
@@ -173,26 +127,26 @@ namespace AilianBT.Services
             {
                 folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("CachedMusic");
             }
-            catch (System.IO.FileNotFoundException IOException)
+            catch (FileNotFoundException e)
             {
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine($"Exception:{IOException.Message}");
-#endif
+                _logger.Error($"Get music' cache folder failed", e);
                 return null;
             }
 
-            StorageFile cachedFile = null;
             try
             {
-                cachedFile = await folder.GetFileAsync(_utilityHelper.CreateMd5HashString(model.Title));
+                var hashName = _utilityHelper.CreateMd5HashString(model.Title);
+                var cachedFile = await folder.GetFileAsync(hashName);
                 var ras = await cachedFile.OpenAsync(FileAccessMode.Read);
+                _logger.Debug($"Music {model.Title}({hashName}) has local cache");
                 return ras.AsStreamForRead();
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine($"Exception:{e.Message}");
-#endif
+                _logger.Error($"Get cached music file failed, target music info:{Environment.NewLine}" +
+                    $"\tTitle: {model.Title}{Environment.NewLine}" +
+                    $"\tUrl: {model.Uri}"
+                    , e);
                 return null;
             }
         }
@@ -204,11 +158,9 @@ namespace AilianBT.Services
             {
                 folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("CachedMusic");
             }
-            catch (FileNotFoundException IOException)
+            catch (FileNotFoundException e)
             {
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine($"Exception:{IOException.Message}");
-#endif
+                _logger.Error($"Get music' cache folder failed", e);
                 return;
             }
             
@@ -227,9 +179,10 @@ namespace AilianBT.Services
                 }
                 catch (Exception e)
                 {
-#if DEBUG
-                    System.Diagnostics.Debug.WriteLine($"Exception:{e.Message}");
-#endif
+                    _logger.Error($"Get cached music file failed, target file info:{Environment.NewLine}" +
+                       $"\tTitle: {item.Title}{Environment.NewLine}" +
+                       $"\tUrl: {item.Uri}"
+                       , e);
                 }
             }
         }
@@ -241,11 +194,9 @@ namespace AilianBT.Services
             {
                 folder = await ApplicationData.Current.LocalFolder.GetFolderAsync(Definition.LOCALSTATE_CACHEDMUSIC);
             }
-            catch (System.IO.FileNotFoundException IOException)
+            catch (FileNotFoundException e)
             {
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine($"Exception:{IOException.Message}");
-#endif
+                _logger.Error($"Get music' cache folder failed", e);
             }
 
             if (folder == null)
@@ -258,13 +209,11 @@ namespace AilianBT.Services
             {
                 cacheFile = await folder.CreateFileAsync(_utilityHelper.CreateMd5HashString(model.Title), CreationCollisionOption.FailIfExists);
             }
-            catch (System.Exception)
+            catch (Exception e)
             {
-                // TODO: Log error message
+                _logger.Error($"Create music' cache file failed", e);
             }
             return cacheFile;
         }
-
-        
     }
 }

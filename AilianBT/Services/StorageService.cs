@@ -10,9 +10,10 @@ namespace AilianBT.Services
     public class StorageService
     {
         private ApplicationDataContainer _container;
-
-        public StorageService()
+        private LogService _logger;
+        public StorageService(LogService logger)
         {
+            _logger = logger;
             _container = ApplicationData.Current.LocalSettings;
         }
 
@@ -28,10 +29,11 @@ namespace AilianBT.Services
                     }
                     return JsonSerializer.Deserialize<T>(settingObj as string);
                 }
-                // TODO: Log error message
+                _logger.Error($"Didn't find {settingName} in local settings");
             }
-            catch
+            catch(Exception e)
             {
+                _logger.Error($"Finding {settingName} in local settings", e);
             }
             return default(T);
         }
@@ -52,8 +54,9 @@ namespace AilianBT.Services
                     }
                 }
             }
-            catch
+            catch(Exception e)
             {
+                _logger.Error($"Add {settingName} in local settings",e);
             }
         }
 

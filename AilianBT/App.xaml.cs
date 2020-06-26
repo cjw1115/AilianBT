@@ -131,6 +131,7 @@ namespace AilianBT
 
         private void _registerService()
         {
+            SimpleIoc.Default.Register(() => new LogService(Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path));
             SimpleIoc.Default.Register<UtilityHelper>();
             SimpleIoc.Default.Register<DbService>();
             SimpleIoc.Default.Register<StorageService>();

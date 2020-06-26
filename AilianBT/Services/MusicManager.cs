@@ -19,6 +19,7 @@ namespace AilianBT.Services
         private MediaPlayer _mediaPlayer;
         private MediaPlaybackList _mediaPlaybackList;
         private MusicService musicService = SimpleIoc.Default.GetInstance<MusicService>();
+        private LogService _logger = SimpleIoc.Default.GetInstance<LogService>();
 
         public List<MusicModel> CachedMusicList { get; private set; } = new List<MusicModel>();
 
@@ -112,10 +113,10 @@ namespace AilianBT.Services
                 {
                     stream = await musicService.GetMusicStream(model.Uri);
                 }
-                catch
+                catch(Exception e)
                 {
                     MediaFailed?.Invoke(model);
-                    // TODO: Log message
+                    _logger.Error($"Get music stream failed", e);
                 }
 
                 //Cache media and send a notification when cache successfully.

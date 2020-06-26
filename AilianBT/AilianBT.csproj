@@ -66,6 +66,7 @@
     <Compile Include="Converters\PlayStatusVisibilityConverter.cs" />
     <Compile Include="Helpers\AssertsHelper.cs" />
     <Compile Include="Models\DownloadStatus.cs" />
+    <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MusicService.cs" />
     <Compile Include="Views\Controls\KeyPannelControl.cs" />
     <Compile Include="Views\Controls\Notification.xaml.cs">
@@ -254,6 +255,15 @@
     </PackageReference>
     <PackageReference Include="NotificationsExtensions.Win10">
       <Version>14332.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog">
+      <Version>2.9.0</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.Debug">
+      <Version>1.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.File">
+      <Version>4.1.0</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Encoding.CodePages">
       <Version>4.7.1</Version>

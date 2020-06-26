@@ -22,6 +22,7 @@ namespace AilianBT.ViewModels
 
         private MusicService _musicService = SimpleIoc.Default.GetInstance<MusicService>();
         private MusicManager _musicManager = null;
+        
 
         private SynchronizationContext SynchronizationContext = SynchronizationContext.Current;
 
