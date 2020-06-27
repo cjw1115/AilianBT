@@ -143,10 +143,9 @@ namespace AilianBT.Services
             }
             catch (Exception e)
             {
-                _logger.Error($"Get cached music file failed, target music info:{Environment.NewLine}" +
+                _logger.Warning($"Get cached music file failed, target music info:{Environment.NewLine}" +
                     $"\tTitle: {model.Title}{Environment.NewLine}" +
-                    $"\tUrl: {model.Uri}"
-                    , e);
+                    $"\tUrl: {model.Uri}");
                 return null;
             }
         }
@@ -194,7 +193,7 @@ namespace AilianBT.Services
             {
                 folder = await ApplicationData.Current.LocalFolder.GetFolderAsync(Definition.LOCALSTATE_CACHEDMUSIC);
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 _logger.Warning($"Get music' cache folder failed");
             }

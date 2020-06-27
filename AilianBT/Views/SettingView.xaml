@@ -3,223 +3,112 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:converters="using:AilianBT.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="using:AilianBT.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:model="using:AilianBT.Models"
       mc:Ignorable="d">
     <Page.Resources>
         <converters:ColorBrushConverter x:Key="ColorBrushConverter" />
-        <Style x:Key="ListViewItem" TargetType="ListViewItem">
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Margin" Value="4" />
-            <Setter Property="Width" Value="50" />
-            <Setter Property="Height" Value="50" />
-            <Setter Property="MaxWidth" Value="50" />
-            <Setter Property="MinWidth" Value="50" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <Grid x:Name="ContentBorder"
-                              Width="{TemplateBinding Width}"
-                              Height="{TemplateBinding Height}">
-                            <Grid x:Name="ContentPresenterGrid"
-                                  Width="{TemplateBinding Width}"
-                                  Height="{TemplateBinding Height}"
-                                  Margin="0,0,0,0"
-                                  Padding="0"
-                                  Background="Transparent">
-
-                                <ContentPresenter x:Name="ContentPresenter"
-                                                  Margin="{TemplateBinding Padding}"
-                                                  HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"
-                                                  Content="{TemplateBinding Content}"
-                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                  ContentTransitions="{TemplateBinding ContentTransitions}" />
-
-                                <Grid x:Name="SelectedOverlay" Visibility="Visible">
-                                    <Rectangle Fill="Black" Opacity="0.4" />
-                                    <SymbolIcon x:Name="SelectedIcon"
-                                                Foreground="White"
-                                                Symbol="Emoji" />
-                                    <SymbolIcon x:Name="OverlayIcon"
-                                                Foreground="White"
-                                                RenderTransformOrigin="0.5,0.5"
-                                                Symbol="Emoji2">
-                                        <SymbolIcon.RenderTransform>
-                                            <CompositeTransform />
-                                        </SymbolIcon.RenderTransform>
-                                    </SymbolIcon>
-                                </Grid>
-                            </Grid>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed" />
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedIcon" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed" />
-                                            </ObjectAnimationUsingKeyFrames>
-
-
-
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayIcon" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                            <DoubleAnimationUsingKeyFrames RepeatBehavior="Forever"
-                                                                           Storyboard.TargetName="OverlayIcon"
-                                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="360" />
-                                            </DoubleAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedIcon" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayIcon" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed" />
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Selected">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedOverlay" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedIcon" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayIcon" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed" />
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
     <Grid Background="{StaticResource AilianBtGridBackground2}">
         <Image x:Name="imgbackground"
                HorizontalAlignment="Right"
                VerticalAlignment="Bottom"
                Stretch="None" />
-        <StackPanel Padding="20">
-            <StackPanel Margin="0,20,0,0">
-                <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">下载目录</TextBlock>
-                <Button Name="tbDownload"
-                        MinHeight="20"
-                        Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch"
-                        Click="{x:Bind SettingVM.DownloadLocationClicked}"
-                        Content="{x:Bind SettingVM.DownloadFolder, Mode=OneWay}"
-                        Foreground="{StaticResource AilianBtListMainForeground}">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <Grid HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                  Background="{StaticResource AilianBtGridBackground2}"
-                                  IsTapEnabled="False">
-                                <Border BorderBrush="#FFC1C9CA" BorderThickness="1">
-                                    <ContentPresenter />
-                                </Border>
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </StackPanel>
-            <StackPanel Margin="0,20,0,0">
-                <TextBlock Margin="8"
-                           Foreground="{StaticResource AilianBtMainColor}"
-                           Text="通知&amp;提示" />
-                <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" Foreground="{StaticResource AilianBtListMainForeground}">启用Toast通知</TextBlock>
-                    <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsToastOn, Mode=TwoWay}" />
+        <ScrollViewer>
+            <StackPanel Padding="20">
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">下载目录</TextBlock>
+                    <Button Name="tbDownload"
+                            MinHeight="20"
+                            Margin="8,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            Click="{x:Bind SettingVM.DownloadLocationClicked}"
+                            Content="{x:Bind SettingVM.DownloadFolder, Mode=OneWay}"
+                            Foreground="{StaticResource AilianBtListMainForeground}">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Grid HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
+                                      Background="{StaticResource AilianBtGridBackground2}"
+                                      IsTapEnabled="False">
+                                    <Border BorderBrush="#FFC1C9CA" BorderThickness="1">
+                                        <ContentPresenter />
+                                    </Border>
+                                </Grid>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Margin="0,20,0,0">
-                <TextBlock Margin="8"
-                           Foreground="{StaticResource AilianBtMainColor}"
-                           Text="生存战略模式" />
-                <TextBlock Margin="8,0,8,0"
-                           FontSize="12"
-                           Foreground="{StaticResource AilianBtTitleUnselectForeground}"
-                           TextWrapping="Wrap">
-                    &quot;生存战略模式&quot;又称为 &quot;生存模式&quot;、 &quot;贤者模式&quot;、 &quot;飞行模式&quot;、 &quot;上岸模式&quot;
-                </TextBlock>
-                <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" Foreground="{StaticResource AilianBtListMainForeground}">是否打开该模式</TextBlock>
-                    <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsLiveModeOn, Mode=TwoWay}" />
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Margin="8"
+                               Foreground="{StaticResource AilianBtMainColor}"
+                               Text="通知&amp;提示" />
+                    <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Foreground="{StaticResource AilianBtListMainForeground}">启用Toast通知</TextBlock>
+                        <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsToastOn, Mode=TwoWay}" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Margin="0,20,0,0">
-                <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">当前版本</TextBlock>
-                <TextBlock Margin="8,0,0,0"
-                           Foreground="{StaticResource AilianBtListMainForeground}"
-                           Text="{x:Bind SettingVM.Version, Mode=OneTime}" />
-            </StackPanel>
-            <StackPanel Margin="0,20,0,0">
-                <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">主色调</TextBlock>
-                <ListView x:Name="lvThemes"
-                          Margin="8"
-                          Foreground="{ThemeResource AilianBtMainColor}"
-                          IsItemClickEnabled="True"
-                          ItemClick="{x:Bind SettingVM.ThemeItemClicked}"
-                          ItemContainerStyle="{StaticResource ListViewItem}"
-                          ItemsSource="{x:Bind SettingVM.ThemeColors, Mode=OneWay}"
-                          SelectedItem="{x:Bind SettingVM.SelectedTheme, Mode=OneWay}"
-                          SelectionMode="Single">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="model:ThemeColorModel">
-                            <Rectangle Width="48"
-                                       Height="48"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch"
-                                       Fill="{x:Bind ThemeColor, Converter={StaticResource ColorBrushConverter}}" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackPanel>
-            <StackPanel Margin="0,20,0,0">
-                <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">关于作者（CQ）</TextBlock>
-                <StackPanel Margin="8,0,0,0" Orientation="Vertical">
-                    <HyperlinkButton Content="微博主页"
-                                     FontSize="12"
-                                     NavigateUri="http://weibo.com/cjw19951115" />
-                    <HyperlinkButton Content="个人站点"
-                                     FontSize="12"
-                                     NavigateUri="http://www.cjw1115.com/" />
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Margin="8"
+                               Foreground="{StaticResource AilianBtMainColor}"
+                               Text="生存战略模式" />
+                    <TextBlock Margin="8,0,8,0"
+                               FontSize="12"
+                               Foreground="{StaticResource AilianBtTitleUnselectForeground}"
+                               TextWrapping="Wrap">
+                        &quot;生存战略模式&quot;又称为 &quot;生存模式&quot;、 &quot;贤者模式&quot;、 &quot;飞行模式&quot;、 &quot;上岸模式&quot;
+                    </TextBlock>
+                    <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Foreground="{StaticResource AilianBtListMainForeground}">是否打开该模式</TextBlock>
+                        <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsLiveModeOn, Mode=TwoWay}" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">主色调</TextBlock>
+                    <ListView x:Name="lvThemes"
+                              Margin="8"
+                              Foreground="{ThemeResource AilianBtMainColor}"
+                              IsItemClickEnabled="True"
+                              ItemClick="{x:Bind SettingVM.ThemeItemClicked}"
+                              ItemContainerStyle="{StaticResource ThemeColorListViewItem}"
+                              ItemsSource="{x:Bind SettingVM.ThemeColors, Mode=OneWay}"
+                              SelectedItem="{x:Bind SettingVM.SelectedTheme, Mode=OneWay}"
+                              SelectionMode="Single">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="model:ThemeColorModel">
+                                <Rectangle Width="48"
+                                           Height="48"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch"
+                                           Fill="{x:Bind ThemeColor, Converter={StaticResource ColorBrushConverter}}" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">当前版本</TextBlock>
+                    <TextBlock Margin="8,0,0,0"
+                               Foreground="{StaticResource AilianBtListMainForeground}"
+                               Text="{x:Bind SettingVM.Version, Mode=OneTime}" />
+                </StackPanel>
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">关于作者（CQ）</TextBlock>
+                    <StackPanel Margin="8,0,0,0" Orientation="Vertical">
+                        <HyperlinkButton Content="微博主页"
+                                         FontSize="12"
+                                         NavigateUri="http://weibo.com/cjw19951115" />
+                        <HyperlinkButton Content="个人站点"
+                                         FontSize="12"
+                                         NavigateUri="http://www.cjw1115.com/" />
 
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

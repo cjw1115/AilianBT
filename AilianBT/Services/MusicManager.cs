@@ -1,15 +1,12 @@
-﻿using AilianBT.Exceptions;
-using AilianBT.Models;
+﻿using AilianBT.Models;
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Core;
-using Windows.Media.MediaProperties;
 using Windows.Media.Playback;
 
 namespace AilianBT.Services

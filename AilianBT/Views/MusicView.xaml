@@ -132,7 +132,7 @@
                     VerticalAlignment="Stretch"
                     Click="{x:Bind MusicVM.PreviousClicked}"
                     IsEnabled="{x:Bind MusicVM.CanPreviou, Mode=OneWay}"
-                    Style="{StaticResource PlaybackButtonStyle}">
+                    Style="{StaticResource PlaybackButton}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE892;" />
             </Button>
             <Button x:Name="btn_play"
@@ -142,7 +142,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Click="{x:Bind MusicVM.PlayClicked}"
-                    Style="{StaticResource PlaybackButtonStyle}"
+                    Style="{StaticResource PlaybackButton}"
                     Visibility="{x:Bind MusicVM.IsPlaying, Mode=OneWay, Converter={StaticResource FalseToVisibility}}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" />
             </Button>
@@ -153,7 +153,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Click="{x:Bind MusicVM.PauseClicked}"
-                    Style="{StaticResource PlaybackButtonStyle}"
+                    Style="{StaticResource PlaybackButton}"
                     Visibility="{x:Bind MusicVM.IsPlaying, Mode=OneWay}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE769;" />
             </Button>
@@ -165,7 +165,7 @@
                     VerticalAlignment="Stretch"
                     Click="{x:Bind MusicVM.NextClicked}"
                     IsEnabled="{x:Bind MusicVM.CanNext, Mode=OneWay}"
-                    Style="{StaticResource PlaybackButtonStyle}">
+                    Style="{StaticResource PlaybackButton}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE893;" />
             </Button>
         </Grid>
