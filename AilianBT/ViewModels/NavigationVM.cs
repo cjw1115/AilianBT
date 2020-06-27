@@ -6,8 +6,6 @@ namespace AilianBT.ViewModels
 {
     public class NavigationVM:ViewModelBase
     {
-        private readonly string messageToken = "1";
-
         public List<NavigationListItem> NavigationList { get; set; } = new List<NavigationListItem>
         {
            new NavigationListItem { Title="首页", PageType=typeof(Views.MainView),Icon="\xE80F" },
@@ -21,16 +19,9 @@ namespace AilianBT.ViewModels
            new NavigationListItem { Title="设置", Icon="\xE713"}
         };
 
-        public static Frame FuncFrame { get; set; }
-        public static Frame DetailFrame { get; set; }
+        public Frame FuncFrame { get; set; }
+        public Frame DetailFrame { get; set; }
         
-        private string _mainTitle;
-        public string MainTitle
-        {
-            get { return _mainTitle; }
-            set { Set(ref _mainTitle, value); }
-        }
-
         private int _selectedIndex;
         public int SelectedIndex
         {
@@ -45,18 +36,12 @@ namespace AilianBT.ViewModels
             NavigationListItem item = NavigationList[SelectedIndex];
             if (item != null && item.PageType != null)
             {
-                MainTitle = item.Title;
                 FuncFrame.Navigate(item.PageType);
-            }
-            else
-            {
-                GalaSoft.MvvmLight.Messaging.Messenger.Default.Send("这只是个饼，而且还没画完O(∩_∩)O", messageToken);
             }
         }
 
         public void SettingClicked()
         {
-            MainTitle = "设置";
             FuncFrame.Navigate(typeof(Views.SettingView));
         }
     }

@@ -12,6 +12,7 @@ namespace AilianBT.ViewModels
     public class MainVM:ViewModelBase
     {
         private AilianBTService _ailianBTService = SimpleIoc.Default.GetInstance<AilianBTService>();
+        private NavigationVM _navigationVM = ViewModelLocator.Instance.NavigationVM;
 
         private ObservableCollection<AilianResModel> _ailianRes = new ObservableCollection<AilianResModel>();
         public ObservableCollection<AilianResModel> AilianRes
@@ -119,12 +120,12 @@ namespace AilianBT.ViewModels
         public void ItemClick(object sender, ItemClickEventArgs e)
         {
             var model = e.ClickedItem as AilianResModel;
-            NavigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
+            _navigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
         }
 
         public void Search_Click()
         {
-            NavigationVM.DetailFrame.Navigate(typeof(Views.SearchView));
+            _navigationVM.DetailFrame.Navigate(typeof(Views.SearchView));
         }
     }
 }

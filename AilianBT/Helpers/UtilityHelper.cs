@@ -1,5 +1,8 @@
-﻿using System.Security.Cryptography;
+﻿using AilianBT.Constant;
+using AilianBT.Models;
+using System.Security.Cryptography;
 using System.Text;
+using Windows.UI.Xaml;
 
 namespace AilianBT.Helpers
 {
@@ -19,6 +22,22 @@ namespace AilianBT.Helpers
                 _md5StrBudilder.Append(hashBuffer[i].ToString("x2"));
             }
             return _md5StrBudilder.ToString();
+        }
+
+        public WindowMode GetWindowMode()
+        {
+            var currentWidth = Window.Current.Bounds.Width;
+            if (currentWidth > Definition.WINDOW_MODE_WIDE_WIDTH)
+            {
+                return WindowMode.Wide;
+            }
+
+            if (ViewModels.ViewModelLocator.Instance.NavigationVM.DetailFrame.BackStackDepth >= 1)
+            {
+                return WindowMode.Detail;
+            }
+
+            return WindowMode.Master;
         }
     }
 }

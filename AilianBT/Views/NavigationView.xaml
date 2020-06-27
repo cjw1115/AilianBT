@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:controls="using:AilianBT.Views.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:locals="using:AilianBT.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:models="using:AilianBT.Models"
       xmlns:triggers="using:AilianBT.Triggers"
@@ -25,7 +26,7 @@
                            Grid.Column="0"
                            CompactPaneLength="48"
                            DisplayMode="CompactInline"
-                           IsPaneOpen="True"
+                           IsPaneOpen="False"
                            OpenPaneLength="144"
                            PaneBackground="{StaticResource NavigationBackgroundAcrylicBrush}"
                            RelativePanel.AlignBottomWithPanel="True"
@@ -39,6 +40,7 @@
                                 <RowDefinition />
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
+
                             <Button x:Name="btnHamber"
                                     Grid.Row="0"
                                     Width="48"
@@ -81,7 +83,6 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-
                             <ListBox x:Name="lbNavigationFooterList"
                                      Grid.Row="2"
                                      Background="Transparent"
@@ -121,15 +122,46 @@
             <Grid x:Name="gridDetail"
                   Grid.Row="1"
                   Grid.Column="1"
-                  Padding="0,0,0,28"
                   Background="{StaticResource AilianBtGridBackground2}">
-                <Image HorizontalAlignment="Right"
-                       VerticalAlignment="Stretch"
-                       Source="/Assets/Images/backpage-background.png" />
-                <Frame x:Name="DetailFrame" Background="Transparent" />
+                <Frame x:Name="DetailFrame"
+                       Background="Transparent"
+                       SourcePageType="locals:DefaultDetailView" />
             </Grid>
         </Grid>
         <controls:Notification x:Name="notification" Visibility="Collapsed" />
+        <Grid x:Name="panelTitilBar"
+              Grid.Row="0"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Top"
+              Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnGoBack"
+                    Grid.Column="0"
+                    Width="48"
+                    VerticalAlignment="Stretch"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Click="_navigationViewBackRequested"
+                    Content="&#xE72B;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="12"
+                    Style="{StaticResource ButtonRevealStyle}"
+                    Visibility="Collapsed" />
+            <Grid x:Name="_gridDragBar"
+                  Grid.Column="1"
+                  VerticalAlignment="Stretch"
+                  Background="Transparent"
+                  RelativePanel.RightOf="btnGoBack">
+                <TextBlock Margin="12,0,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           Text="爱恋动漫BT" />
+            </Grid>
+
+        </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ShowModeVisualStateGroup">
                 <VisualState x:Name="WideVisualState">
@@ -138,26 +170,28 @@
                         <Setter Target="col2.Width" Value="*" />
                     </VisualState.Setters>
                     <VisualState.StateTriggers>
-                        <triggers:NavigationViewAdaptiveTrigger MinWindowWidth="700" />
+                        <triggers:NavigationViewAdaptiveTrigger Mode="Wide" />
+                        <!--<AdaptiveTrigger MinWindowWidth="768" />-->
                     </VisualState.StateTriggers>
                 </VisualState>
-                <VisualState x:Name="NarrowVisualState">
+                <VisualState x:Name="DetailVisualState">
                     <VisualState.Setters>
                         <Setter Target="mainPanel.Visibility" Value="Collapsed" />
                         <Setter Target="gridDetail.(Grid.Column)" Value="0" />
                     </VisualState.Setters>
                     <VisualState.StateTriggers>
-                        <triggers:NavigationViewAdaptiveTrigger MinWindowWidth="0" />
+                        <triggers:NavigationViewAdaptiveTrigger Mode="Detail" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <VisualState x:Name="NormalVisualState">
+                <VisualState x:Name="MasterVisualState">
                     <VisualState.Setters>
                         <Setter Target="col1.Width" Value="*" />
                         <Setter Target="col2.Width" Value="0" />
                     </VisualState.Setters>
-
+                    <VisualState.StateTriggers>
+                        <triggers:NavigationViewAdaptiveTrigger Mode="Master" />
+                    </VisualState.StateTriggers>
                 </VisualState>
-
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

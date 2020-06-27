@@ -11,6 +11,7 @@ namespace AilianBT.ViewModels
     public class KeyVM:ViewModelBase
     {
         private AilianBTService _ailianBTService = SimpleIoc.Default.GetInstance<AilianBTService>();
+        private NavigationVM _navigationVM = ViewModelLocator.Instance.NavigationVM;
 
         public ObservableCollection<KeyGroupModel> _groups = new ObservableCollection<KeyGroupModel>();
         public ObservableCollection<KeyGroupModel> Groups
@@ -44,7 +45,7 @@ namespace AilianBT.ViewModels
             searchViewParam.IsTo = true;
             searchViewParam.SearchKey = item.Value;
 
-            NavigationVM.DetailFrame.Navigate(typeof(Views.SearchView), searchViewParam);
+            _navigationVM.DetailFrame.Navigate(typeof(Views.SearchView), searchViewParam);
         }
     }
 }

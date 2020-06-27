@@ -1,7 +1,10 @@
 ﻿using AilianBT.Helpers;
+using AilianBT.Services;
 using AilianBT.ViewModels;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
+using Windows.ApplicationModel.Core;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -15,6 +18,9 @@ namespace AilianBT.Views
     public sealed partial class NavigationView : Page
     {
         public NavigationVM NavigationVM { get; private set; } = ViewModelLocator.Instance.NavigationVM;
+        private UtilityHelper _utilityHelper = SimpleIoc.Default.GetInstance<UtilityHelper>();
+        private LogService _logService = SimpleIoc.Default.GetInstance<LogService>();
+
         public Controls.Notification Notification { get; set; }
 
         public NavigationView()
@@ -29,54 +35,28 @@ namespace AilianBT.Views
 
             DetailFrame.Navigated += _detailFrameNavigated;
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += _navigationViewBackRequested;
-
             Notification = this.notification;
+
+            _customizeTitleBar();
         }
 
-        private void _navigationViewBackRequested(object sender, BackRequestedEventArgs e)
+        private void _navigationViewBackRequested(object sender, RoutedEventArgs e)
         {
-            if (this.DetailFrame.BackStackDepth > 1)
-            {
-                this.DetailFrame.GoBack();
-                e.Handled = true;
-            }
-            else if (this.DetailFrame.BackStackDepth == 1)
-            {
-                this.DetailFrame.GoBack();
-                e.Handled = true;
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                var currentState = ShowModeVisualStateGroup.CurrentState;
-                if (currentState == null || currentState == NarrowVisualState || currentState == NormalVisualState)
-                {
-                    VisualStateManager.GoToState(this, "NormalVisualState", false);
-                }
-                else
-                {
-                    VisualStateManager.GoToState(this, "WideVisualState", false);
-                }
-            }
-            else
-            {
-            }
+            DetailFrame.GoBack();
         }
 
         private void _detailFrameNavigated(object sender, NavigationEventArgs e)
         {
-            if (e.SourcePageType != typeof(Views.DefaultDetailView))
+            if (e.SourcePageType != typeof(DefaultDetailView))
             {
+                btnGoBack.Visibility =  Visibility.Visible;
             }
             else
             {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                var currentState = ShowModeVisualStateGroup.CurrentState;
-                if (currentState == null || currentState == NarrowVisualState || currentState == NormalVisualState)
-                {
-                    VisualStateManager.GoToState(this, "NarrowVisualState", false);
-                }
+                btnGoBack.Visibility = Visibility.Collapsed;
             }
+            _adjustWindowMode();
         }
-
 
         private IList<Visual> _selectedIndicatorVisuals = new List<Visual>();
         private void _navigationViewLoaded(object sender, RoutedEventArgs e)
@@ -86,6 +66,8 @@ namespace AilianBT.Views
             {
                 _selectedIndicatorVisuals.Add(ElementCompositionPreview.GetElementVisual(item));
             }
+
+            _adjustWindowMode();
         }
 
         private void btnHamberClicked(object sender, RoutedEventArgs e)
@@ -134,6 +116,24 @@ namespace AilianBT.Views
             offsetAnimation.Duration = TimeSpan.FromMilliseconds(600);
 
             visual.StartAnimation("Offset", offsetAnimation);
+        }
+
+        private void _customizeTitleBar()
+        {
+            _logService.Debug("Try to use customized title bar");
+            CoreApplication.MainView.TitleBar.LayoutMetricsChanged += (o, e) =>
+            {
+                panelTitilBar.Height = o.Height;
+            };
+            Window.Current.SetTitleBar(_gridDragBar);
+        }
+
+        private void _adjustWindowMode()
+        {
+            var viewState = $"{_utilityHelper.GetWindowMode()}VisualState";
+            _logService.Debug($"Set view state to {viewState}");
+            // Here is an appointment, the view state name should be "{WindowMode}VisualState"
+            VisualStateManager.GoToState(this, viewState, false);
         }
     }
 }

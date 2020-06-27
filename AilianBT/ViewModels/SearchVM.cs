@@ -2,6 +2,7 @@
 using AilianBT.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace AilianBT.ViewModels
     public class SearchVM : ViewModelBase
     {
         private AilianBTService _ailianBTService = SimpleIoc.Default.GetInstance<AilianBTService>();
+        private NavigationVM _navigationVM = ViewModelLocator.Instance.NavigationVM;
 
         private ObservableCollection<AilianResModel> _ailianRes = new ObservableCollection<AilianResModel>();
         public ObservableCollection<AilianResModel> AilianRes
@@ -102,7 +104,7 @@ namespace AilianBT.ViewModels
         public void ItemClick(object sender, ItemClickEventArgs e)
         {
             var model = e.ClickedItem as AilianResModel;
-            NavigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
+            _navigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
         }
 
         private string _searchKey;

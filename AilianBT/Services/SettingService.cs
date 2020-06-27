@@ -60,7 +60,8 @@ namespace AilianBT.Services
             view.TitleBar.BackgroundColor = Colors.Transparent;
             view.TitleBar.InactiveBackgroundColor = Colors.Transparent;
             view.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-
+            view.TitleBar.ButtonForegroundColor = Colors.Black;
+            
             if ("Windows.Mobile" == Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily)
             {
                 StatusBar statusBar = StatusBar.GetForCurrentView();

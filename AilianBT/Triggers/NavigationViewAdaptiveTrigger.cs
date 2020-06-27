@@ -1,34 +1,25 @@
-﻿
+﻿using AilianBT.Helpers;
+using AilianBT.Models;
 using AilianBT.ViewModels;
+using GalaSoft.MvvmLight.Ioc;
 using Windows.UI.Xaml;
 
 namespace AilianBT.Triggers
 {
     public class NavigationViewAdaptiveTrigger : StateTriggerBase
     {
-        public double MinWindowWidth
-        {
-            get { return (double)GetValue(MinWindowWidthProperty); }
-            set { SetValue(MinWindowWidthProperty, value); }
-        }
+        private UtilityHelper _utilityHelper = SimpleIoc.Default.GetInstance<UtilityHelper>();
 
-        public static DependencyProperty MinWindowWidthProperty = DependencyProperty.Register("MinWindowWidth", typeof(double), typeof(NavigationViewAdaptiveTrigger), new PropertyMetadata(null));
+        public WindowMode Mode { get; set; }
 
         public NavigationViewAdaptiveTrigger()
         {
-            Window.Current.SizeChanged += Current_SizeChanged;
+            Window.Current.SizeChanged += _windowSizeChanged;
         }
 
-        private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        private void _windowSizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
-            if (Window.Current.Bounds.Width > MinWindowWidth && (MinWindowWidth!=0||NavigationVM.DetailFrame.BackStackDepth>=1))
-            {
-                this.SetActive(true);
-            }
-            else
-            {
-                this.SetActive(false);
-            }
+            SetActive(_utilityHelper.GetWindowMode() == Mode);
         }
     }
 }
