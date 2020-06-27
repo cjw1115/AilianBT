@@ -54,6 +54,32 @@ namespace AilianBT.Helpers
             return null;
         }
 
+        public static IList<T> FindAllNamedVisualChild<T>(DependencyObject obj, string name) where T : FrameworkElement
+        {
+            var result = new List<T>();
+            Queue<DependencyObject> queue = new Queue<DependencyObject>();
+            queue.Enqueue(obj);
+            while (queue.Count > 0)
+            {
+                var item = queue.Dequeue();
+                int count = Windows.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(item);
+                for (int i = 0; i < count; i++)
+                {
+                    var re = Windows.UI.Xaml.Media.VisualTreeHelper.GetChild(item, i);
+                    var child = re as FrameworkElement;
+                    if (child != null && child.Name == name)
+                    {
+                        result.Add(child as T);
+                    }
+                    else
+                    {
+                        queue.Enqueue(child);
+                    }
+                }
+            }
+            return result;
+        }
+
         public static VisualStateGroup FindVisualState(FrameworkElement element, string name)
         {
             if (element == null || string.IsNullOrWhiteSpace(name))

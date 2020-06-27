@@ -1,48 +1,43 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using AilianBT.Helpers;
+using AilianBT.ViewModels;
+using System;
+using System.Collections.Generic;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 namespace AilianBT.Views
 {
     public sealed partial class NavigationView : Page
     {
-        public ViewModels.NavigationVM NavigationVM { get; set; }
+        public NavigationVM NavigationVM { get; private set; } = ViewModelLocator.Instance.NavigationVM;
         public Controls.Notification Notification { get; set; }
 
         public NavigationView()
         {
-
             this.InitializeComponent();
-            this.Loaded += NavigationView_Loaded;
-            this.btnAbout.Click += BtnAbout_Click;
-            var locator = Application.Current.Resources["Locator"] as ViewModels.ViewModelLocator;
-            NavigationVM = locator.NavigationVM;
-            ViewModels.NavigationVM.DetailFrame = this.DetailFrame;
-            ViewModels.NavigationVM.FuncFrame = this.FuncFrame;
+            this.Loaded += _navigationViewLoaded;
 
+            this.lbNavigationList.SelectionChanged += lbNavigationListSelectionChanged;
 
-            DetailFrame.Navigated += DetailFrame_Navigated;
+            NavigationVM.DetailFrame = this.DetailFrame;
+            NavigationVM.FuncFrame = this.FuncFrame;
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += NavigationView_BackRequested;
+            DetailFrame.Navigated += _detailFrameNavigated;
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += _navigationViewBackRequested;
 
             Notification = this.notification;
         }
 
-        private void BtnAbout_Click(object sender, RoutedEventArgs e)
-        {
-            this.splitView.IsPaneOpen = false;
-        }
-
-        private void NavigationView_BackRequested(object sender, BackRequestedEventArgs e)
+        private void _navigationViewBackRequested(object sender, BackRequestedEventArgs e)
         {
             if (this.DetailFrame.BackStackDepth > 1)
             {
-
                 this.DetailFrame.GoBack();
                 e.Handled = true;
             }
@@ -63,16 +58,10 @@ namespace AilianBT.Views
             }
             else
             {
-
             }
         }
 
-        private void btnHamber_Click(object sender, RoutedEventArgs e)
-        {
-            this.splitView.IsPaneOpen = !this.splitView.IsPaneOpen;
-        }
-
-        private void DetailFrame_Navigated(object sender, NavigationEventArgs e)
+        private void _detailFrameNavigated(object sender, NavigationEventArgs e)
         {
             if (e.SourcePageType != typeof(Views.DefaultDetailView))
             {
@@ -88,107 +77,63 @@ namespace AilianBT.Views
             }
         }
 
-        Grid paneGrid;
-        private void NavigationView_Loaded(object sender, RoutedEventArgs e)
+
+        private IList<Visual> _selectedIndicatorVisuals = new List<Visual>();
+        private void _navigationViewLoaded(object sender, RoutedEventArgs e)
         {
-            var findre = AilianBT.Helpers.VisualTreeHelperTool.FindNamedVisualChild<FrameworkElement>(this.splitView, "PaneRoot");
-            paneGrid = findre as Grid;
-            trans = paneGrid.RenderTransform as CompositeTransform;
-
-
-            findre.ManipulationCompleted += Pane_ManipulationCompleted;
-            findre.ManipulationMode = ManipulationModes.TranslateX;
-            findre.ManipulationDelta += Pane_ManipulationDelta;
-
-
-            var grid = Helpers.VisualTreeHelperTool.FindVisualChild<Grid>(splitView);
-            var group = VisualStateManager.GetVisualStateGroups(grid).ToList();
-            var transitons = group[0].Transitions;
-            if (transitons != null)
+            var _indicators = VisualTreeHelperTool.FindAllNamedVisualChild<Rectangle>(splitView, "SelectedIndicator");
+            foreach (var item in _indicators)
             {
-                var visualTrans = transitons.Where(m => m.From == "Closed" && m.To == "OpenOverlayLeft").FirstOrDefault();
-                close_overlay = visualTrans;
-
-                visualTrans = transitons.Where(m => m.From == "OpenOverlayLeft" && m.To == "Closed").FirstOrDefault();
-                overlay_close = visualTrans;
-            }
-
-        }
-
-        private void Pane_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            e.Handled = true;
-
-            Debug.WriteLine("TranslateX:" + trans.TranslateX);
-        }
-
-        private void Pane_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            e.Handled = true;
-            if (e.Cumulative.Translation.X < 0 && -e.Cumulative.Translation.X >= splitView.OpenPaneLength / 4)
-            {
-                splitView.IsPaneOpen = false;
-                paneGrid.Visibility = Visibility.Collapsed;
-                trans = paneGrid.RenderTransform as CompositeTransform;
-                trans.TranslateX = 0;
+                _selectedIndicatorVisuals.Add(ElementCompositionPreview.GetElementVisual(item));
             }
         }
 
-        VisualTransition close_overlay;
-        VisualTransition overlay_close;
-        CompositeTransform trans = new CompositeTransform();
-        private void swipeBorder_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        private void btnHamberClicked(object sender, RoutedEventArgs e)
         {
-            e.Handled = true;
-            if (splitView.DisplayMode == SplitViewDisplayMode.Overlay)
+            splitView.IsPaneOpen = !splitView.IsPaneOpen;
+        }
+
+        private void lbNavigationFooterListSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0 && e.RemovedItems.Count <= 0)
             {
-                if (e.Cumulative.Translation.X > 0 && e.Cumulative.Translation.X <= splitView.OpenPaneLength)
-                {
+                lbNavigationList.SelectedIndex = -1;
 
-                    paneGrid.Visibility = Visibility.Visible;
-
-                    trans = paneGrid.RenderTransform as CompositeTransform;
-                    trans.TranslateX = (e.Cumulative.Translation.X - splitView.OpenPaneLength);
-
-                    Debug.WriteLine("TranslateX:" + trans.TranslateX);
-                }
-
+                NavigationVM.SettingClicked();
             }
         }
 
-        private void swipeBorder_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        private void lbNavigationListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            e.Handled = true;
-            if (splitView.DisplayMode == SplitViewDisplayMode.Overlay && paneGrid != null)
+            if (e.AddedItems.Count > 0 && e.RemovedItems.Count <= 0)
             {
-                paneGrid.Visibility = Visibility.Collapsed;
-                //paneGrid.Visibility = Visibility.Collapsed;
-                if (e.Cumulative.Translation.X > splitView.OpenPaneLength / 2.0)
-                {
-
-                    splitView.IsPaneOpen = true;
-                    //paneGrid.Visibility = Visibility.Visible ;
-
-                    close_overlay?.Storyboard?.SkipToFill();
-                    trans = paneGrid.RenderTransform as CompositeTransform;
-                    trans.TranslateX = 0;
-                }
-                else
-                {
-
-                    trans = paneGrid.RenderTransform as CompositeTransform;
-                    trans.TranslateX = 0;
-                }
-                //trans = paneGrid.RenderTransform as CompositeTransform;
-                //trans.TranslateX = 0;
+                lbNavigationFooterList.SelectedIndex = -1;
+                return;
             }
 
+            if (e.AddedItems.Count <= 0 || e.RemovedItems.Count <= 0)
+                return;
 
-        }
+            var newIndx = lbNavigationList.Items.IndexOf(e.AddedItems[0]);
+            var oldIndex = lbNavigationList.Items.IndexOf(e.RemovedItems[0]);
 
-        private void navigationList_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            this.splitView.IsPaneOpen = false;
+            var oldItem = lbNavigationList.ContainerFromIndex(oldIndex) as FrameworkElement;
+            var newItem = lbNavigationList.ContainerFromIndex(newIndx) as FrameworkElement;
+
+            var transform = oldItem.TransformToVisual(newItem);
+            var point = transform.TransformPoint(new Windows.Foundation.Point(0, 0));
+
+            Compositor _compositor = Window.Current.Compositor;
+            var offsetAnimation = _compositor.CreateVector3KeyFrameAnimation();
+
+            var visual = _selectedIndicatorVisuals[newIndx];
+            var finalOffset = visual.Offset;
+            var beginOffset = visual.Offset + new System.Numerics.Vector3((float)point.X, (float)point.Y, 0);
+            offsetAnimation.InsertKeyFrame(0, beginOffset);
+            offsetAnimation.InsertKeyFrame(1, finalOffset);
+            offsetAnimation.Duration = TimeSpan.FromMilliseconds(600);
+
+            visual.StartAnimation("Offset", offsetAnimation);
         }
     }
 }

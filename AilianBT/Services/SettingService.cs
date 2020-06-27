@@ -56,10 +56,10 @@ namespace AilianBT.Services
 
             currentBrush.Color = targetColor;
             var view = ApplicationView.GetForCurrentView();
-            view.TitleBar.ButtonBackgroundColor = targetColor;
-            view.TitleBar.BackgroundColor = targetColor;
-            view.TitleBar.InactiveBackgroundColor = targetColor;
-            view.TitleBar.ButtonInactiveBackgroundColor = targetColor;
+            view.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            view.TitleBar.BackgroundColor = Colors.Transparent;
+            view.TitleBar.InactiveBackgroundColor = Colors.Transparent;
+            view.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
             if ("Windows.Mobile" == Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily)
             {

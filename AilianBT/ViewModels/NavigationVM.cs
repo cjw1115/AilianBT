@@ -7,12 +7,18 @@ namespace AilianBT.ViewModels
     public class NavigationVM:ViewModelBase
     {
         private readonly string messageToken = "1";
+
         public List<NavigationListItem> NavigationList { get; set; } = new List<NavigationListItem>
         {
            new NavigationListItem { Title="首页", PageType=typeof(Views.MainView),Icon="\xE80F" },
            new NavigationListItem { Title="番组", PageType=typeof(Views.KeyView),Icon="\xE192"},
            new NavigationListItem { Title="音乐", PageType=typeof(Views.MusicView),Icon="\xE8D6"},
            new NavigationListItem { Title="下载", PageType=typeof(Views.DownloadMainView) ,Icon="\xE896"}
+        };
+
+        public List<NavigationListItem> NavigationFooterList { get; set; } = new List<NavigationListItem>
+        {
+           new NavigationListItem { Title="设置", Icon="\xE713"}
         };
 
         public static Frame FuncFrame { get; set; }
@@ -48,9 +54,8 @@ namespace AilianBT.ViewModels
             }
         }
 
-        public void Setting_Click()
+        public void SettingClicked()
         {
-            SelectedIndex = -1;
             MainTitle = "设置";
             FuncFrame.Navigate(typeof(Views.SettingView));
         }

@@ -141,7 +141,7 @@ namespace AilianBT.Services
                 _logger.Debug($"Music {model.Title}({hashName}) has local cache");
                 return ras.AsStreamForRead();
             }
-            catch (Exception e)
+            catch
             {
                 _logger.Warning($"Get cached music file failed, target music info:{Environment.NewLine}" +
                     $"\tTitle: {model.Title}{Environment.NewLine}" +
@@ -176,7 +176,7 @@ namespace AilianBT.Services
                         }, null);
                     }
                 }
-                catch (Exception e)
+                catch
                 {
                     _logger.Warning($"Get cached music file failed, target file info:{Environment.NewLine}" +
                        $"\tTitle: {item.Title}{Environment.NewLine}" +
