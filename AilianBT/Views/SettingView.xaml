@@ -18,8 +18,8 @@
             <StackPanel Padding="20">
                 <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">下载目录</TextBlock>
-                    <Button Name="tbDownload"
-                            MinHeight="20"
+                    <!--<Button Name="tbDownload"
+                            MinHeight="30"
                             Margin="8,0,0,0"
                             HorizontalAlignment="Stretch"
                             Click="{x:Bind SettingVM.DownloadLocationClicked}"
@@ -31,13 +31,32 @@
                                       VerticalAlignment="Stretch"
                                       Background="{StaticResource AilianBtGridBackground2}"
                                       IsTapEnabled="False">
-                                    <Border BorderBrush="#FFC1C9CA" BorderThickness="1">
-                                        <ContentPresenter />
+                                    <Border BorderBrush="{StaticResource AilianBtMainColor}" BorderThickness="1">
+                                        <ContentPresenter Margin="4,0" VerticalAlignment="Center" />
                                     </Border>
                                 </Grid>
                             </ControlTemplate>
                         </Button.Template>
-                    </Button>
+                    </Button>-->
+                    <StackPanel Margin="8,0,8,0"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal">
+                        <TextBox Width="240"
+                                 Padding="4,0"
+                                 VerticalAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 IsReadOnly="True"
+                                 Style="{StaticResource CommonTextBox}"
+                                 Text="{x:Bind SettingVM.DownloadFolder, Mode=OneWay}"
+                                 TextWrapping="NoWrap" />
+                        <Button Width="48"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                BorderBrush="{StaticResource AilianBtMainColor}"
+                                BorderThickness="0,1,1,1"
+                                Click="{x:Bind SettingVM.DownloadLocationClicked}"
+                                Content="选择" />
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8"
@@ -138,13 +157,15 @@
                 <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">关于作者（CQ）</TextBlock>
                     <StackPanel Margin="8,0,0,0" Orientation="Vertical">
-                        <HyperlinkButton Content="微博主页"
+                        <HyperlinkButton Content="GitHub"
                                          FontSize="12"
-                                         NavigateUri="http://weibo.com/cjw19951115" />
-                        <HyperlinkButton Content="个人站点"
+                                         NavigateUri="https://github.com/cjw1115/" />
+                        <HyperlinkButton Content="哔哩哔哩 Bilibili (求关注，求点赞)"
                                          FontSize="12"
-                                         NavigateUri="http://www.cjw1115.com/" />
-
+                                         NavigateUri="https://space.bilibili.com/17399941" />
+                        <HyperlinkButton Content="联系我"
+                                         FontSize="12"
+                                         NavigateUri="mailto://cjw1115@hotmail.com" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
