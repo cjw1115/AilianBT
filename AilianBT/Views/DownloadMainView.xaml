@@ -76,14 +76,14 @@
         </ListView>
         <Pivot x:Name="pivot"
                Grid.Row="1"
-               Background="{StaticResource AilianBtGridBackground2}">
+               Background="{StaticResource AilianBtGridBackground2}"
+               Style="{StaticResource DownloadViewPivot}">
             <PivotItem Margin="0">
                 <local:DownloadingView x:Name="DownloadingView" Margin="0" />
             </PivotItem>
             <PivotItem Margin="0">
                 <local:DownloadedView x:Name="DownloadedView" Margin="0" />
             </PivotItem>
-
         </Pivot>
     </Grid>
 </Page>

@@ -369,53 +369,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--<DataTemplate x:Key="SelectingDataTemplate" x:DataType="local:DownloadInfo">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
-                    <CheckBox MinWidth="24" IsChecked="{x:Bind IsSelected,Mode=TwoWay}"
-                                          VerticalAlignment="Top" Template="{StaticResource CheckBoxControlTemplate}"></CheckBox>
-                </Grid>
-                <Image Grid.Column="1" Width="44" Stretch="Uniform" Source="{x:Bind Thumb,Mode=OneWay}"></Image>
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="tbTitle" TextWrapping="Wrap"  Text="{x:Bind FileName}"></TextBlock>
-                    <Grid Grid.Row="0" Grid.Column="1" >
-                        <Button VerticalAlignment="Top" x:Name="btnControl" Content="暂停" Tag="{x:Bind ID,Mode=OneWay}"  RelativePanel.AlignTopWithPanel="True" RelativePanel.LeftOf="btnDelete" Click="btnControl_Click"/>
-                    </Grid>
-                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="progressBar"  Value="{x:Bind FinishedPercent,Mode=OneWay}"  Maximum="100"></ProgressBar>
-                    <Grid Grid.Row="2" Grid.ColumnSpan="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" x:Name="tbProgress" FontSize="12" >
-                                        <Run Text="{x:Bind ReceivedBytes,Mode=OneWay,Converter={StaticResource dataSizeConverter}}"></Run>
-                                        <Run Text="/"></Run>
-                                        <Run Text="{x:Bind TotalToReceive,Mode=OneWay,Converter={StaticResource dataSizeConverter}}"></Run>
-                        </TextBlock>
-                        <TextBlock FontSize="12"  Grid.Column="1">
-                                        <Run Text="{x:Bind FinishedPercent,Mode=OneWay}"></Run>
-                                        <Run Text="%"></Run>
-                        </TextBlock>
-                    </Grid>
 
-                </Grid>
-
-            </Grid>
-        </DataTemplate>-->
         <DataTemplate x:Key="NormalDataTemplate" x:DataType="models:DownloadInfo">
             <Grid>
                 <Grid.ColumnDefinitions>

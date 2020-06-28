@@ -9,7 +9,9 @@
                 <ResourceDictionary Source="ms-appx:///Styles/Brushes.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/Buttons.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/ItemsControls.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/InputControls.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
             <vm:ViewModelLocator x:Key="Locator" />
             <ResourceDictionary x:Key="ThemeColors">
                 <Color x:Key="少女粉">#FFE777AB</Color>
@@ -18,6 +20,7 @@
                 <Color x:Key="烟波蓝">#FF1D91FF</Color>
                 <Color x:Key="浪漫紫">#FFBE3CFD</Color>
             </ResourceDictionary>
+
             <x:String x:Key="FontAwesome">/Assets/Fonts/fontawesome-webfont.ttf#FontAwesome</x:String>
         </ResourceDictionary>
     </Application.Resources>

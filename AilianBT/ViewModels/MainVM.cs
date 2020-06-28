@@ -120,12 +120,12 @@ namespace AilianBT.ViewModels
         public void ItemClick(object sender, ItemClickEventArgs e)
         {
             var model = e.ClickedItem as AilianResModel;
-            _navigationVM.DetailFrame.Navigate(typeof(Views.ShowView), model);
+            _navigationVM.DetailFrameNavigate(typeof(Views.ShowView), model);
         }
 
         public void Search_Click()
         {
-            _navigationVM.DetailFrame.Navigate(typeof(Views.SearchView));
+            _navigationVM.DetailFrameNavigate(typeof(Views.SearchView));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AilianBT.Constant;
 using AilianBT.Models;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Windows.UI.Xaml;
@@ -22,6 +23,19 @@ namespace AilianBT.Helpers
                 _md5StrBudilder.Append(hashBuffer[i].ToString("x2"));
             }
             return _md5StrBudilder.ToString();
+        }
+
+        public string ReplaceInvalidCharactorsInFileName(string fileName, char preferredChar = '_')
+        {
+            if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                string invalid = new string(Path.GetInvalidFileNameChars());
+                foreach (char c in invalid)
+                {
+                    fileName = fileName.Replace(c, preferredChar);
+                }
+            }
+            return fileName;
         }
 
         public WindowMode GetWindowMode()

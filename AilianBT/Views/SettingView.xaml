@@ -16,7 +16,7 @@
                Stretch="None" />
         <ScrollViewer>
             <StackPanel Padding="20">
-                <StackPanel Margin="0,20,0,0">
+                <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">下载目录</TextBlock>
                     <Button Name="tbDownload"
                             MinHeight="20"
@@ -39,7 +39,7 @@
                         </Button.Template>
                     </Button>
                 </StackPanel>
-                <StackPanel Margin="0,20,0,0">
+                <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8"
                                Foreground="{StaticResource AilianBtMainColor}"
                                Text="通知&amp;提示" />
@@ -48,7 +48,7 @@
                         <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsToastOn, Mode=TwoWay}" />
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Margin="0,20,0,0">
+                <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8"
                                Foreground="{StaticResource AilianBtMainColor}"
                                Text="生存战略模式" />
@@ -63,7 +63,45 @@
                         <ToggleSwitch Margin="8,0,0,0" IsOn="{x:Bind SettingVM.IsLiveModeOn, Mode=TwoWay}" />
                     </StackPanel>
                 </StackPanel>
-                <StackPanel Margin="0,20,0,0">
+                <StackPanel Margin="0,16,0,0">
+                    <TextBlock Margin="8"
+                               Foreground="{StaticResource AilianBtMainColor}"
+                               Text="磁链下载" />
+                    <TextBlock Margin="8,0,8,0"
+                               FontSize="12"
+                               Foreground="{StaticResource AilianBtTitleUnselectForeground}"
+                               TextWrapping="Wrap">
+                        迅雷注册了 URL 协议 “thunder://”，此功能用该协议打开迅雷，然后迅雷检测到剪贴板中的磁链自动下载。也可自行替换 Uri 启动协议到其他下载工具。
+                    </TextBlock>
+                    <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Foreground="{StaticResource AilianBtListMainForeground}">是否自动调用第三方工具下载磁链:</TextBlock>
+                        <ToggleSwitch Margin="8,0,0,0"
+                                      VerticalAlignment="Center"
+                                      IsOn="{x:Bind SettingVM.IsAutoDownloadMagnet, Mode=TwoWay}" />
+                    </StackPanel>
+                    <StackPanel Margin="8,0,8,0"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal">
+                        <TextBox Width="240"
+                                 Padding="4,0"
+                                 VerticalAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 InputScope="Url"
+                                 IsEnabled="{x:Bind SettingVM.IsAutoDownloadMagnet, Mode=OneWay}"
+                                 Style="{StaticResource CommonTextBox}"
+                                 Text="{x:Bind SettingVM.AutoDownloadMagnetProtocal, Mode=TwoWay}"
+                                 TextWrapping="Wrap" />
+                        <Button Width="48"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                BorderBrush="{StaticResource AilianBtMainColor}"
+                                BorderThickness="0,1,1,1"
+                                Click="{x:Bind SettingVM.SetAutoDownloadMagnetSettings}"
+                                Content="保存"
+                                IsEnabled="{x:Bind SettingVM.IsAutoDownloadMagnet, Mode=OneWay}" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">主色调</TextBlock>
                     <ListView x:Name="lvThemes"
                               Margin="8"
@@ -90,13 +128,14 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </StackPanel>
-                <StackPanel Margin="0,20,0,0">
+
+                <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">当前版本</TextBlock>
                     <TextBlock Margin="8,0,0,0"
                                Foreground="{StaticResource AilianBtListMainForeground}"
                                Text="{x:Bind SettingVM.Version, Mode=OneTime}" />
                 </StackPanel>
-                <StackPanel Margin="0,20,0,0">
+                <StackPanel Margin="0,16,0,0">
                     <TextBlock Margin="8" Foreground="{StaticResource AilianBtMainColor}">关于作者（CQ）</TextBlock>
                     <StackPanel Margin="8,0,0,0" Orientation="Vertical">
                         <HyperlinkButton Content="微博主页"

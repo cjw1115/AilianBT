@@ -35,6 +35,8 @@ namespace AilianBT.ViewModels
 
             IsLiveModeOn = _settingService.GetLiveMode().Value;
 
+            _loadAutoDownloadMagnetSettings();
+
             _loadThemeSettings();
         }
 
@@ -126,6 +128,44 @@ namespace AilianBT.ViewModels
                 theme = ThemeColors.Single(m => m.ThemeColor == currentColor);
             }
             SelectedTheme = ThemeColors.Single(m => m.ThemeColor == theme.ThemeColor);
+        }
+        #endregion
+
+        #region 磁链自动下载
+        public bool _isAutoDownloadMagnet;
+        public bool IsAutoDownloadMagnet
+        {
+            get => _isAutoDownloadMagnet;
+            set
+            {
+                if (Set(ref _isAutoDownloadMagnet, value))
+                {
+                    _settingService.SetMagnetAutoDownloadStatus(value);
+                }
+            }
+        }
+
+        public string _autoDownloadMagnetProtocal;
+        public string AutoDownloadMagnetProtocal
+        {
+            get => _autoDownloadMagnetProtocal;
+            set => Set(ref _autoDownloadMagnetProtocal, value);
+        }
+
+        private void _loadAutoDownloadMagnetSettings()
+        {
+            IsAutoDownloadMagnet = _settingService.GetMagnetAutoDownloadStatus() ?? false;
+            var protocal = _settingService.GetMagnetAutoDownloadProtocal() ?? string.Empty;
+            if(string.IsNullOrEmpty(protocal))
+            {
+                protocal = Definition.SETTING_MAGNET_AUTO_DOWNLOAD_PROTOCAL_THUNDER;
+            }
+            AutoDownloadMagnetProtocal = protocal;
+        }
+
+        public void SetAutoDownloadMagnetSettings()
+        {
+            _settingService.SetMagnetAutoDownloadProtocal(AutoDownloadMagnetProtocal);
         }
         #endregion
     }

@@ -102,5 +102,45 @@ namespace AilianBT.Services
             _logService.Debug($"Try to set living mode to " + (mode ? "on" : "off"));
             _storageService.SetLocalSetting<bool?>(Definition.KISSSUB_LIVING_MODE, mode);
         }
+
+        public bool? GetMagnetAutoDownloadStatus()
+        {
+            var status = _storageService.GetLocalSetting<bool?>(Definition.SETTING_MAGNET_AUTO_DOWNLOAD_ENABLE);
+            if (status == null || status.Value == false)
+            {
+                _logService.Debug($"Magnet auto download with third patry tool is not enabled");
+            }
+            else
+            {
+                _logService.Debug($"Magnet auto download with third patry tool is enabled");
+            }
+            return status;
+        }
+
+        public void SetMagnetAutoDownloadStatus(bool mode)
+        {
+            _logService.Debug($"Try to set magnet auto download to " + (mode ? "on" : "off"));
+            _storageService.SetLocalSetting<bool?>(Definition.SETTING_MAGNET_AUTO_DOWNLOAD_ENABLE, mode);
+        }
+
+        public string GetMagnetAutoDownloadProtocal()
+        {
+            var protocal = _storageService.GetLocalSetting<string>(Definition.SETTING_MAGNET_AUTO_DOWNLOAD_PROTOCAL);
+            if (string.IsNullOrEmpty(protocal))
+            {
+                _logService.Debug($"Magnet auto download protocal is not set");
+            }
+            else
+            {
+                _logService.Debug($"Magnet auto download protocal is set to {protocal}");
+            }
+            return protocal;
+        }
+
+        public void SetMagnetAutoDownloadProtocal(string protocal)
+        {
+            _logService.Debug($"Try to set magnet auto download protocal to {protocal}");
+            _storageService.SetLocalSetting<string>(Definition.SETTING_MAGNET_AUTO_DOWNLOAD_PROTOCAL, protocal);
+        }
     }
 }

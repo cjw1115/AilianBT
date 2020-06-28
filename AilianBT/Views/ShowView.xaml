@@ -5,92 +5,7 @@
       xmlns:local="using:AilianBT.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
-    <Page.Resources>
-        <Style TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Grid x:Name="RootGrid">
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              HorizontalContentAlignment="Center"
-                                              VerticalContentAlignment="Center" />
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup>
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="White" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="ListViewItem">
-            <Setter Property="Foreground" Value="{StaticResource AilianBtTitleUnselectForeground}" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <StackPanel x:Name="RootPanel"
-                                    VerticalAlignment="Stretch"
-                                    Background="Transparent">
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              HorizontalAlignment="Stretch"
-                                              VerticalAlignment="Stretch"
-                                              HorizontalContentAlignment="Center" />
-                            <Border x:Name="BorderBar"
-                                    Margin="8"
-                                    BorderBrush="{StaticResource AilianBtMainColor}"
-                                    BorderThickness="0,0,0,2"
-                                    Visibility="Collapsed" />
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup>
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="Selected">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBar" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AilianBtMainColor}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBar" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Margin="0,0,0,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer x:Name="scrollView">
             <Grid x:Name="root">
                 <Grid.RowDefinitions>
@@ -102,50 +17,59 @@
                         <RowDefinition Height="auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
+                    <ProgressBar Foreground="{StaticResource AilianBtMainColor}"
+                                 IsIndeterminate="True"
+                                 Visibility="{x:Bind ShowVM.IsLoadingWebView, Mode=OneWay}" />
                     <Pivot x:Name="pivot"
                            Grid.Row="1"
-                           Background="AliceBlue">
-
+                           Style="{StaticResource ShowViewPivot}">
                         <PivotItem>
                             <WebView x:Name="webViewSummary"
                                      HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Top"
                                      local:ShowView.DetailInfo="{x:Bind ShowVM.ShowModel.Summary, Mode=OneWay}"
-                                     DefaultBackgroundColor="AliceBlue"
                                      ManipulationMode="None"
                                      ScrollViewer.VerticalScrollMode="Disabled" />
                         </PivotItem>
                         <PivotItem>
-                            <WebView local:ShowView.DetailInfo="{x:Bind ShowVM.ShowModel.FileInfo, Mode=OneWay}" DefaultBackgroundColor="AliceBlue" />
+                            <WebView x:Name="webViewFile"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Top"
+                                     local:ShowView.DetailInfo="{x:Bind ShowVM.ShowModel.FileInfo, Mode=OneWay}"
+                                     DefaultBackgroundColor="White"
+                                     ManipulationMode="None"
+                                     ScrollViewer.VerticalScrollMode="Disabled" />
                         </PivotItem>
                     </Pivot>
                 </Grid>
-                <Grid x:Name="panel" Background="{StaticResource AilianBtGridBackground}">
+                <Grid x:Name="panel"
+                      Grid.Row="0"
+                      Background="{StaticResource AilianBtGridBackground}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-
-                    <TextBlock Margin="4"
-                               FontSize="22"
-                               Foreground="{StaticResource AilianBtListMainForeground}"
-                               Text="{x:Bind ShowVM.ShowModel.Title, Mode=OneWay}"
-                               TextWrapping="Wrap" />
-                    <Grid Grid.Row="1" Margin="4">
+                    <Grid Padding="8,4">
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="{StaticResource AilianBtListMainForeground}"
+                                   Text="{x:Bind ShowVM.ShowModel.Title, Mode=OneWay}"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                    <Grid Grid.Row="1" Padding="8,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
-                                   Margin="8,4,8,4"
+                                   VerticalAlignment="Center"
                                    FontSize="12"
-                                   Foreground="{StaticResource AilianBtListOtherForeground}">
-
-                            <Run Text="{x:Bind ShowVM.ShowModel.PublishTime, Mode=OneWay}" />
-                        </TextBlock>
+                                   Foreground="{StaticResource AilianBtListOtherForeground}"
+                                   Text="{x:Bind ShowVM.ShowModel.PublishTime, Mode=OneWay}" />
                         <TextBlock Grid.Column="1"
                                    Margin="8,4,8,4"
                                    HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
                                    FontSize="12"
                                    Foreground="{StaticResource AilianBtListOtherForeground}">
                             <Run>发布代号：</Run>
@@ -155,37 +79,38 @@
                     <StackPanel x:Name="panelControl"
                                 Grid.Row="2"
                                 Orientation="Vertical">
-                        <StackPanel Padding="4,12" Orientation="Horizontal">
-                            <Button Margin="4,0"
-                                    Command="{x:Bind ShowVM.DownloadBtCommand}"
-                                    CommandParameter="{x:Bind ShowVM.ShowModel.BtLink, Mode=OneWay}">
-                                <Button.Content>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock FontFamily="Segoe MDL2 Assets"
-                                                   FontSize="15"
-                                                   Text="&#xE896;" />
-                                        <TextBlock FontSize="12">下载种子</TextBlock>
-                                    </StackPanel>
-                                </Button.Content>
+                        <StackPanel Margin="0,4" Orientation="Horizontal">
+                            <Button Padding="8,4"
+                                    Click="{x:Bind ShowVM.DownloadBt}"
+                                    Style="{StaticResource ShowViewButton}">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets"
+                                               FontSize="18"
+                                               Text="&#xE896;" />
+                                    <TextBlock FontSize="12">下载种子</TextBlock>
+                                </StackPanel>
                             </Button>
-                            <Button Margin="4,0"
-                                    Command="{x:Bind ShowVM.DownloadMagnetCommand}"
-                                    CommandParameter="{x:Bind ShowVM.ShowModel.MagnetLink, Mode=OneWay}">
-                                <Button.Content>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock FontFamily="Segoe MDL2 Assets"
-                                                   FontSize="15"
-                                                   Text="&#xE8C8;" />
-                                        <TextBlock FontSize="12">复制磁链</TextBlock>
-                                    </StackPanel>
-                                </Button.Content>
+                            <Button Margin="4,0,0,0"
+                                    Padding="8,4"
+                                    Click="{x:Bind ShowVM.DownloadMagnet}"
+                                    Style="{StaticResource ShowViewButton}">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets"
+                                               FontSize="18"
+                                               Text="&#xE8C8;" />
+                                    <TextBlock FontSize="12">复制磁链</TextBlock>
+                                </StackPanel>
                             </Button>
                         </StackPanel>
-                        <ListView x:Name="navibar"
+                        <ListView x:Name="lvNavigationBar"
+                                  Margin="0"
+                                  Padding="0,4,0,0"
                                   Background="{StaticResource AilianBtGridBackground2}"
-                                  SelectedIndex="{Binding ElementName=pivot, Path=SelectedIndex, Mode=TwoWay}">
-                            <TextBlock FontSize="20">简介</TextBlock>
-                            <TextBlock FontSize="20">文件</TextBlock>
+                                  ItemContainerStyle="{StaticResource ShowViewNavigationBarItem}"
+                                  SelectedIndex="{Binding ElementName=pivot, Path=SelectedIndex, Mode=TwoWay}"
+                                  SelectionChanged="_lvNavigationBarSelectionChanged">
+                            <TextBlock FontSize="12">简介</TextBlock>
+                            <TextBlock FontSize="12">文件</TextBlock>
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" />
@@ -193,12 +118,8 @@
                             </ListView.ItemsPanel>
                         </ListView>
                     </StackPanel>
-
                 </Grid>
-
-
             </Grid>
         </ScrollViewer>
-
     </Grid>
 </Page>

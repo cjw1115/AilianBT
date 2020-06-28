@@ -58,15 +58,9 @@ namespace AilianBT.Views
             _adjustWindowMode();
         }
 
-        private IList<Visual> _selectedIndicatorVisuals = new List<Visual>();
         private void _navigationViewLoaded(object sender, RoutedEventArgs e)
         {
-            var _indicators = VisualTreeHelperTool.FindAllNamedVisualChild<Rectangle>(splitView, "SelectedIndicator");
-            foreach (var item in _indicators)
-            {
-                _selectedIndicatorVisuals.Add(ElementCompositionPreview.GetElementVisual(item));
-            }
-
+            _findIndicatorVisuals();
             _adjustWindowMode();
         }
 
@@ -116,6 +110,16 @@ namespace AilianBT.Views
             offsetAnimation.Duration = TimeSpan.FromMilliseconds(600);
 
             visual.StartAnimation("Offset", offsetAnimation);
+        }
+
+        private IList<Visual> _selectedIndicatorVisuals = new List<Visual>();
+        private void _findIndicatorVisuals()
+        {
+            var _indicators = VisualTreeHelperTool.FindAllNamedVisualChild<Rectangle>(splitView, "SelectedIndicator");
+            foreach (var item in _indicators)
+            {
+                _selectedIndicatorVisuals.Add(ElementCompositionPreview.GetElementVisual(item));
+            }
         }
 
         private void _customizeTitleBar()

@@ -1,4 +1,5 @@
-﻿using AilianBT.Models;
+﻿using AilianBT.Helpers;
+using AilianBT.Models;
 using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace AilianBT.Services
         private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
         private DbService _dbService = SimpleIoc.Default.GetInstance<DbService > ();
         private NotificationService _notificationService= SimpleIoc.Default.GetInstance<NotificationService>();
+        private UtilityHelper _utilityHelper = SimpleIoc.Default.GetInstance<UtilityHelper>();
 
         //直接创建下载任务，有ui
         public async Task<DownloadInfo> CreateDownload(Uri uri,IStorageFile file,Action<DownloadOperation> handler)
@@ -57,10 +59,11 @@ namespace AilianBT.Services
         }
 
         //创建后台下载任务
-        public async  void CreateBackDownload(string filename,Uri uri)
+        public async  void CreateBackDownload(string fileName, Uri uri)
         {
             var folder = await GetDownloadFolder();
-            var file = await _storageService.CreaterFile(folder, filename);
+            fileName = _utilityHelper.ReplaceInvalidCharactorsInFileName(fileName);
+            var file = await _storageService.CreaterFile(folder, fileName);
             var operation = _downloader.CreateDownload(uri, file);
             try
             {
@@ -73,7 +76,7 @@ namespace AilianBT.Services
             DownloadedInfo info = new DownloadedInfo()
             {
                 DownloadedTime = DateTime.Now,
-                FileName = filename,
+                FileName = fileName,
                 FilePath = file.Path,
                 Size = operation.Progress.TotalBytesToReceive,
                 Thumb = thumb

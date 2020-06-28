@@ -13,6 +13,7 @@ using AilianBT.Models;
 using AilianBT.Services;
 using GalaSoft.MvvmLight.Ioc;
 using AilianBT.ViewModels;
+using AilianBT.Helpers;
 
 namespace AilianBT.Views
 {
@@ -21,6 +22,7 @@ namespace AilianBT.Views
         private DownloadService _downloadService = SimpleIoc.Default.GetInstance<DownloadService>();
         private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
         private NotificationService _notificationService = SimpleIoc.Default.GetInstance<NotificationService>();
+        private UtilityHelper _utilityHelper = SimpleIoc.Default.GetInstance<UtilityHelper>();
 
         public DownloadingViewModel DownloadingVM { get; private set; } = ViewModelLocator.Instance.DownloadingVM;
         public DownloadedViewModel DownloadedVM { get; private set; } = ViewModelLocator.Instance.DownloadedVM;
@@ -80,11 +82,13 @@ namespace AilianBT.Views
             _notificationService.ShowDownloadFinishedToast(downloadInfo.FileName);
         }
 
-        public async Task StarDownload(string filename,Uri uri)
+        public async Task StarDownload(string fileName, Uri uri)
         {
+            fileName = _utilityHelper.ReplaceInvalidCharactorsInFileName(fileName);
+
             //创建文件
             //td:此处添加文件存在检测逻辑
-            var file = await _storageService.CreaterFile(defaultFolder, filename);
+            var file = await _storageService.CreaterFile(defaultFolder, fileName);
 
             var downloadinfo = await _downloadService.CreateDownload(uri, file, DownloadProgress);
             DownloadingVM.DownloadOperations.Add(downloadinfo);

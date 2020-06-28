@@ -1,5 +1,6 @@
 ﻿using AilianBT.Models;
 using GalaSoft.MvvmLight;
+using System;
 using System.Collections.Generic;
 using Windows.UI.Xaml.Controls;
 namespace AilianBT.ViewModels
@@ -36,13 +37,34 @@ namespace AilianBT.ViewModels
             NavigationListItem item = NavigationList[SelectedIndex];
             if (item != null && item.PageType != null)
             {
+                ClearDetailFrame();
                 FuncFrame.Navigate(item.PageType);
             }
         }
 
         public void SettingClicked()
         {
+            ClearDetailFrame();
             FuncFrame.Navigate(typeof(Views.SettingView));
+        }
+
+        private void ClearDetailFrame()
+        {
+            while (DetailFrame.BackStackDepth >= 1)
+            {
+                if (DetailFrame.BackStackDepth == 1)
+                {
+                    DetailFrame.GoBack();
+                    break;
+                }
+                DetailFrame.BackStack.RemoveAt(DetailFrame.BackStackDepth - 1);
+            }
+        }
+
+        public void DetailFrameNavigate(Type viewType, object param = null)
+        {
+            ClearDetailFrame();
+            DetailFrame.Navigate(viewType, param);
         }
     }
 }
