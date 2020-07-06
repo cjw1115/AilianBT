@@ -1,0 +1,173 @@
+﻿<UserControl x:Class="AilianBT.Views.Controls.PlayerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="using:AilianBT.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:effects="using:AilianBT.Effects"
+             xmlns:local="using:AilianBT.Views.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="300"
+             d:DesignWidth="400"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <effects:MyRevealBorderBrush x:Key="NextRevealBorderBrush" Color="#118A8781" />
+        <effects:MyRevealBorderBrush x:Key="PlayRevealBorderBrush" Color="#33FFFFFF" />
+        <effects:MyRevealBorderBrush x:Key="RevealBackgroundBrush" Color="Transparent" />
+
+        <AcrylicBrush x:Key="AcrylicBackgroundBrush"
+                      BackgroundSource="Backdrop"
+                      FallbackColor="#8A8781"
+                      TintColor="#8A8781"
+                      TintOpacity="0.9" />
+
+        <Style x:Key="ButtonRevealStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
+            <Setter Property="Padding" Value="{ThemeResource ButtonPadding}" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+            <Setter Property="FocusVisualMargin" Value="-3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid"
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="2"
+                              CornerRadius="{TemplateBinding CornerRadius}">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Margin="0"
+                                              Padding="0"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              HorizontalContentAlignment="Center"
+                                              VerticalContentAlignment="Center"
+                                              AutomationProperties.AccessibilityView="Raw"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              CornerRadius="{TemplateBinding CornerRadius}" />
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.(effects:MyRevealBorderBrush.State)" Value="Pressed" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundDisabled}" />
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushDisabled}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundDisabled}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+                        </Grid>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NextButtonRevealStyle"
+               BasedOn="{StaticResource ButtonRevealStyle}"
+               TargetType="Button">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Background" Value="{StaticResource RevealBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource NextRevealBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="48" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style x:Key="PlayButtonRevealStyle"
+               BasedOn="{StaticResource ButtonRevealStyle}"
+               TargetType="Button">
+            <Setter Property="Width" Value="44" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="Background" Value="{StaticResource RevealBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource PlayRevealBorderBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="48" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <converters:PlayStatusConverter x:Key="PlayingToVisible" StatusToVisible="Playing" />
+        <converters:PlayStatusConverter x:Key="PausedToVisible" StatusToVisible="Paused" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid Height="48"
+              Padding="8,0"
+              VerticalAlignment="Bottom"
+              Background="{StaticResource AcrylicBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Click="{x:Bind PlayerVM.PreviousClicked}"
+                    CornerRadius="48"
+                    Style="{StaticResource NextButtonRevealStyle}">
+                <TextBlock Text="&#xE892;" />
+            </Button>
+            <Button Grid.Column="1"
+                    Margin="8,0"
+                    Click="{x:Bind PlayerVM.PlayClicked}"
+                    Style="{StaticResource PlayButtonRevealStyle}"
+                    Visibility="{x:Bind PlayerVM.Status, Mode=OneWay, Converter={StaticResource PausedToVisible}}">
+                <TextBlock Text="&#xE768;" />
+            </Button>
+            <Button Grid.Column="1"
+                    Margin="8,0"
+                    Click="{x:Bind PlayerVM.PauseClicked}"
+                    Style="{StaticResource PlayButtonRevealStyle}"
+                    Visibility="{x:Bind PlayerVM.Status, Mode=OneWay, Converter={StaticResource PlayingToVisible}}">
+                <TextBlock Text="&#xE769;" />
+            </Button>
+            <Button Grid.Column="2"
+                    Click="{x:Bind PlayerVM.NextClicked}"
+                    Style="{StaticResource NextButtonRevealStyle}">
+                <TextBlock Text="&#xE893;" />
+            </Button>
+            <Grid Grid.Column="3" Padding="8,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Slider Grid.Row="1"
+                        VerticalAlignment="Top"
+                        Minimum="0" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

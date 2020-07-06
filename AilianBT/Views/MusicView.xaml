@@ -1,6 +1,7 @@
 ﻿<Page x:Class="AilianBT.Views.MusicView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:AilianBT.Views.Controls"
       xmlns:converters="using:AilianBT.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,7 +14,7 @@
         <converters:PadleftConverter x:Key="PadleftConverter" PadCount="4" />
     </Page.Resources>
     <Grid>
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -168,6 +169,7 @@
                     Style="{StaticResource PlaybackButton}">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE893;" />
             </Button>
-        </Grid>
+        </Grid>-->
+        <controls:PlayerView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>
 </Page>

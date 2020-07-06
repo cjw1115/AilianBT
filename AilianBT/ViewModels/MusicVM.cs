@@ -1,4 +1,5 @@
 ﻿using AilianBT.Services;
+using AilianBT.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +23,6 @@ namespace AilianBT.ViewModels
 
         private MusicService _musicService = SimpleIoc.Default.GetInstance<MusicService>();
         private MusicManager _musicManager = null;
-        
 
         private SynchronizationContext SynchronizationContext = SynchronizationContext.Current;
 
