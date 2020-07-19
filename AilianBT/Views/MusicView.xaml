@@ -14,7 +14,7 @@
         <converters:PadleftConverter x:Key="PadleftConverter" PadCount="4" />
     </Page.Resources>
     <Grid>
-        <!--<Grid.RowDefinitions>
+        <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -27,7 +27,7 @@
                   Background="{ThemeResource AilianBtGridBackground2}"
                   IsItemClickEnabled="True"
                   ItemsSource="{x:Bind MusicVM.MusicList, Mode=OneWay}"
-                  SelectedIndex="{x:Bind MusicVM.CurrentIndex, Mode=TwoWay}"
+                  SelectedIndex="{x:Bind MusicVM.PlayerVM.CurrentIndex, Mode=TwoWay}"
                   SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:MusicModel">
@@ -92,84 +92,11 @@
                          BorderThickness="0"
                          Foreground="{StaticResource AilianBtMainColor}"
                          IsIndeterminate="True"
-                         Visibility="{x:Bind MusicVM.IsLoading, Mode=OneWay}" />
+                         Visibility="{x:Bind MusicVM.PlayerVM.IsLoading, Mode=OneWay}" />
         </Grid>
-        <Grid Grid.Row="2"
-              Padding="10,0,10,0"
-              Background="{ThemeResource AilianBtMainColor}">
-            <StackPanel Height="40"
-                        Orientation="Horizontal"
-                        Visibility="{x:Bind tbMusicTitle.Text, Mode=OneWay, Converter={StaticResource NullToVisibityConverter}}">
-                <TextBlock VerticalAlignment="Center"
-                           FontFamily="{StaticResource FontAwesome}"
-                           FontSize="20"
-                           Foreground="White"
-                           Text="&#xf001;" />
-                <TextBlock x:Name="tbMusicTitle"
-                           Margin="8,0,0,0"
-                           VerticalAlignment="Center"
-                           FontSize="16"
-                           Foreground="White"
-                           Text="{x:Bind MusicVM.Title, Mode=OneWay}"
-                           TextWrapping="Wrap" />
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Row="3" Background="#FFF4F4F4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.Resources>
-                <Style TargetType="AppBarButton">
-                    <Setter Property="Foreground" Value="{ThemeResource AilianBtMainColor}" />
-                </Style>
-            </Grid.Resources>
-            <Button x:Name="btn_previou"
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="4"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Click="{x:Bind MusicVM.PreviousClicked}"
-                    IsEnabled="{x:Bind MusicVM.CanPreviou, Mode=OneWay}"
-                    Style="{StaticResource PlaybackButton}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE892;" />
-            </Button>
-            <Button x:Name="btn_play"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="4"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Click="{x:Bind MusicVM.PlayClicked}"
-                    Style="{StaticResource PlaybackButton}"
-                    Visibility="{x:Bind MusicVM.IsPlaying, Mode=OneWay, Converter={StaticResource FalseToVisibility}}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" />
-            </Button>
-            <Button x:Name="btn_pause"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="4"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Click="{x:Bind MusicVM.PauseClicked}"
-                    Style="{StaticResource PlaybackButton}"
-                    Visibility="{x:Bind MusicVM.IsPlaying, Mode=OneWay}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE769;" />
-            </Button>
-            <Button x:Name="btn_next"
-                    Grid.Row="1"
-                    Grid.Column="3"
-                    Margin="4"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Click="{x:Bind MusicVM.NextClicked}"
-                    IsEnabled="{x:Bind MusicVM.CanNext, Mode=OneWay}"
-                    Style="{StaticResource PlaybackButton}">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE893;" />
-            </Button>
-        </Grid>-->
-        <controls:PlayerView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <controls:PlayerView Grid.Row="3"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"
+                             DataContext="{x:Bind MusicVM.PlayerVM, Mode=OneWay}" />
     </Grid>
 </Page>

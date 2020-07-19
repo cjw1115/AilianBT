@@ -1,28 +1,39 @@
 ﻿using GalaSoft.MvvmLight;
 using System;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace AilianBT.Models
 {
     [DataContract]
     public class MusicModel: ViewModelBase
     {
-        [DataMember]
         public int ID { get; set; }
-        [DataMember]
         public string Title { get; set; }
-        [DataMember]
         public Uri Uri { get; set; }
-        [DataMember]
-        public Uri RealUri { get; set; }
 
-        [IgnoreDataMember]
         private bool _hasCached = false;
-        [DataMember]
+        [JsonIgnore]
         public bool HasCached
         {
             get=> _hasCached;
             set => Set(ref _hasCached, value);
+        }
+
+        private TimeSpan _position;
+        [JsonIgnore]
+        public TimeSpan Position
+        {
+            get => _position;
+            set => Set(ref _position, value);
+        }
+
+        private TimeSpan _length;
+        [JsonIgnore]
+        public TimeSpan Length
+        {
+            get => _length;
+            set => Set(ref _length, value);
         }
 
         public override bool Equals(object obj)
@@ -36,15 +47,24 @@ namespace AilianBT.Models
             {
                 return true;
             }
-            return model.ID == ID 
-                && model.Title == Title 
-                && model.Uri == Uri
-                && model.RealUri == RealUri;
+            return model.Title == Title
+                && model.Uri == Uri;
         }
 
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public bool Update(MusicModel source)
+        {
+            if (!this.Equals(source))
+            {
+                this.Title = source.Title;
+                this.Uri = source.Uri;
+                return true;
+            }
+            return false;
         }
     }
 }

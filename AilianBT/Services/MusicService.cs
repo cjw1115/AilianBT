@@ -2,6 +2,7 @@
 using AilianBT.Constant;
 using AilianBT.Helpers;
 using AilianBT.Models;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,10 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Media.Core;
+using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
+using Windows.UI.WindowManagement;
 
 namespace AilianBT.Services
 {
@@ -18,18 +22,27 @@ namespace AilianBT.Services
     {
         private const string KISSSUB_PLAYLIST = "http://www.kisssub.org/addon/player/app/scm-music-player/playlist.js?time=";
         private const string KISSSUB_HOST = "http://www.kisssub.org/";
+        private const string LOCAL_PLAYLIST_FILENAME = "Playlist.json";
 
         private HttpService _httpService = new HttpService(true);
         private UtilityHelper _utilityHelper;
         private LogService _logger;
+        private StorageService _storageService;
 
-        public MusicService(UtilityHelper utilityHelper,LogService logger)
+        private BackgroundDownloader _backgroundDownloader;
+
+        public MusicService(UtilityHelper utilityHelper,LogService logger, StorageService storageService)
         {
             _utilityHelper = utilityHelper;
             _logger = logger;
+            _storageService = storageService;
+
+            _initDownloader();
         }
 
-        public async Task<IList<MusicModel>> GetNetPlayList()
+        #region Playlist
+
+        public async Task<IList<MusicModel>> GetNetPlayListAsync()
         {
             var musicList = new List<MusicModel>();
             try
@@ -64,63 +77,101 @@ namespace AilianBT.Services
             return musicList;
         }
 
-        public async Task<Stream> GetMusicStream(Uri uri)
+        public async Task<IList<MusicModel>> GetLocalPlayListAsync()
         {
-            var newUri=uri.ToString() + "?date=" + DateTime.Now.Millisecond;
-            var headers = new Dictionary<string, string>
+            try
             {
-                { "Referer", KISSSUB_HOST }
-            };
-
-            return await _httpService.SendRequestForStream(newUri, HttpMethod.Get, appendHeaders: headers);
+                var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, LOCAL_PLAYLIST_FILENAME);
+                var playlistFile = await _storageService.GetFile(fileName);
+                using(var stream = await playlistFile.OpenStreamForReadAsync())
+                {
+                    return await JsonSerializer.DeserializeAsync<IList<MusicModel>>(stream);
+                }
+            }
+            catch(FileNotFoundException)
+            {
+                _logger.Warning($"Didn't find the local playlist file");
+            }
+            catch
+            {
+                _logger.Warning($"Parse local playlist file failed");
+            }
+            return null;
         }
 
-        public async Task CahcheMusic(Stream sourceStream, MusicModel model)
+        public async Task CachePlayListAsync(IList<MusicModel> playlist)
         {
-            var cacheFile = await _createMusicFile(model);
-            if (cacheFile == null)
+            try
             {
-                _logger.Error($"Create local file for storing music failed");
-                return;
+                var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, LOCAL_PLAYLIST_FILENAME);
+                var playlistFile = await _storageService.GetFile(fileName);
+                await _storageService.DeleteFile(playlistFile);   
+            }
+            catch (FileNotFoundException)
+            {
+                _logger.Information($"Didn't find the local playlist file");
             }
 
             try
             {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                Task.Run(async () =>
+                var playlistFile = await _storageService.CreaterFile(ApplicationData.Current.LocalFolder, LOCAL_PLAYLIST_FILENAME);
+                using (var stream = await playlistFile.OpenStreamForWriteAsync())
                 {
-                    using (var fileStream = await cacheFile.OpenStreamForWriteAsync())
-                    {
-                        long totalSize = sourceStream.Length;
-                        long cachedSize = 0;
-                        byte[] tempBuffer = new byte[48000];
-
-                        _logger.Debug($"Start to save audio stream, expected {totalSize} bytes");
-                        while (cachedSize <= totalSize)
-                        {
-                            var readSize = sourceStream.Read(tempBuffer, 0, tempBuffer.Length);
-                            fileStream.Write(tempBuffer, 0, readSize);
-                            fileStream.Flush();
-                            cachedSize += readSize;
-                        }
-                        _logger.Debug($"Save audio stream successfully, cached {cachedSize} bytes");
-                    }
-                });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    await JsonSerializer.SerializeAsync(stream, playlist);
+                }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                _logger.Error($"Caching music:{Environment.NewLine}" +
-                    $"\tTitle: {model.Title}{Environment.NewLine}" +
-                    $"\tUrl: {model.Uri}"
-                    , e);
+                _logger.Error($"Cache playlist file failed", e);
             }
+        }
+        #endregion
+
+        
+        private void _initDownloader()
+        {
+            _backgroundDownloader = new BackgroundDownloader();
+            _backgroundDownloader.SetRequestHeader("Referer", KISSSUB_HOST);
+        }
+
+        public async Task<MediaSource> RequestMusic(MusicModel model)
+        {
+            EventHandler<DownloadOperation> downloadProgressHandler = (o, e) =>
+            {
+                _logger.Debug($"Downloading status of {model.Title}:\n\t{e.Progress.Status}, ({e.Progress.BytesReceived}/{e.Progress.TotalBytesToReceive})");
+                switch (e.Progress.Status)
+                {
+                    case BackgroundTransferStatus.Completed:
+                        _utilityHelper.RunAtUIThread(() => model.HasCached = true);
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            var cacheFile = await _createMusicFile(model);
+            if (cacheFile == null)
+            {
+                _logger.Error($"Create local file for storing music failed");
+                return null;
+            }
+
+            var downloadProgress = new Progress<DownloadOperation>();
+            downloadProgress.ProgressChanged += downloadProgressHandler;
+
+            var downloadOperation = _backgroundDownloader.CreateDownload(model.Uri, cacheFile);
+            downloadOperation.IsRandomAccessRequired = true;
+            var ras = downloadOperation.GetResultRandomAccessStreamReference();
+
+            downloadOperation.StartAsync().AsTask(downloadProgress);
+            var source = MediaSource.CreateFromStreamReference(ras, "audio/mpeg");
+            return source;
         }
 
         /// <summary>
         /// Get music stream from the local cache
         /// </summary>
-        public async Task<Stream> GetCahchedMusicAsync(MusicModel model)
+        public async Task<MediaSource> GetCahchedMusicAsync(MusicModel model)
         {
             StorageFolder folder = null;
             try
@@ -139,7 +190,7 @@ namespace AilianBT.Services
                 var cachedFile = await folder.GetFileAsync(hashName);
                 var ras = await cachedFile.OpenAsync(FileAccessMode.Read);
                 _logger.Debug($"Music {model.Title}({hashName}) has local cache");
-                return ras.AsStreamForRead();
+                return MediaSource.CreateFromStream(ras, "audio/mpeg");
             }
             catch
             {
@@ -150,7 +201,7 @@ namespace AilianBT.Services
             }
         }
 
-        public async Task CheckCachedMusic(IList<MusicModel> models, SynchronizationContext context)
+        public async Task CheckCachedMusicAsync(IEnumerable<MusicModel> models, SynchronizationContext context)
         {
             StorageFolder folder = null;
             try

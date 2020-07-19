@@ -1,8 +1,10 @@
 ﻿using AilianBT.Constant;
 using AilianBT.Models;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 
 namespace AilianBT.Helpers
@@ -52,6 +54,11 @@ namespace AilianBT.Helpers
             }
 
             return WindowMode.Master;
+        }
+
+        public void RunAtUIThread(DispatchedHandler action)
+        {
+            Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, action);
         }
     }
 }

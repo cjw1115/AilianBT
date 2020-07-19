@@ -247,6 +247,7 @@
 
         <converters:PlayStatusConverter x:Key="PlayingToVisible" StatusToVisible="Playing" />
         <converters:PlayStatusConverter x:Key="PausedToVisible" StatusToVisible="Paused" />
+        <converters:TimeSpanConverter x:Key="DurationConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -261,27 +262,27 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                    Click="{x:Bind PlayerVM.PreviousClicked}"
+                    Click="{x:Bind _playerVM.PreviousClicked}"
                     CornerRadius="48"
                     Style="{StaticResource NextButtonRevealStyle}">
                 <TextBlock Text="&#xE892;" />
             </Button>
             <Button Grid.Column="1"
                     Margin="8,0"
-                    Click="{x:Bind PlayerVM.PlayClicked}"
+                    Click="{x:Bind _playerVM.PlayClicked}"
                     Style="{StaticResource PlayButtonRevealStyle}"
-                    Visibility="{x:Bind PlayerVM.Status, Mode=OneWay, Converter={StaticResource PausedToVisible}}">
+                    Visibility="{x:Bind _playerVM.Status, Mode=OneWay, Converter={StaticResource PausedToVisible}}">
                 <TextBlock Text="&#xE768;" />
             </Button>
             <Button Grid.Column="1"
                     Margin="8,0"
-                    Click="{x:Bind PlayerVM.PauseClicked}"
+                    Click="{x:Bind _playerVM.PauseClicked}"
                     Style="{StaticResource PlayButtonRevealStyle}"
-                    Visibility="{x:Bind PlayerVM.Status, Mode=OneWay, Converter={StaticResource PlayingToVisible}}">
+                    Visibility="{x:Bind _playerVM.Status, Mode=OneWay, Converter={StaticResource PlayingToVisible}}">
                 <TextBlock Text="&#xE769;" />
             </Button>
             <Button Grid.Column="2"
-                    Click="{x:Bind PlayerVM.NextClicked}"
+                    Click="{x:Bind _playerVM.NextClicked}"
                     Style="{StaticResource NextButtonRevealStyle}">
                 <TextBlock Text="&#xE893;" />
             </Button>
@@ -311,7 +312,7 @@
                                        FontSize="13"
                                        Foreground="#FFE4E4E4"
                                        SizeChanged="_tbPlayerTitleSizeChanged"
-                                       Text="动物世界真好看之熊出没动物世界真好看之熊出没动物世界真好看之熊出没" />
+                                       Text="{x:Bind _playerVM.CurrentMusic.Title, Mode=OneWay}" />
                             <TextBlock x:Name="tbPlayerTitleSecond"
                                        VerticalAlignment="Center"
                                        FontFamily="Calibri"
@@ -329,7 +330,7 @@
                                    FocusVisualPrimaryBrush="#FFE2E2E2"
                                    FontSize="12"
                                    Foreground="#FFE4E4E4"
-                                   Text="00:00" />
+                                   Text="{x:Bind _playerVM.CurrentMusic.Position, Mode=OneWay, Converter={StaticResource DurationConverter}}" />
                         <TextBlock Margin="2,0"
                                    VerticalAlignment="Center"
                                    FontSize="12"
@@ -338,13 +339,16 @@
                         <TextBlock VerticalAlignment="Center"
                                    FontSize="12"
                                    Foreground="#FFC4C4C4"
-                                   Text="03:15" />
+                                   Text="{x:Bind _playerVM.CurrentMusic.Length, Mode=OneWay, Converter={StaticResource DurationConverter}}" />
                     </StackPanel>
                 </Grid>
-                <Slider Grid.Row="1"
+                <Slider x:Name="sliderProgress"
+                        Grid.Row="1"
                         VerticalAlignment="Top"
+                        Maximum="100"
                         Minimum="0"
-                        Style="{StaticResource ProgressSliderStyle}" />
+                        Style="{StaticResource ProgressSliderStyle}"
+                        Value="{x:Bind _playerVM.PlaybackProgress, Mode=OneWay}" />
             </Grid>
         </Grid>
     </Grid>

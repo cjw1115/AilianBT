@@ -13,12 +13,16 @@ namespace AilianBT.Views.Controls
 {
     public sealed partial class PlayerView : UserControl
     {
-        private PlayerViewModel PlayerVM { get; set; } = new PlayerViewModel();
+        private PlayerViewModel _playerVM;
+        
         private SynchronizationContext SynchronizationContext = SynchronizationContext.Current;
+
         public PlayerView()
         {
             this.InitializeComponent();
+            this.DataContextChanged += (o, e) => _playerVM = this.DataContext as PlayerViewModel;
             _initPlayerTitleAnimationResources();
+            _initPlaybackProgress();
         }
 
         private bool _isAnimating = false;
@@ -106,6 +110,24 @@ namespace AilianBT.Views.Controls
                 }, null, TimeSpan.FromMilliseconds(400), TimeSpan.Zero);
             }
             _panelSizeChangedTimer.Change(TimeSpan.FromMilliseconds(400), TimeSpan.Zero);
+        }
+
+        private void _initPlaybackProgress()
+        {
+            sliderProgress.ManipulationMode = ManipulationModes.TranslateX;
+            sliderProgress.ManipulationCompleted += SliderProgress_ManipulationCompleted;
+            sliderProgress.ManipulationStarted += SliderProgress_ManipulationStarted;
+        }
+
+        private void SliderProgress_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            _playerVM.Seeking = true;
+        }
+
+        private void SliderProgress_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            _playerVM.Seek(sliderProgress.Value / (sliderProgress.Maximum - sliderProgress.Minimum));
+            _playerVM.Seeking = false;
         }
     }
 }

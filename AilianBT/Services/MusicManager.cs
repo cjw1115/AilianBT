@@ -1,13 +1,16 @@
 ﻿using AilianBT.Models;
 using GalaSoft.MvvmLight.Ioc;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.UI.WebUI;
 
 namespace AilianBT.Services
 {
@@ -36,6 +39,18 @@ namespace AilianBT.Services
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.AutoPlay = false;
             _mediaPlayer.Source = _mediaPlaybackList;
+            _mediaPlayer.PlaybackSession.PositionChanged += PlaybackSession_PositionChanged;
+            _mediaPlayer.MediaEnded += _mediaPlayerMediaEnded;
+        }
+
+        private void _mediaPlayerMediaEnded(MediaPlayer sender, object args)
+        {
+            MediaEnd?.Invoke();
+        }
+
+        private void PlaybackSession_PositionChanged(MediaPlaybackSession sender, object args)
+        {
+            PositionChanged?.Invoke(_mediaPlayer.PlaybackSession.Position, _mediaPlayer.PlaybackSession.NaturalDuration);
         }
 
         public event Action<MusicModel> MediaLoaded;
@@ -43,6 +58,8 @@ namespace AilianBT.Services
         public event Action<MusicModel, MusicModel> MediaChanged;
         public event Action<MusicModel> MediaLoading;
         public event Action<MusicModel> MediaCached;
+        public event Action<TimeSpan, TimeSpan> PositionChanged;
+        
         public event Action MediaEnd;
 
         #region MediaPlaybackList callbacks
@@ -74,11 +91,7 @@ namespace AilianBT.Services
         {
             var modelJson = args.Item.Source.CustomProperties["model"] as string;
             var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
-
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("Open Successfully:");
-            System.Diagnostics.Debug.WriteLine(modelJson);
-#endif
+            _logger.Error($"Open Successfully: \n\t{modelJson}");
             MediaLoaded?.Invoke(model);
         }
 
@@ -88,55 +101,44 @@ namespace AilianBT.Services
             {
                 var modelJson = value as string;
                 var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine("Open Failed:");
-                System.Diagnostics.Debug.WriteLine(modelJson);
-#endif
+                _logger.Error($"Play music failed: \n\t{modelJson}\n\t{args.Error.ErrorCode}", args.Error.ExtendedError);
                 MediaFailed?.Invoke(model);
             }
         }
         #endregion
 
-        public async Task Add(MusicModel model)
+        public async Task<MediaPlaybackItem> Add(MusicModel model)
         {
             var indexInPlaybackList = _getIndex(model);
 
             // Prepare audio steam
-            var stream = await musicService.GetCahchedMusicAsync(model);
-            if (stream == null)
+            var source = await musicService.GetCahchedMusicAsync(model);
+            if (source == null)
             {
-                MediaLoading?.Invoke(model);
                 try
                 {
-                    stream = await musicService.GetMusicStream(model.Uri);
+                    source = await musicService.RequestMusic(model);
                 }
                 catch(Exception e)
                 {
-                    MediaFailed?.Invoke(model);
                     _logger.Error($"Get music stream failed", e);
                 }
-
-                //Cache media and send a notification when cache successfully.
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                musicService.CahcheMusic(stream, model);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                MediaCached?.Invoke(model);
             }
 
+            var playbackItem = _createMediaPlaybackItem(source, model);
             if (indexInPlaybackList != null)
             {
-                _mediaPlaybackList.Items[indexInPlaybackList.Value] = _createMediaPlaybackItem(stream, model);
+                _mediaPlaybackList.Items[indexInPlaybackList.Value] = playbackItem;
             }
             else
             {
-                _mediaPlaybackList.Items.Add(_createMediaPlaybackItem(stream, model));
+                _mediaPlaybackList.Items.Add(playbackItem);
             }
+            return playbackItem;
         }
 
-        private MediaPlaybackItem _createMediaPlaybackItem(Stream sourceStream, MusicModel model)
+        private MediaPlaybackItem _createMediaPlaybackItem(MediaSource source, MusicModel model)
         {
-            //Create Media source
-            var source = MediaSource.CreateFromStream(sourceStream.AsRandomAccessStream(), "audio/mpeg");
             source.CustomProperties["model"] = JsonSerializer.Serialize(model);
             var item = new MediaPlaybackItem(source);
             //Set STMC
@@ -149,7 +151,7 @@ namespace AilianBT.Services
 
         private bool _isPaused;
 
-        public void Play(MusicModel model)
+        public async Task Play(MusicModel model)
         {
             if (_isPaused)
             {
@@ -157,15 +159,7 @@ namespace AilianBT.Services
             }
             else
             {
-                var index = _getIndex(model);
-                if (index == null)
-                {
-                    //Media is in downloading...
-                    MediaLoading?.Invoke(model);
-                    return;
-                }
-                _mediaPlaybackList.MoveTo((uint)index.Value);
-                _mediaPlayer.Play();
+                await _play(model);
             }
         }
 
@@ -178,29 +172,25 @@ namespace AilianBT.Services
             _mediaPlayer.Pause();
         }
 
-        public void Previous(MusicModel model)
+        public async Task Previous(MusicModel model)
         {
-            var index = _getIndex(model);
-            if (index == null)
-            {
-                //Media is in downloading...
-                MediaLoading?.Invoke(model);
-                return;
-            }
-            _mediaPlaybackList.MoveTo((uint)index.Value);
-            _mediaPlayer.Play();
+            await _play(model);
         }
 
-        public void Next(MusicModel model)
+        public async Task Next(MusicModel model)
         {
-            var index = _getIndex(model);
-            if(index==null)
-            {
-                //Media is in downloading...
-                MediaLoading?.Invoke(model);
-                return;
-            }
-            _mediaPlaybackList.MoveTo((uint)index.Value);
+            await _play(model);
+        }
+
+        public async Task Seek(TimeSpan position)
+        {
+            _mediaPlayer.PlaybackSession.Position = position;
+        }
+        private async Task _play(MusicModel model)
+        {
+            var playbackItem = await _cacheMusic(model);
+            var playbackItemIndex = _mediaPlaybackList.Items.IndexOf(playbackItem);
+            _mediaPlaybackList.MoveTo((uint)playbackItemIndex);
             _mediaPlayer.Play();
         }
 
@@ -225,6 +215,15 @@ namespace AilianBT.Services
         private MediaPlaybackItem _createPlaceholderItem()
         {
             return new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri("cq://cq")));
+        }
+
+        private async Task<MediaPlaybackItem> _cacheMusic(MusicModel model)
+        {
+            if (!CachedMusicList.Any(m => m.Title == model.Title))
+            {
+                CachedMusicList.Add(model);
+            }
+            return await Add(model);
         }
     }
 }
