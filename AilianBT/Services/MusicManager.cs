@@ -26,15 +26,10 @@ namespace AilianBT.Services
         public MusicManager()
         {
             _mediaPlaybackList = new MediaPlaybackList();
-            _mediaPlaybackList.CurrentItemChanged += _mediaPlaybackListCurrentItemChanged;
             _mediaPlaybackList.ItemOpened += _mediaPlaybackListItemOpened;
             _mediaPlaybackList.ItemFailed += _mediaPlaybackListItemFailed;
             _mediaPlaybackList.AutoRepeatEnabled = false;
             _mediaPlaybackList.MaxPlayedItemsToKeepOpen = 3;
-
-            _mediaPlaybackList.Items.Add(_createPlaceholderItem());
-            _mediaPlaybackList.Items.Add(_createPlaceholderItem());
-            _mediaPlaybackList.Items.Add(_createPlaceholderItem());
 
             _mediaPlayer = new MediaPlayer();
             _mediaPlayer.AutoPlay = false;
@@ -43,50 +38,19 @@ namespace AilianBT.Services
             _mediaPlayer.MediaEnded += _mediaPlayerMediaEnded;
         }
 
-        private void _mediaPlayerMediaEnded(MediaPlayer sender, object args)
-        {
-            MediaEnd?.Invoke();
-        }
-
         private void PlaybackSession_PositionChanged(MediaPlaybackSession sender, object args)
         {
             PositionChanged?.Invoke(_mediaPlayer.PlaybackSession.Position, _mediaPlayer.PlaybackSession.NaturalDuration);
         }
 
         public event Action<MusicModel> MediaLoaded;
+        public event Action<MusicModel> MediaEnd;
         public event Action<MusicModel> MediaFailed;
-        public event Action<MusicModel, MusicModel> MediaChanged;
-        public event Action<MusicModel> MediaLoading;
         public event Action<MusicModel> MediaCached;
         public event Action<TimeSpan, TimeSpan> PositionChanged;
         
-        public event Action MediaEnd;
 
         #region MediaPlaybackList callbacks
-        private void _mediaPlaybackListCurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
-        {
-            if(args.Reason== MediaPlaybackItemChangedReason.EndOfStream)
-            {
-                _mediaPlayer.Pause();
-                MediaEnd?.Invoke();
-                return;
-            }
-
-            MusicModel newModel = null;
-            MusicModel oldModel= null;
-            if(args.NewItem!=null)
-            {
-                var newModelJson = args.NewItem.Source.CustomProperties["model"] as string;
-                newModel = JsonSerializer.Deserialize<MusicModel>(newModelJson);
-            }
-            if (args.OldItem != null)
-            {
-                var oldModelJson = args.OldItem.Source.CustomProperties["model"] as string;
-                oldModel = JsonSerializer.Deserialize<MusicModel>(oldModelJson);
-            }
-            MediaChanged?.Invoke(newModel, oldModel);
-        }
-
         private void _mediaPlaybackListItemOpened(MediaPlaybackList sender, MediaPlaybackItemOpenedEventArgs args)
         {
             var modelJson = args.Item.Source.CustomProperties["model"] as string;
@@ -95,15 +59,21 @@ namespace AilianBT.Services
             MediaLoaded?.Invoke(model);
         }
 
+        private void _mediaPlayerMediaEnded(MediaPlayer sender, object args)
+        {
+            MediaEnd?.Invoke(null);
+        }
+
         private void _mediaPlaybackListItemFailed(MediaPlaybackList sender, MediaPlaybackItemFailedEventArgs args)
         {
+            MusicModel model = null;
             if(args.Item.Source.CustomProperties.TryGetValue("model", out object value))
             {
                 var modelJson = value as string;
-                var model = JsonSerializer.Deserialize<MusicModel>(modelJson);
+                model = JsonSerializer.Deserialize<MusicModel>(modelJson);
                 _logger.Error($"Play music failed: \n\t{modelJson}\n\t{args.Error.ErrorCode}", args.Error.ExtendedError);
-                MediaFailed?.Invoke(model);
             }
+            MediaFailed?.Invoke(model);
         }
         #endregion
 
@@ -188,10 +158,17 @@ namespace AilianBT.Services
         }
         private async Task _play(MusicModel model)
         {
-            var playbackItem = await _cacheMusic(model);
-            var playbackItemIndex = _mediaPlaybackList.Items.IndexOf(playbackItem);
-            _mediaPlaybackList.MoveTo((uint)playbackItemIndex);
-            _mediaPlayer.Play();
+            try
+            {
+                var playbackItem = await _cacheMusic(model);
+                var playbackItemIndex = _mediaPlaybackList.Items.IndexOf(playbackItem);
+                _mediaPlaybackList.MoveTo((uint)playbackItemIndex);
+                _mediaPlayer.Play();
+            }
+            catch
+            {
+                MediaFailed?.Invoke(model);
+            }
         }
 
         private int? _getIndex(MusicModel model)

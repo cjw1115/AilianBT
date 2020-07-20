@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.WindowManagement;
 
 namespace AilianBT.Services
@@ -30,6 +31,7 @@ namespace AilianBT.Services
         private StorageService _storageService;
 
         private BackgroundDownloader _backgroundDownloader;
+        private BackgroundTransferGroup _backgroundDownloaderGroup = BackgroundTransferGroup.CreateGroup(DOWNLOAD_GROUP_NAME);
 
         public MusicService(UtilityHelper utilityHelper,LogService logger, StorageService storageService)
         {
@@ -127,10 +129,11 @@ namespace AilianBT.Services
         }
         #endregion
 
-        
+        private const string DOWNLOAD_GROUP_NAME = "MusicCaching";
         private void _initDownloader()
         {
             _backgroundDownloader = new BackgroundDownloader();
+            _backgroundDownloader.TransferGroup = _backgroundDownloaderGroup;
             _backgroundDownloader.SetRequestHeader("Referer", KISSSUB_HOST);
         }
 
@@ -149,21 +152,45 @@ namespace AilianBT.Services
                 }
             };
 
-            var cacheFile = await _createMusicFile(model);
-            if (cacheFile == null)
-            {
-                _logger.Error($"Create local file for storing music failed");
-                return null;
-            }
-
+            IRandomAccessStreamReference ras = null;
+            DownloadOperation downloadOperation = null;
             var downloadProgress = new Progress<DownloadOperation>();
             downloadProgress.ProgressChanged += downloadProgressHandler;
 
-            var downloadOperation = _backgroundDownloader.CreateDownload(model.Uri, cacheFile);
-            downloadOperation.IsRandomAccessRequired = true;
-            var ras = downloadOperation.GetResultRandomAccessStreamReference();
+            var cacheFile = await _createMusicFile(model);
+            if (cacheFile == null)
+            {
+                var operations = await BackgroundDownloader.GetCurrentDownloadsForTransferGroupAsync(_backgroundDownloaderGroup);
+                foreach (var item in operations)
+                {
+                    if (item.ResultFile is StorageFile cachedFile)
+                    {
+                        if (cachedFile.Name == _utilityHelper.CreateMd5HashString(model.Title))
+                        {
+                            downloadOperation = item;
+                            break;
+                        }
+                    }
+                }
+                if (downloadOperation != null)
+                {
+                    ras = downloadOperation.GetResultRandomAccessStreamReference();
+                    downloadOperation.AttachAsync().AsTask(downloadProgress);
+                }
+                else
+                {
+                    _logger.Warning($"Don't find the downloading task for {model.Title}");
+                    return null;
+                }
+            }
+            else
+            {
+                downloadOperation = _backgroundDownloader.CreateDownload(model.Uri, cacheFile);
+                downloadOperation.IsRandomAccessRequired = true;
+                ras = downloadOperation.GetResultRandomAccessStreamReference();
+                downloadOperation.StartAsync().AsTask(downloadProgress);
+            }
 
-            downloadOperation.StartAsync().AsTask(downloadProgress);
             var source = MediaSource.CreateFromStreamReference(ras, "audio/mpeg");
             return source;
         }

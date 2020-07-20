@@ -56,7 +56,9 @@
                                    Margin="4"
                                    VerticalAlignment="Center"
                                    FontFamily="{StaticResource FontAwesome}"
-                                   FontSize="20"
+                                   FontSize="16"
+                                   FontStyle="Normal"
+                                   FontWeight="ExtraLight"
                                    Foreground="{ThemeResource AilianBtTitleUnselectForeground}"
                                    Text="&#xf05d;"
                                    Visibility="{Binding Path=Visibility, ElementName=tbIconCached, Converter={StaticResource VisibilityInverseConverter}}" />
@@ -66,7 +68,9 @@
                                    Margin="4"
                                    VerticalAlignment="Center"
                                    FontFamily="{StaticResource FontAwesome}"
-                                   FontSize="20"
+                                   FontSize="16"
+                                   FontStyle="Normal"
+                                   FontWeight="ExtraLight"
                                    Foreground="{ThemeResource AilianBtMainColor}"
                                    Text="&#xf05d;"
                                    Visibility="{x:Bind HasCached, Mode=OneWay}" />

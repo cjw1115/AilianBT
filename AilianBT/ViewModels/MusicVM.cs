@@ -31,8 +31,8 @@ namespace AilianBT.ViewModels
 
         public async void Load()
         {
-            PlayerVM.SetMusicList(MusicList);
             await _preparePlaylist();
+            PlayerVM.SetMusicList(MusicList);
             await _musicService.CheckCachedMusicAsync(MusicList, SynchronizationContext);
         }
 
@@ -82,7 +82,6 @@ namespace AilianBT.ViewModels
                 {
                     MusicList.Add(item);
                 }
-                PlayerVM.CurrentIndex = 0;
             }
             catch (Exception e)
             {
@@ -90,18 +89,12 @@ namespace AilianBT.ViewModels
                 _logger.Error($"Initilize the playlist failed", e);
                 return;
             }
-            PlayerVM.CanPreviou = false;
-            PlayerVM.CanNext = true;
         }
 
 
-        public async void ItemClicked(MusicModel model)
+        public void ItemClicked(MusicModel model)
         {
-            //IsLoading = true;
-
-            //_musicManager.Pause(true);
-            //await _musicManager.Play(model);
-            //Title = model.Title;
+            PlayerVM.PlayClicked();
         }
     }
 }

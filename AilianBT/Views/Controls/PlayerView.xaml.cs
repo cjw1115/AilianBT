@@ -112,22 +112,23 @@ namespace AilianBT.Views.Controls
             _panelSizeChangedTimer.Change(TimeSpan.FromMilliseconds(400), TimeSpan.Zero);
         }
 
+        #region Interact with Player Progress
         private void _initPlaybackProgress()
         {
-            sliderProgress.ManipulationMode = ManipulationModes.TranslateX;
-            sliderProgress.ManipulationCompleted += SliderProgress_ManipulationCompleted;
-            sliderProgress.ManipulationStarted += SliderProgress_ManipulationStarted;
+            sliderProgress.AddHandler(PointerPressedEvent, new PointerEventHandler(_sliderProgressPointerPressed), true);
+            sliderProgress.AddHandler(PointerReleasedEvent, new PointerEventHandler(_sliderProgressPointerReleased), true);
         }
 
-        private void SliderProgress_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        private void _sliderProgressPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             _playerVM.Seeking = true;
         }
 
-        private void SliderProgress_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        private void _sliderProgressPointerReleased(object sender, PointerRoutedEventArgs e)
         {
             _playerVM.Seek(sliderProgress.Value / (sliderProgress.Maximum - sliderProgress.Minimum));
             _playerVM.Seeking = false;
         }
+        #endregion
     }
 }

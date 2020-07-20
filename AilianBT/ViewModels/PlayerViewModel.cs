@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace AilianBT.ViewModels
 {
@@ -18,45 +19,31 @@ namespace AilianBT.ViewModels
         public PlayerViewModel()
         {
             _musicManager.PositionChanged += _playbackPositionChanged;
-
+            _musicManager.MediaLoaded += _musicManagerMediaLoaded;
             _musicManager.MediaEnd += _musicManagerMediaEnd;
-        }
-
-        private void _musicManagerMediaEnd()
-        {
-            SynchronizationContext.Post((o) =>
-            {
-                NextClicked();
-            }, null);
-        }
-
-        private void _playbackPositionChanged(TimeSpan position, TimeSpan length)
-        {
-            if (!Seeking)
-            {
-                SynchronizationContext.Post((o) =>
-                {
-                    CurrentMusic.Position = position;
-                    CurrentMusic.Length = length;
-
-                    if (length != TimeSpan.Zero)
-                    {
-                        PlaybackProgress = (100d) * position / length;
-                    }
-                }, null);
-            }
+            _musicManager.MediaFailed += _musicManagerMediaFailed;
         }
 
         public void SetMusicList(Collection<MusicModel> musicList)
         {
             _musicList = musicList;
+
+            if (CurrentIndex == -1 && _musicList.Count > 0)
+            {
+                CurrentIndex = 0;
+            }
+
+            if (CurrentIndex != -1)
+            {
+                CurrentMusic = _musicList[CurrentIndex];
+            }
         }
 
-        private bool _isLoading = false;
-        public bool IsLoading
+        private bool _seeking = false;
+        public bool Seeking
         {
-            get { return _isLoading; }
-            set { Set(ref _isLoading, value); }
+            get { return _seeking; }
+            set { Set(ref _seeking, value); }
         }
 
         private int _currentIndex = -1;
@@ -86,6 +73,14 @@ namespace AilianBT.ViewModels
             }
         }
 
+        #region Player UI related props
+        private bool _isLoading = false;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set { Set(ref _isLoading, value); }
+        }
+
         private bool _canPreviou;
         public bool CanPreviou
         {
@@ -93,18 +88,18 @@ namespace AilianBT.ViewModels
             set { Set(ref _canPreviou, value); }
         }
 
+        private PlayerStatus _status = PlayerStatus.Stopped;
+        public PlayerStatus Status
+        {
+            get { return _status; }
+            set { Set(ref _status, value); }
+        }
+
         private bool _canNext;
         public bool CanNext
         {
             get { return _canNext; }
             set { Set(ref _canNext, value); }
-        }
-
-        private PlayerStatus _status =  PlayerStatus.Stopped;
-        public PlayerStatus Status
-        {
-            get { return _status; }
-            set { Set(ref _status, value); }
         }
 
         private MusicModel _currentMusic;
@@ -120,16 +115,12 @@ namespace AilianBT.ViewModels
             get { return _playbackProgress; }
             set { Set(ref _playbackProgress, value); }
         }
-
-        private bool _seeking = false;
-        public bool Seeking
-        {
-            get { return _seeking; }
-            set { Set(ref _seeking, value); }
-        }
+        #endregion
 
         public async void PlayClicked()
         {
+            if (_musicList.Count <= 0 || CurrentIndex == -1)
+                return;
             if (Status == PlayerStatus.Paused)
             {
                 Status = PlayerStatus.Playing;
@@ -137,11 +128,7 @@ namespace AilianBT.ViewModels
             }
             else
             {
-                IsLoading = true;
-                await _musicManager.Play(_musicList[CurrentIndex]);
-                CurrentMusic = _musicList[CurrentIndex];
-                IsLoading = false;
-                Status = PlayerStatus.Playing;
+                await _play();
             }
         }
 
@@ -153,6 +140,8 @@ namespace AilianBT.ViewModels
 
         public async void PreviousClicked()
         {
+            if (_musicList.Count <= 0)
+                return;
             if (CurrentIndex <= 0)
             {
                 return;
@@ -160,17 +149,14 @@ namespace AilianBT.ViewModels
             if (CurrentIndex - 1 >= 0)
             {
                 CurrentIndex--;
-                Status = PlayerStatus.Stopped;
-                IsLoading = true;
-                await _musicManager.Next(_musicList[CurrentIndex]);
-                CurrentMusic = _musicList[CurrentIndex];
-                IsLoading = false;
-                Status = PlayerStatus.Playing;
+                await _play();
             }
         }
 
         public async void NextClicked()
         {
+            if (_musicList.Count <= 0)
+                return;
             if (CurrentIndex >= _musicList.Count - 1)
             {
                 return;
@@ -178,13 +164,18 @@ namespace AilianBT.ViewModels
             if (CurrentIndex + 1 <= _musicList.Count - 1)
             {
                 CurrentIndex++;
-                Status = PlayerStatus.Stopped;
-                IsLoading = true;
-                await _musicManager.Next(_musicList[CurrentIndex]);
-                CurrentMusic = _musicList[CurrentIndex];
-                IsLoading = false;
-                Status = PlayerStatus.Playing;
+                await _play();
             }
+        }
+
+        private async Task _play()
+        {
+            PlaybackProgress = 0;
+            Status = PlayerStatus.Stopped;
+            IsLoading = true;
+            await _musicManager.Next(_musicList[CurrentIndex]);
+            CurrentMusic = _musicList[CurrentIndex];
+            Status = PlayerStatus.Playing;
         }
 
         public async void Seek(double targetProgress)
@@ -192,8 +183,27 @@ namespace AilianBT.ViewModels
             var targetPosition = targetProgress * CurrentMusic.Length;
             await _musicManager.Seek(targetPosition);
         }
+
         #region Manager events
-        private void MusicManager_MediaEnd()
+
+        private void _musicManagerMediaLoaded(MusicModel model)
+        {
+            SynchronizationContext.Post((o) =>
+            {
+                IsLoading = false;
+            }, null);
+        }
+
+        private void _musicManagerMediaFailed(MusicModel model)
+        {
+            SynchronizationContext.Post((o) =>
+            {
+                IsLoading = false;
+                NextClicked();
+            }, null);
+        }
+        
+        private void _musicManagerMediaEnd(MusicModel model)
         {
             SynchronizationContext.Post((o) =>
             {
@@ -201,70 +211,22 @@ namespace AilianBT.ViewModels
             }, null);
         }
 
-        private void MusicManager_MediaCached(MusicModel model)
+        private void _playbackPositionChanged(TimeSpan position, TimeSpan length)
         {
-            SynchronizationContext.Post((o) =>
+            if (!Seeking)
             {
-                var matchedModel = _musicList.Where(m => m.Equals(model)).FirstOrDefault();
-                matchedModel.HasCached = true;
-                //if (model.Equals(_musicList[CurrentIndex]))
-                //{
-                //    //IsLoading = false;
-                //}
-            }, null);
-        }
-
-        private void MusicManager_MediaLoading(MusicModel model)
-        {
-            SynchronizationContext.Post((o) =>
-            {
-                if (model.Equals(_musicList[CurrentIndex]))
+                SynchronizationContext.Post((o) =>
                 {
-                    IsLoading = true;
-                }
-            }, null);
+                    CurrentMusic.Position = position;
+                    CurrentMusic.Length = length;
 
-        }
-
-        private void MusicManager_MediaChanged(MusicModel newModel, MusicModel oldModel)
-        {
-            SynchronizationContext.Post((o) =>
-            {
-
-                if (newModel != null)
-                {
-                    if (newModel.Equals(_musicList[CurrentIndex]))
+                    if (length != TimeSpan.Zero)
                     {
-                        IsLoading = false;
+                        PlaybackProgress = (100d) * position / length;
                     }
-                }
-                else
-                {
-                }
-            }, null);
-        }
-
-        private void MusicManager_MediaLoaded(MusicModel model)
-        {
-            SynchronizationContext.Post((o) =>
-            {
-                var matchedModel = _musicList.Where(m => m.Equals(model)).FirstOrDefault();
-                matchedModel.HasCached = true;
-                //if (model.Equals(_musicList[CurrentIndex]))
-                //{
-                //    //IsLoading = false;
-                //}
-            }, null);
-        }
-
-        private void MusicManager_MediaFailed(MusicModel model)
-        {
-            SynchronizationContext.Post((o) =>
-            {
-                IsLoading = false;
-            }, null);
+                }, null);
+            }
         }
         #endregion
     }
 }
-
