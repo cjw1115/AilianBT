@@ -126,7 +126,11 @@ namespace AilianBT.Views.Controls
 
         private void _sliderProgressPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _playerVM.Seek(sliderProgress.Value / (sliderProgress.Maximum - sliderProgress.Minimum));
+            var length = (sliderProgress.Maximum - sliderProgress.Minimum);
+            if (length > 0)
+            {
+                _playerVM.Seek(sliderProgress.Value / length);
+            }
             _playerVM.Seeking = false;
         }
         #endregion

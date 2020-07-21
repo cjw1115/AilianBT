@@ -60,7 +60,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\PlayStatusConverter.cs" />
-    <Compile Include="Converters\TimeSpanConverter.cs" />
+    <Compile Include="Converters\TimeSpanStrConverter.cs" />
+    <Compile Include="Converters\TimeSpanToDoulbeConverter.cs" />
     <Compile Include="Effects\MyRevealBorderBrush.cs" />
     <Compile Include="Effects\MyRevealBorderLight.cs" />
     <Compile Include="Effects\RevealBrush.cs" />
