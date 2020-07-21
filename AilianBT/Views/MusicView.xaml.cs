@@ -17,7 +17,7 @@ namespace AilianBT.Views
             this.InitializeComponent();
             this.Loaded += _musicViewLoaded;
         }
-
+        
         private void _musicViewLoaded(object sender, RoutedEventArgs e)
         {
             MusicVM.Load();

@@ -91,7 +91,6 @@ namespace AilianBT.ViewModels
             }
         }
 
-
         public void ItemClicked(MusicModel model)
         {
             PlayerVM.PlayClicked();

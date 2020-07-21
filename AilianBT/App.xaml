@@ -7,9 +7,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///Styles/Brushes.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/Buttons.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/ItemsControls.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/InputControls.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/Buttons.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <vm:ViewModelLocator x:Key="Locator" />

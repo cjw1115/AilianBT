@@ -20,7 +20,6 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-
         <ListView x:Name="list_music"
                   Grid.Row="0"
                   Grid.ColumnSpan="3"

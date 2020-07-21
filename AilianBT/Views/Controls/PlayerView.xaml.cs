@@ -7,14 +7,11 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace AilianBT.Views.Controls
 {
     public sealed partial class PlayerView : UserControl
     {
         private PlayerViewModel _playerVM;
-        
         private SynchronizationContext SynchronizationContext = SynchronizationContext.Current;
 
         public PlayerView()
@@ -29,6 +26,7 @@ namespace AilianBT.Views.Controls
         private bool _isScrollable = false;
         private Visual _scrollableVisual = null;
         private Timer _panelSizeChangedTimer = null;
+
         private void _initPlayerTitleAnimationResources()
         {
             _scrollableVisual = ElementCompositionPreview.GetElementVisual(panelScrollPlayerTitle);

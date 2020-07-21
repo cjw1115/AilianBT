@@ -1,4 +1,6 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:effects="using:AilianBT.Effects">
     <!--  整体主色调，适用于大标题背景，小标题前景  -->
     <SolidColorBrush x:Name="AilianBtMainColor" Color="#FFE777AB" />
     <SolidColorBrush x:Key="AilinaBtItemHoverColor" Color="#FFE7ADC8" />
@@ -19,4 +21,15 @@
                   FallbackColor="#FFF2F2F2"
                   TintOpacity="0.7" />
     <SolidColorBrush x:Key="NavigationItemHoverBrush" Color="#44A5A5A5" />
+
+    <!--  Used by player view  -->
+    <effects:MyRevealBorderBrush x:Key="NextRevealBorderBrush" Color="#118A8781" />
+    <effects:MyRevealBorderBrush x:Key="PlayRevealBorderBrush" Color="#33FFFFFF" />
+    <effects:MyRevealBorderBrush x:Key="RevealBackgroundBrush" Color="Transparent" />
+    <AcrylicBrush x:Key="AcrylicBackgroundBrush"
+                  BackgroundSource="HostBackdrop"
+                  FallbackColor="#8A8781"
+                  TintColor="#8A8781"
+                  TintOpacity="0.6" />
+    <effects:MyRevealBorderBrush x:Key="ProgressRevealTrackBrush" Color="#33FFFFFF" />
 </ResourceDictionary>

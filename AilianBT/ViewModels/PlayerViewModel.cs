@@ -2,9 +2,7 @@
 using AilianBT.Models;
 using AilianBT.Services;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using System.Threading;
-using System.Linq;
 using System;
 using System.Threading.Tasks;
 
@@ -117,6 +115,7 @@ namespace AilianBT.ViewModels
         }
         #endregion
 
+        #region Playback control actions
         public async void PlayClicked()
         {
             if (_musicList.Count <= 0 || CurrentIndex == -1)
@@ -183,9 +182,9 @@ namespace AilianBT.ViewModels
             var targetPosition = targetProgress * CurrentMusic.Length;
             await _musicManager.Seek(targetPosition);
         }
+        #endregion
 
         #region Manager events
-
         private void _musicManagerMediaLoaded(MusicModel model)
         {
             SynchronizationContext.Post((o) =>
