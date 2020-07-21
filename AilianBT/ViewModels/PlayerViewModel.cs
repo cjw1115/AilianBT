@@ -20,6 +20,7 @@ namespace AilianBT.ViewModels
             _musicManager.MediaLoaded += _musicManagerMediaLoaded;
             _musicManager.MediaEnd += _musicManagerMediaEnd;
             _musicManager.MediaFailed += _musicManagerMediaFailed;
+            _musicManager.SMTCCommandReceived += _musicManagerSMTCCommandReceived;
         }
 
         public void SetMusicList(Collection<MusicModel> musicList)
@@ -225,6 +226,30 @@ namespace AilianBT.ViewModels
                     }
                 }, null);
             }
+        }
+
+        private void _musicManagerSMTCCommandReceived(SMTCCommandType command)
+        {
+            SynchronizationContext.Post((o) =>
+            {
+                switch (command)
+                {
+                    case SMTCCommandType.Play:
+                        PlayClicked();
+                        break;
+                    case SMTCCommandType.Pause:
+                        PauseClicked();
+                        break;
+                    case SMTCCommandType.Previous:
+                        PreviousClicked();
+                        break;
+                    case SMTCCommandType.Next:
+                        NextClicked();
+                        break;
+                    default:
+                        break;
+                }
+            }, null);
         }
         #endregion
     }

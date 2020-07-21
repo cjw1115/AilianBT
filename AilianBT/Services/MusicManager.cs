@@ -1,19 +1,24 @@
 ﻿using AilianBT.Models;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
-using Windows.UI.WebUI;
 
 namespace AilianBT.Services
 {
+    public enum SMTCCommandType
+    {
+        Play,
+        Pause,
+        Previous,
+        Next
+    }
+
     public class MusicManager
     {
         private MediaPlayer _mediaPlayer;
@@ -36,6 +41,16 @@ namespace AilianBT.Services
             _mediaPlayer.Source = _mediaPlaybackList;
             _mediaPlayer.PlaybackSession.PositionChanged += PlaybackSession_PositionChanged;
             _mediaPlayer.MediaEnded += _mediaPlayerMediaEnded;
+
+            _mediaPlayer.CommandManager.PlayBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            _mediaPlayer.CommandManager.PauseBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            _mediaPlayer.CommandManager.NextBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+            _mediaPlayer.CommandManager.PreviousBehavior.EnablingRule = MediaCommandEnablingRule.Always;
+
+            _mediaPlayer.CommandManager.PlayReceived += _commandManagerPlayReceived;
+            _mediaPlayer.CommandManager.PauseReceived += _commandManagerPauseReceived;
+            _mediaPlayer.CommandManager.NextReceived += _commandManagerNextReceived;
+            _mediaPlayer.CommandManager.PreviousReceived += _commandManagerPreviousReceived;
         }
 
         private void PlaybackSession_PositionChanged(MediaPlaybackSession sender, object args)
@@ -48,8 +63,8 @@ namespace AilianBT.Services
         public event Action<MusicModel> MediaFailed;
         public event Action<MusicModel> MediaCached;
         public event Action<TimeSpan, TimeSpan> PositionChanged;
+        public event Action<SMTCCommandType> SMTCCommandReceived;
         
-
         #region MediaPlaybackList callbacks
         private void _mediaPlaybackListItemOpened(MediaPlaybackList sender, MediaPlaybackItemOpenedEventArgs args)
         {
@@ -156,6 +171,7 @@ namespace AilianBT.Services
         {
             _mediaPlayer.PlaybackSession.Position = position;
         }
+        
         private async Task _play(MusicModel model)
         {
             try
@@ -189,11 +205,6 @@ namespace AilianBT.Services
             return index;
         }
 
-        private MediaPlaybackItem _createPlaceholderItem()
-        {
-            return new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri("cq://cq")));
-        }
-
         private async Task<MediaPlaybackItem> _cacheMusic(MusicModel model)
         {
             if (!CachedMusicList.Any(m => m.Title == model.Title))
@@ -202,5 +213,31 @@ namespace AilianBT.Services
             }
             return await Add(model);
         }
+
+        #region SMTC commnad
+        private void _commandManagerPreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
+        {
+            args.Handled = true;
+            SMTCCommandReceived?.Invoke(SMTCCommandType.Previous);
+        }
+
+        private void _commandManagerNextReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerNextReceivedEventArgs args)
+        {
+            args.Handled = true;
+            SMTCCommandReceived?.Invoke(SMTCCommandType.Next);
+        }
+
+        private void _commandManagerPauseReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPauseReceivedEventArgs args)
+        {
+            args.Handled = true;
+            SMTCCommandReceived?.Invoke(SMTCCommandType.Pause);
+        }
+
+        private void _commandManagerPlayReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPlayReceivedEventArgs args)
+        {
+            args.Handled = true;
+            SMTCCommandReceived?.Invoke(SMTCCommandType.Play);
+        }
+        #endregion
     }
 }

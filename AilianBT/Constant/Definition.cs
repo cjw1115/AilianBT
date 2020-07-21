@@ -12,5 +12,7 @@
         public const string SETTING_MAGNET_AUTO_DOWNLOAD_PROTOCAL_THUNDER = "thunder://";
 
         public const double WINDOW_MODE_WIDE_WIDTH = 768;
+
+        public const string MUSIC_DOWNLOAD_GROUP_NAME = "MusicCaching";
     }
 }

@@ -51,8 +51,7 @@
                                    Text="{x:Bind Title, Mode=OneWay}"
                                    TextWrapping="Wrap" />
                         <TextBlock Grid.Column="2"
-                                   Width="40"
-                                   Margin="4"
+                                   Margin="16,0"
                                    VerticalAlignment="Center"
                                    FontFamily="{StaticResource FontAwesome}"
                                    FontSize="16"
@@ -63,8 +62,7 @@
                                    Visibility="{Binding Path=Visibility, ElementName=tbIconCached, Converter={StaticResource VisibilityInverseConverter}}" />
                         <TextBlock x:Name="tbIconCached"
                                    Grid.Column="2"
-                                   Width="40"
-                                   Margin="4"
+                                   Margin="16,0"
                                    VerticalAlignment="Center"
                                    FontFamily="{StaticResource FontAwesome}"
                                    FontSize="16"

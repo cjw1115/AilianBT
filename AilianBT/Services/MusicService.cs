@@ -2,7 +2,6 @@
 using AilianBT.Constant;
 using AilianBT.Helpers;
 using AilianBT.Models;
-using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +14,6 @@ using Windows.Media.Core;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI.WindowManagement;
 
 namespace AilianBT.Services
 {
@@ -31,7 +29,7 @@ namespace AilianBT.Services
         private StorageService _storageService;
 
         private BackgroundDownloader _backgroundDownloader;
-        private BackgroundTransferGroup _backgroundDownloaderGroup = BackgroundTransferGroup.CreateGroup(DOWNLOAD_GROUP_NAME);
+        private BackgroundTransferGroup _backgroundDownloaderGroup = BackgroundTransferGroup.CreateGroup(Definition.MUSIC_DOWNLOAD_GROUP_NAME);
 
         public MusicService(UtilityHelper utilityHelper,LogService logger, StorageService storageService)
         {
@@ -43,7 +41,6 @@ namespace AilianBT.Services
         }
 
         #region Playlist
-
         public async Task<IList<MusicModel>> GetNetPlayListAsync()
         {
             var musicList = new List<MusicModel>();
@@ -129,7 +126,6 @@ namespace AilianBT.Services
         }
         #endregion
 
-        private const string DOWNLOAD_GROUP_NAME = "MusicCaching";
         private void _initDownloader()
         {
             _backgroundDownloader = new BackgroundDownloader();
