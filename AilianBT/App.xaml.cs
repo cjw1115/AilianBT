@@ -1,5 +1,4 @@
-﻿using AilianBT.Constant;
-using AilianBT.Helpers;
+﻿using AilianBT.Helpers;
 using AilianBT.Services;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +18,17 @@ namespace AilianBT
         private DbService _dbService;
         private StorageService _storageService;
         private SettingService _settingService;
+        private LogService _logService;
 
         public App()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             InitializeComponent();
+            UnhandledException += _appUnhandledException;
 
             _registerService();
+
+            _logService = SimpleIoc.Default.GetInstance<LogService>();
 
             _dbService = SimpleIoc.Default.GetInstance<DbService>();
             _dbService.DownloadDbContext.Database.Migrate();
@@ -104,7 +107,8 @@ namespace AilianBT
 
         private void _registerService()
         {
-            SimpleIoc.Default.Register(() => new LogService(Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path));
+            SimpleIoc.Default.Register<AppCenterService>();
+            SimpleIoc.Default.Register(() => new LogService(Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path, SimpleIoc.Default.GetInstance<AppCenterService>()));
             SimpleIoc.Default.Register<UtilityHelper>();
             SimpleIoc.Default.Register<DbService>();
             SimpleIoc.Default.Register<StorageService>();
@@ -113,6 +117,11 @@ namespace AilianBT
             SimpleIoc.Default.Register<MusicService>();
             SimpleIoc.Default.Register<AilianBTService>();
             SimpleIoc.Default.Register<SettingService>();
+        }
+        
+        private void _appUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            _logService.Error($"Unhandled exception:{e?.Message}", e.Exception);
         }
     }
 }

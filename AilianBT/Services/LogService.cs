@@ -8,9 +8,12 @@ namespace AilianBT.Services
     {
         private LoggerConfiguration _loggerConfiguration = new LoggerConfiguration();
         private ILogger _logger;
+        private AppCenterService _appCenterService;
 
-        public LogService(string logFolder)
+        public LogService(string logFolder, AppCenterService appCenterService)
         {
+            _appCenterService = appCenterService;
+
             var template = "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff}][{Level:u3}]{Message:lj}{NewLine}{Exception}";
 #if DEBUG
             _loggerConfiguration.MinimumLevel.Debug();
@@ -41,6 +44,10 @@ namespace AilianBT.Services
         public void Error(string messageTemplate, Exception exception = null, [CallerFilePath] string filePath = null, [CallerMemberName] string functionName = null)
         {
             _logger.Error(exception, $"[{_stackInfo(filePath, functionName)}]::{messageTemplate}");
+            if (exception != null)
+            {
+                _appCenterService.TrackError(new Exception(messageTemplate));
+            }
         }
 
         public void Information(string messageTemplate, [CallerFilePath] string filePath = null, [CallerMemberName] string functionName = null)
