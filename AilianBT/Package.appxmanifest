@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap uap3 mp">
-  <Identity Name="43612cjw1115.BT" Publisher="CN=44E84CDA-74C3-45A0-AAD6-3A43680DABBC" Version="1.8.1.0" />
-  <mp:PhoneIdentity PhoneProductId="be2aab12-5e56-4cfb-8a75-d72c6093b0e1" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="43612cjw1115.BT" Publisher="CN=44E84CDA-74C3-45A0-AAD6-3A43680DABBC" Version="1.8.2.0" />
+  <mp:PhoneIdentity PhoneProductId="d5ae58a9-97e1-4c78-a138-0fe3fb24e8ce" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>爱恋动漫BT</DisplayName>
-    <PublisherDisplayName>cjw1115</PublisherDisplayName>
+    <PublisherDisplayName>cjw1115‬</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

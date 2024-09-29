@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <StoreAssociation xmlns="http://schemas.microsoft.com/appx/2010/storeassociation">
   <Publisher>CN=44E84CDA-74C3-45A0-AAD6-3A43680DABBC</Publisher>
-  <PublisherDisplayName>cjw1115</PublisherDisplayName>
+  <PublisherDisplayName>cjw1115‬</PublisherDisplayName>
   <DeveloperAccountType>MSA</DeveloperAccountType>
   <GeneratePackageHash>http://www.w3.org/2001/04/xmlenc#sha256</GeneratePackageHash>
   <SupportedLocales>
@@ -369,25 +369,11 @@
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
     <MainPackageIdentityName>43612cjw1115.AudiCapture</MainPackageIdentityName>
+    <MainPackageIdentityName>43612cjw1115.LoadSomething</MainPackageIdentityName>
+    <MainPackageIdentityName>43612cjw1115.ModernMenu</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.ULove</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.2457283754C76</MainPackageIdentityName>
     <MainPackageIdentityName>43612cjw1115.WP8.1</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NBLGGH4TFBW">
-    <PackageInfo>
-      <OsMinVersion>0.0.0.0</OsMinVersion>
-      <PackageArchitecture>Arm</PackageArchitecture>
-      <PackageMaxArchitectureVersion>1.6.0.0</PackageMaxArchitectureVersion>
-    </PackageInfo>
-    <PackageInfo>
-      <OsMinVersion>0.0.0.0</OsMinVersion>
-      <PackageArchitecture>X64</PackageArchitecture>
-      <PackageMaxArchitectureVersion>1.6.0.0</PackageMaxArchitectureVersion>
-    </PackageInfo>
-    <PackageInfo>
-      <OsMinVersion>0.0.0.0</OsMinVersion>
-      <PackageArchitecture>X86</PackageArchitecture>
-      <PackageMaxArchitectureVersion>1.6.0.0</PackageMaxArchitectureVersion>
-    </PackageInfo>
-  </PackageInfoList>
+  <PackageInfoList LandingUrl="https://devcenterapi.dce.mp.microsoft.com/dashboard/Application?appId=9NBLGGH4TFBW" />
 </StoreAssociation>

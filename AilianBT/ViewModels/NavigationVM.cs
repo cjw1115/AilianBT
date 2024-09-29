@@ -9,6 +9,7 @@ namespace AilianBT.ViewModels
     {
         public List<NavigationListItem> NavigationList { get; set; } = new List<NavigationListItem>
         {
+           new NavigationListItem { Title="人类", PageType=typeof(Views.HumanTestView),Icon="\xEB68" },
            new NavigationListItem { Title="首页", PageType=typeof(Views.MainView),Icon="\xE80F" },
            new NavigationListItem { Title="番组", PageType=typeof(Views.KeyView),Icon="\xE192"},
            new NavigationListItem { Title="音乐", PageType=typeof(Views.MusicView),Icon="\xE8D6"},

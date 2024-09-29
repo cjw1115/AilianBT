@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace AilianBT.Common.Services
         public HttpService(bool allowRedirect = true)
         {
             _handler = new HttpClientHandler();
+            _handler.UseCookies = true;
+            _handler.CookieContainer = new CookieContainer();
             _handler.UseProxy = false;
             _handler.AllowAutoRedirect = allowRedirect;
 
@@ -77,6 +80,11 @@ namespace AilianBT.Common.Services
                     return reader.ReadToEnd();
                 }
             }
+        }
+
+        public void SetCookie(Cookie cookie)
+        {
+            _handler.CookieContainer.Add(cookie);
         }
     }
 }

@@ -1,0 +1,35 @@
+﻿<Page x:Class="AilianBT.Views.HumanTestView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:models="using:AilianBT.Models"
+      xmlns:ms="using:Microsoft.UI.Xaml.Controls"
+      mc:Ignorable="d">
+    <Grid Background="{StaticResource AilianBtGridBackground2}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Margin="4"
+                       HorizontalAlignment="Center"
+                       FontSize="26"
+                       Foreground="Red"
+                       Text="此页面用于进行人类行为检测&#x1F436;"
+                       TextWrapping="Wrap" />
+            <TextBlock Margin="4"
+                       HorizontalAlignment="Center"
+                       FontSize="18"
+                       Foreground="Red"
+                       Text="现在app启动后, 首先会先在这个页面打开爱恋动漫的论坛进行交互式验证（reCAPTCHA ）, 你需要手动点击验证框！验证完成后就可以访问其他页面了！切记！"
+                       TextWrapping="Wrap" />
+        </StackPanel>
+
+        <ms:WebView2 x:Name="testWebView"
+                     Grid.Row="1"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     Opacity="0.5" />
+    </Grid>
+</Page>

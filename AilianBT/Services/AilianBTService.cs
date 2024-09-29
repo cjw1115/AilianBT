@@ -12,6 +12,7 @@ using System.Net.Http;
 using AngleSharp.Html.Parser;
 using AilianBT.Constant;
 using GalaSoft.MvvmLight.Ioc;
+using System.Net;
 
 namespace AilianBT.Services
 {
@@ -25,13 +26,26 @@ namespace AilianBT.Services
 
         private StorageService _storageService = SimpleIoc.Default.GetInstance<StorageService>();
 
+        public void SetHumanTestCookie(Cookie humanCookie)
+        {
+            _httpService.SetCookie(humanCookie);
+        }
+
+        public Dictionary<string, string> GetCommonHeader()
+        {
+            var header = new Dictionary<string, string>();
+            header.Add("cookie", "visitor_test=human");
+            return header;
+        }
+
         public async Task<IList<AilianResModel>> GetResList(int pageIndex = 1)
         {
             List<AilianResModel> list = null;
             string content = null;
             try
             {
-                content = await _httpService.SendRequestForString(KISSSUB_HOME + pageIndex + ".html", HttpMethod.Get, Encoding.UTF8);
+                
+                content = await _httpService.SendRequestForString(KISSSUB_HOME + pageIndex + ".html", HttpMethod.Get, Encoding.UTF8, content: null, GetCommonHeader());
             }
             catch(Exception e)
             {
@@ -79,7 +93,7 @@ namespace AilianBT.Services
             string content = null;
             try
             {
-                content = await _httpService.SendRequestForString(detailUri, HttpMethod.Get, Encoding.UTF8);
+                content = await _httpService.SendRequestForString(detailUri, HttpMethod.Get, Encoding.UTF8,null, GetCommonHeader());
             }
             catch(Exception e)
             {
@@ -150,7 +164,7 @@ namespace AilianBT.Services
             string content = null;
             try
             {
-                content = await _httpService.SendRequestForString(KISSSUB_SEARCH + searchiKey + "&page=" + pageIndex, HttpMethod.Get, Encoding.UTF8);
+                content = await _httpService.SendRequestForString(KISSSUB_SEARCH + searchiKey + "&page=" + pageIndex, HttpMethod.Get, Encoding.UTF8, null, GetCommonHeader());
             }
             catch(Exception e)
             {
@@ -199,7 +213,7 @@ namespace AilianBT.Services
 
             try
             {
-                content = await _httpService.SendRequestForString(KISSSUB_NEW_FAN, HttpMethod.Get, Encoding.UTF8);
+                content = await _httpService.SendRequestForString(KISSSUB_NEW_FAN, HttpMethod.Get, Encoding.UTF8, null, GetCommonHeader());
             }
             catch (Exception e)
             {
